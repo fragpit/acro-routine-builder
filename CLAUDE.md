@@ -86,6 +86,35 @@ A single boolean `awtMode` on the Program. Structural differences are minimal (M
 - UI strings are in English; Russian is only in docs and this file.
 - After editing `.md` files run `markdownlint-cli2 --config ~/.markdownlint-cli2.yaml <file>` (from the user's global rules).
 
+## Workflow conventions
+
+### "Do the task"
+
+1. Create a new branch from `main`.
+2. Make the changes.
+3. Commit and push the branch.
+4. Open a PR via GitHub MCP (never `gh` CLI - see user memory).
+
+Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
+
+### "Do the task and merge"
+
+Do everything above, then **finalize**:
+
+1. Merge the PR (squash).
+2. Switch to the default branch (`main`) and pull.
+3. Bump the release tag. The user must specify `patch`, `minor` or `major`; if they didn't, ask. Bumping rules below.
+4. Delete the dev branch locally and on the remote.
+
+### Tag bumping rules
+
+- Tags drive deploys (`.github/workflows/deploy.yml` triggers on `v*.*.*`), so the tag IS the release. `package.json` `version` is informational only - the built bundle takes the version from the tag via `__APP_VERSION__` in `vite.config.ts`.
+- Before bumping, **always** run `git tag -l --sort=-v:refname | head -5` to see the current latest tag. Do not trust `package.json` as the source of truth - it has drifted from tags before.
+- Compute the next tag from the latest existing tag (not from `package.json`): `patch` → `vX.Y.Z+1`, `minor` → `vX.Y+1.0`, `major` → `vX+1.0.0`.
+- Also bump `package.json` `version` to match, commit as `Bump version to X.Y.Z`, push to `main`.
+- Create the tag annotated (`git tag -a vX.Y.Z -m "..."`) - lightweight tags fail here because of a forced-annotated git config. Push with `git push origin vX.Y.Z`.
+- The tag push may report "Cannot create ref due to creations being restricted" - that's a protected-ref ruleset being bypassed (admin action). The tag still gets created; no action needed.
+
 ## Key documents
 
 - [docs/claude_plan.md](docs/claude_plan.md) - current implementation plan and phase status.
