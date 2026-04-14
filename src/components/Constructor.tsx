@@ -38,6 +38,10 @@ export default function Constructor() {
   const setDefaultBonuses = useProgramStore((s) => s.setDefaultBonuses);
   const resetRun = useProgramStore((s) => s.resetRun);
   const resetProgram = useProgramStore((s) => s.resetProgram);
+  const undo = useProgramStore((s) => s.undo);
+  const redo = useProgramStore((s) => s.redo);
+  const canUndo = useProgramStore((s) => s.past.length > 0);
+  const canRedo = useProgramStore((s) => s.future.length > 0);
   const selectedTrickId = useProgramStore((s) => s.selectedTrickId);
   const selectTrick = useProgramStore((s) => s.selectTrick);
 
@@ -236,15 +240,37 @@ export default function Constructor() {
                 </>
               )}
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                if (confirm('Clear all tricks from every run?')) resetProgram();
-              }}
-              className="ml-auto px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
-            >
-              Reset all
-            </button>
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                type="button"
+                onClick={undo}
+                disabled={!canUndo}
+                title="Undo (Cmd/Ctrl+Z)"
+                aria-label="Undo"
+                className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
+              >
+                ↶
+              </button>
+              <button
+                type="button"
+                onClick={redo}
+                disabled={!canRedo}
+                title="Redo (Cmd/Ctrl+Shift+Z)"
+                aria-label="Redo"
+                className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
+              >
+                ↷
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('Clear all tricks from every run?')) resetProgram();
+                }}
+                className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
+              >
+                Reset all
+              </button>
+            </div>
           </div>
           <div className="flex-1 overflow-auto">
             <div

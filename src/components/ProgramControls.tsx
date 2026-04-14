@@ -13,7 +13,31 @@ export default function ProgramControls() {
   const deleteSavedProgram = useProgramStore((s) => s.deleteSavedProgram);
   const newProgram = useProgramStore((s) => s.newProgram);
   const importProgram = useProgramStore((s) => s.importProgram);
+  const undo = useProgramStore((s) => s.undo);
+  const redo = useProgramStore((s) => s.redo);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const mod = e.metaKey || e.ctrlKey;
+      if (!mod || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) return;
+      }
+      const key = e.key.toLowerCase();
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+        e.preventDefault();
+        redo();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [undo, redo]);
 
   const [openMenu, setOpenMenu] = useState<'save' | 'load' | null>(null);
   const [saveName, setSaveName] = useState('');
