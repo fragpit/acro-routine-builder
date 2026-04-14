@@ -80,8 +80,8 @@ export default function RunMobile({
       </div>
 
       {run.tricks.length > 0 && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-600 dark:text-slate-300 space-y-2">
-          <div className="grid grid-cols-3 gap-2">
+        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-600 dark:text-slate-300">
+          <div className="grid grid-cols-4 gap-2">
             <Stat label="TC" value={technicity.toFixed(3)} />
             <Stat label={awtMode ? 'Bonus ≤' : 'Bonus'} value={`+${bonus.toFixed(1)}%`} />
             <Stat
@@ -89,17 +89,13 @@ export default function RunMobile({
               value={symmetry.balanced ? '+1' : '+0'}
               tone={symmetry.balanced ? 'ok' : 'warn'}
             />
-          </div>
-          <div className="grid grid-cols-3 gap-2">
             <SlotStat label="Twisted" used={bonusUsage.twisted} max={BONUS_LIMITS.twisted} />
             <SlotStat label="Reversed" used={bonusUsage.reversed} max={BONUS_LIMITS.reversed} />
             <SlotStat label="Flipped" used={bonusUsage.flipped} max={BONUS_LIMITS.flipped} />
-          </div>
-          {choreoPenalty > 0 && (
-            <div className="grid grid-cols-1">
+            {choreoPenalty > 0 && (
               <Stat label="Choreo" value={`-${choreoPenalty}%`} tone="warn" />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </div>
