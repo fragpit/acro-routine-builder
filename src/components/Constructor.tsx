@@ -413,10 +413,8 @@ function RunColumn({
               }`}
               title="Trick directions balance (1/8) - same number of tricks in both directions. Odd number: difference of 1 is OK"
             >
-              <span>Symmetry</span>
-              <span className="font-mono">
-                {symmetry.balanced ? '+1' : '0'}/8 ({symmetry.left}L/{symmetry.right}R)
-              </span>
+              <span>Choreo(sym)</span>
+              <span className="font-mono">{symmetry.balanced ? '+1' : '+0'}</span>
             </div>
           )}
         </div>
