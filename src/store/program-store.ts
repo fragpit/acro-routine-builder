@@ -29,6 +29,7 @@ interface ProgramState {
   addTrick: (runIndex: number, manoeuvreId: string, atIndex?: number) => void;
   removeTrick: (trickId: string) => void;
   moveTrick: (trickId: string, toRunIndex: number, toIndex: number) => void;
+  copyTrick: (trickId: string, toRunIndex: number, toIndex: number) => void;
   setTrickSide: (trickId: string, side: Side | null) => void;
   toggleBonus: (trickId: string, bonusId: string) => void;
   selectTrick: (trickId: string | null) => void;
@@ -232,6 +233,26 @@ export const useProgramStore = create<ProgramState>()(
       if (loc.runIndex === toRunIndex && loc.trickIndex < toIndex) insertAt = toIndex - 1;
       targetTricks.splice(Math.min(insertAt, targetTricks.length), 0, trick);
       runs[toRunIndex] = { ...target, tricks: targetTricks };
+      return commit(state, { ...state.program, runs });
+    }),
+
+  copyTrick: (trickId, toRunIndex, toIndex) =>
+    set((state) => {
+      const loc = findTrick(state.program, trickId);
+      if (!loc) return state;
+      const source = state.program.runs[loc.runIndex].tricks[loc.trickIndex];
+      const copy: PlacedTrick = {
+        id: nextId(),
+        manoeuvreId: source.manoeuvreId,
+        side: source.side,
+        selectedBonuses: [...source.selectedBonuses],
+      };
+      const runs = state.program.runs.map((r, i) => {
+        if (i !== toRunIndex) return r;
+        const tricks = [...r.tricks];
+        tricks.splice(Math.min(toIndex, tricks.length), 0, copy);
+        return { ...r, tricks };
+      });
       return commit(state, { ...state.program, runs });
     }),
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -32,6 +32,7 @@ export default function Constructor() {
   const violations = useProgramStore((s) => s.violations);
   const addTrick = useProgramStore((s) => s.addTrick);
   const moveTrick = useProgramStore((s) => s.moveTrick);
+  const copyTrick = useProgramStore((s) => s.copyTrick);
   const setRunCount = useProgramStore((s) => s.setRunCount);
   const setAwtMode = useProgramStore((s) => s.setAwtMode);
   const setRepeatAfterRuns = useProgramStore((s) => s.setRepeatAfterRuns);
@@ -46,6 +47,27 @@ export default function Constructor() {
   const selectTrick = useProgramStore((s) => s.selectTrick);
 
   const [activeDrag, setActiveDrag] = useState<{ type: 'palette' | 'cell'; id: string } | null>(null);
+  const altHeldRef = useRef(false);
+  const [altHeld, setAltHeld] = useState(false);
+
+  useEffect(() => {
+    function sync(e: KeyboardEvent) {
+      altHeldRef.current = e.altKey;
+      setAltHeld(e.altKey);
+    }
+    function clear() {
+      altHeldRef.current = false;
+      setAltHeld(false);
+    }
+    window.addEventListener('keydown', sync);
+    window.addEventListener('keyup', sync);
+    window.addEventListener('blur', clear);
+    return () => {
+      window.removeEventListener('keydown', sync);
+      window.removeEventListener('keyup', sync);
+      window.removeEventListener('blur', clear);
+    };
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -111,7 +133,12 @@ export default function Constructor() {
     if (data.type === 'palette' && data.manoeuvreId) {
       addTrick(overData.runIndex, data.manoeuvreId, overData.insertIndex);
     } else if (data.type === 'cell' && data.trickId) {
-      moveTrick(data.trickId, overData.runIndex, overData.insertIndex);
+      const activator = e.activatorEvent as { altKey?: boolean } | null;
+      if (altHeldRef.current || activator?.altKey) {
+        copyTrick(data.trickId, overData.runIndex, overData.insertIndex);
+      } else {
+        moveTrick(data.trickId, overData.runIndex, overData.insertIndex);
+      }
     }
   }
 
@@ -314,7 +341,13 @@ export default function Constructor() {
         {activeDrag?.type === 'palette' && MANOEUVRES_BY_ID[activeDrag.id] && (
           <PaletteCardPresentation manoeuvre={MANOEUVRES_BY_ID[activeDrag.id]} />
         )}
-        {activeDrag?.type === 'cell' && <div className="px-2 py-1 rounded bg-sky-700 text-sm">Moving...</div>}
+        {activeDrag?.type === 'cell' && (
+          <div
+            className={`px-2 py-1 rounded text-sm text-white ${altHeld ? 'bg-emerald-700' : 'bg-sky-700'}`}
+          >
+            {altHeld ? 'Copying...' : 'Moving...'}
+          </div>
+        )}
       </DragOverlay>
     </DndContext>
   );
