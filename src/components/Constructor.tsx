@@ -31,6 +31,7 @@ import ProgramControls from './ProgramControls';
 import ConstructorMobile from './mobile/ConstructorMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { IconUndo, IconRedo } from './icons';
+import NumberStepper from './NumberStepper';
 
 export default function Constructor() {
   const isMobile = useIsMobile();
@@ -195,13 +196,12 @@ function ConstructorDesktop() {
             <div className="h-5 w-px bg-slate-200 dark:bg-slate-700" />
             <label className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
               Runs:
-              <input
-                type="number"
+              <NumberStepper
+                value={program.runs.length}
                 min={1}
                 max={MAX_RUNS}
-                value={program.runs.length}
-                onChange={(e) => setRunCount(Math.max(1, Math.min(MAX_RUNS, Number(e.target.value))))}
-                className="w-14 px-2 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700"
+                onChange={setRunCount}
+                ariaLabel="Runs"
               />
             </label>
             <label
@@ -209,13 +209,12 @@ function ConstructorDesktop() {
               title="Repetition tracker resets every N runs. 0 = never resets. 2 = blocks [1,2], [3,4], [5]..."
             >
               Reset gap:
-              <input
-                type="number"
+              <NumberStepper
+                value={program.repeatAfterRuns}
                 min={0}
                 max={99}
-                value={program.repeatAfterRuns}
-                onChange={(e) => setRepeatAfterRuns(Math.max(0, Math.min(99, Number(e.target.value))))}
-                className="w-16 px-2 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700"
+                onChange={setRepeatAfterRuns}
+                ariaLabel="Reset gap"
               />
             </label>
             <label className="flex items-center gap-2 text-slate-700 dark:text-slate-300" title="Enable AWT-specific rules (Misty to Misty forbidden)">

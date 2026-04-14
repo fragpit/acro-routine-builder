@@ -4,6 +4,7 @@ import { MAX_RUNS } from '../../data/competition-types';
 import { useProgramStore } from '../../store/program-store';
 import MobileFileControls from './MobileFileControls';
 import { IconUndo, IconRedo } from '../icons';
+import NumberStepper from '../NumberStepper';
 
 interface Props {
   open: boolean;
@@ -79,24 +80,22 @@ export default function MobileMenu({ open, onClose }: Props) {
             <h3 className="text-[11px] uppercase text-slate-500">Program settings</h3>
             <label className="flex items-center justify-between gap-3">
               <span className="text-slate-700 dark:text-slate-200">Runs</span>
-              <input
-                type="number"
+              <NumberStepper
+                value={program.runs.length}
                 min={1}
                 max={MAX_RUNS}
-                value={program.runs.length}
-                onChange={(e) => setRunCount(Math.max(1, Math.min(MAX_RUNS, Number(e.target.value))))}
-                className="w-16 px-2 py-1 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700"
+                onChange={setRunCount}
+                ariaLabel="Runs"
               />
             </label>
             <label className="flex items-center justify-between gap-3" title="Repetition tracker resets every N runs. 0 = never.">
               <span className="text-slate-700 dark:text-slate-200">Reset gap</span>
-              <input
-                type="number"
+              <NumberStepper
+                value={program.repeatAfterRuns}
                 min={0}
                 max={99}
-                value={program.repeatAfterRuns}
-                onChange={(e) => setRepeatAfterRuns(Math.max(0, Math.min(99, Number(e.target.value))))}
-                className="w-16 px-2 py-1 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700"
+                onChange={setRepeatAfterRuns}
+                ariaLabel="Reset gap"
               />
             </label>
             <label className="flex items-center justify-between gap-3">
