@@ -1,15 +1,15 @@
 # Acro World Tour - Trick List
 
-Источник: <https://results.acroworldtour.com/tricks>
+Source: <https://results.acroworldtour.com/tricks>
 
-## Условные обозначения свойств
+## Property legend
 
-- 🔁 - может выполняться в одну сторону
-- ⬅️➡️ - может выполняться в обе стороны (left/right)
+- 🔁 - can be performed in one direction only
+- ⬅️➡️ - can be performed in both directions (left/right)
 - ⨂ - this trick can't be performed as last 2
-- ① - выполняется один раз за ран
+- ① - performed once per run
 
-## Трюки
+## Tricks
 
 | #   | Trick                            | Ac  | Prop        | Bonuses                                                                                                                         | TC   |
 | --- | -------------------------------- | --- | ----------- | ------------------------------------------------------------------------------------------------------------------------------- | ---- |

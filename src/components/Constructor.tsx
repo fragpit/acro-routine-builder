@@ -23,7 +23,7 @@ import ViolationsPanel from './ViolationsPanel';
 import TrickCell from './TrickCell';
 import ProgramControls from './ProgramControls';
 
-export default function Builder() {
+export default function Constructor() {
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const addTrick = useProgramStore((s) => s.addTrick);

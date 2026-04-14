@@ -9,10 +9,10 @@ export default function Home() {
         Build an AWT/AWQ program under FAI Sporting Code 2025 rules.
       </p>
       <Link
-        to="/builder"
+        to="/constructor"
         className="inline-block px-6 py-4 text-lg rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-sky-500 dark:hover:border-sky-500 transition text-sky-700 dark:text-sky-300 font-semibold"
       >
-        Open builder
+        Open
       </Link>
       <div className="mt-10 text-base text-slate-600 dark:text-slate-400">
         <h3 className="font-semibold text-slate-800 dark:text-slate-300 mb-2">Documentation</h3>

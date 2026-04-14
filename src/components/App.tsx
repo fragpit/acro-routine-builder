@@ -1,6 +1,6 @@
 import { Routes, Route, Link } from 'react-router-dom';
 import Home from './Home';
-import Builder from './Builder';
+import Constructor from './Constructor';
 import ThemeToggle from './ThemeToggle';
 import TricksDocs from './TricksDocs';
 import RulesDocs from './RulesDocs';
@@ -23,7 +23,7 @@ export default function App() {
       <main className="flex-1 min-h-0">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/builder" element={<Builder />} />
+          <Route path="/constructor" element={<Constructor />} />
           <Route path="/docs/rules" element={<RulesDocs />} />
           <Route path="/docs/tricks" element={<TricksDocs />} />
         </Routes>

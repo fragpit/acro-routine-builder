@@ -1,51 +1,75 @@
-# План разработки сервиса
+# Service development plan
 
-## Описание
+## Description
 
-Сервис для составления программы для соревнования AWT/AWQ.
+A service for building competition programs for AWT/AWQ events.
 
-Пользователь на главной странице сервисы выбирает для какого типа соревнований он хочет составить ран.
+On the home page the user picks the competition type they want to
+build a run for.
 
-После выбора пользователь попадает на экран конструктора. Экран конструктора состоит из
+After that the user lands on the constructor screen. The constructor screen
+consists of:
 
-* списка трюков
-* динамических настроек
-* поля где отображаются появившиеся ограничения
+- a trick list
+- dynamic settings
+- a panel displaying active restrictions
 
-Динамические настройки:
+Dynamic settings:
 
-* Количество ранов
-* Через сколько ранов можно повторять трюки (по умолчанию нельзя повторять)
+- number of runs
+- after how many runs tricks may be repeated (by default repetition
+  is not allowed)
 
-Пользователь должен иметь возможность составить N ранов. Раны выглядят как таблица где строка это трюки, а столбец это номер рана. Начальное количество ранов отображается на основании выбранного типа соревнований.
+The user must be able to build N runs. Runs are laid out as a table
+where rows are tricks and columns are run numbers. The initial number
+of runs is derived from the selected competition type.
 
-Пользователь видит список трюков, отсортированных по коэфф., и может перетаскивать их в ячейку относящуюся к конкретному рану.
+The user sees a list of tricks sorted by coefficient and can drag them
+into a cell belonging to a specific run.
 
-Пользователь может удалять трюк из ячейки, вместе с трюком должны удаляться и все модификаторы трюка в этой ячейке.
+The user can remove a trick from a cell; removing a trick must also
+remove all of its modifiers in that cell.
 
-Во время составления программы на экране с таблицей ранов система непрерывно реагирует на изменение состояния и проверяет соответствие текущей программы списку бизнес-правил. Бизнес правила это ограничения на трюки, такие как порядок трюков, последовательность, повтор и другие. Если срабатывает какое-то ограничение то под списком ранов необходимо указать какое правило сработало и подсветить ячейку с трюком(трюками) вызвавшими срабатывание.
+While the user builds the program, the run table continuously reacts
+to state changes and checks the current program against the list of
+business rules. Business rules are constraints on tricks: order,
+sequence, repetition and so on. When a restriction fires, the rule
+must be shown under the run list and the cell(s) that triggered it
+must be highlighted.
 
-Существуют различные модификаторы для трюков: reversed, twisted, devil twist и т.п.. После того как пользователь перетащил трюк в ячейку он может кликнуть на трюк и во всплывающем меню выбрать модификатор. После чего модификатор применялся к стоимости трюка. В UI должно отображаться что модификатор применен к ячейке.
+There are various trick modifiers: reversed, twisted, devil twist etc.
+After dragging a trick into a cell the user can click on it and pick
+a modifier from a popover. The modifier then affects the trick's
+value. The UI must show that a modifier has been applied to a cell.
 
-ран (run) - это один этап соревнований. как правило проходящий в отдельный день.
-акро (acro) - вид парапланарного спорта, в котором спортсмены выполняют различные трюки на параплане.
+run - one stage of the competition, typically held on a separate day.
+acro - a paragliding discipline where athletes perform various tricks
+on a paraglider.
 
-## Тех. моменты
+## Technical notes
 
-Хотелось бы делать сервис максимально простым. Усложнять только при крайней необходимости. Сервису скорее всего не требуется хранить никакие данные в БД и т.п., достаточно статических справочников (или как это называется) трюков, правил и тому подобное.
+The service should be as simple as possible. Add complexity only when
+strictly necessary. The service most likely does not need to store
+any data in a DB - static reference data (tricks, rules and so on)
+is enough.
 
-Сервису очевидно нужна какая-то бизнес логика чтобы применять бизнес правила на составляемую программу.
+The service obviously needs some business logic to apply the rules
+to the program being built.
 
-Сервису понадобится UI фронтенд и возможно им и стоит ограничится (тут нужно подумать). Кто будет рассчитывать применение правил? js? это всё ещё фронтенд?
+The service needs a UI frontend, and possibly that is all it needs
+(worth thinking about). Who will evaluate the rules - JS? Is that
+still frontend?
 
-UI хотелось бы не супер замороченный, но современный и стильный.
+The UI should not be over-engineered, but modern and stylish.
 
-UI должен работать и выглядеть красиво на мобильных устройствах с вертикальной ориентацией экрана.
+The UI must work and look good on mobile devices in portrait
+orientation.
 
-Сервису нужен будет какой-то хостинг. Получится ли хостить на github pages?
+The service will need hosting. Can it be hosted on GitHub Pages?
 
-## Дальнейшее развитие
+## Future work
 
-AI не должен учитывать эту информацию. Это последующий этап.
+AI should not take this into account. This is a later stage.
 
-В дальнейшем хотелось бы прикрутить анализатор эффективности программы через AI и подсказки в реальном времени во время составления программы.
+In the future we would like to plug in an AI-based program efficiency
+analyzer and real-time hints while the program is being built.
