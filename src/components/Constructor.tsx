@@ -48,13 +48,16 @@ export default function Constructor() {
 
   const [activeDrag, setActiveDrag] = useState<{ type: 'palette' | 'cell'; id: string } | null>(null);
   const altHeldRef = useRef(false);
+  const [altHeld, setAltHeld] = useState(false);
 
   useEffect(() => {
     function sync(e: KeyboardEvent) {
       altHeldRef.current = e.altKey;
+      setAltHeld(e.altKey);
     }
     function clear() {
       altHeldRef.current = false;
+      setAltHeld(false);
     }
     window.addEventListener('keydown', sync);
     window.addEventListener('keyup', sync);
@@ -338,7 +341,13 @@ export default function Constructor() {
         {activeDrag?.type === 'palette' && MANOEUVRES_BY_ID[activeDrag.id] && (
           <PaletteCardPresentation manoeuvre={MANOEUVRES_BY_ID[activeDrag.id]} />
         )}
-        {activeDrag?.type === 'cell' && <div className="px-2 py-1 rounded bg-sky-700 text-sm">Moving...</div>}
+        {activeDrag?.type === 'cell' && (
+          <div
+            className={`px-2 py-1 rounded text-sm text-white ${altHeld ? 'bg-emerald-700' : 'bg-sky-700'}`}
+          >
+            {altHeld ? 'Copying +' : 'Moving...'}
+          </div>
+        )}
       </DragOverlay>
     </DndContext>
   );
