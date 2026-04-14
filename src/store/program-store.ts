@@ -8,6 +8,8 @@ import { validateProgram } from '../rules/engine';
 let idCounter = 0;
 const nextId = () => `id_${Date.now()}_${++idCounter}`;
 
+const HISTORY_LIMIT = 100;
+
 function emptyRun(): Run {
   return { id: nextId(), tricks: [] };
 }
@@ -18,6 +20,8 @@ interface ProgramState {
   selectedTrickId: string | null;
   currentName: string | null;
   savedPrograms: Record<string, Program>;
+  past: Program[];
+  future: Program[];
   setAwtMode: (on: boolean) => void;
   setRunCount: (n: number) => void;
   setRepeatAfterRuns: (n: number) => void;
@@ -35,6 +39,8 @@ interface ProgramState {
   deleteSavedProgram: (name: string) => void;
   newProgram: () => void;
   importProgram: (program: Program, name: string | null) => void;
+  undo: () => void;
+  redo: () => void;
 }
 
 function recompute(program: Program): Violation[] {
@@ -47,6 +53,28 @@ function findTrick(program: Program, trickId: string): { runIndex: number; trick
     if (i >= 0) return { runIndex: r, trickIndex: i };
   }
   return null;
+}
+
+function pushHistory(past: Program[], prev: Program): Program[] {
+  const next = past.length >= HISTORY_LIMIT ? past.slice(past.length - HISTORY_LIMIT + 1) : past.slice();
+  next.push(prev);
+  return next;
+}
+
+type HistoryPatch = {
+  program: Program;
+  violations: Violation[];
+  past: Program[];
+  future: Program[];
+};
+
+function commit(state: { program: Program; past: Program[] }, nextProgram: Program): HistoryPatch {
+  return {
+    program: nextProgram,
+    violations: recompute(nextProgram),
+    past: pushHistory(state.past, state.program),
+    future: [],
+  };
 }
 
 export const useProgramStore = create<ProgramState>()(
@@ -62,6 +90,8 @@ export const useProgramStore = create<ProgramState>()(
   selectedTrickId: null,
   currentName: null,
   savedPrograms: {},
+  past: [],
+  future: [],
 
   saveProgramAs: (name) =>
     set((state) => {
@@ -81,8 +111,7 @@ export const useProgramStore = create<ProgramState>()(
       const program: Program = JSON.parse(JSON.stringify(saved));
       if (!Array.isArray(program.defaultBonuses)) program.defaultBonuses = [];
       return {
-        program,
-        violations: recompute(program),
+        ...commit(state, program),
         currentName: name,
         selectedTrickId: null,
       };
@@ -100,7 +129,7 @@ export const useProgramStore = create<ProgramState>()(
     }),
 
   newProgram: () =>
-    set(() => {
+    set((state) => {
       const program: Program = {
         awtMode: false,
         runs: Array.from({ length: DEFAULT_RUNS }, () => emptyRun()),
@@ -108,30 +137,25 @@ export const useProgramStore = create<ProgramState>()(
         defaultBonuses: [],
       };
       return {
-        program,
-        violations: recompute(program),
+        ...commit(state, program),
         currentName: null,
         selectedTrickId: null,
       };
     }),
 
   importProgram: (program, name) =>
-    set(() => {
+    set((state) => {
       const cloned: Program = JSON.parse(JSON.stringify(program));
       if (!Array.isArray(cloned.defaultBonuses)) cloned.defaultBonuses = [];
       return {
-        program: cloned,
-        violations: recompute(cloned),
+        ...commit(state, cloned),
         currentName: name,
         selectedTrickId: null,
       };
     }),
 
   setAwtMode: (on) =>
-    set((state) => {
-      const program = { ...state.program, awtMode: on };
-      return { program, violations: recompute(program) };
-    }),
+    set((state) => commit(state, { ...state.program, awtMode: on })),
 
   setRunCount: (n) =>
     set((state) => {
@@ -142,18 +166,14 @@ export const useProgramStore = create<ProgramState>()(
       } else {
         runs = current.slice(0, n);
       }
-      const program = { ...state.program, runs };
-      return { program, violations: recompute(program) };
+      return commit(state, { ...state.program, runs });
     }),
 
   setRepeatAfterRuns: (n) =>
-    set((state) => {
-      const program = { ...state.program, repeatAfterRuns: n };
-      return { program, violations: recompute(program) };
-    }),
+    set((state) => commit(state, { ...state.program, repeatAfterRuns: n })),
 
   setDefaultBonuses: (bonuses) =>
-    set((state) => ({ program: { ...state.program, defaultBonuses: bonuses } })),
+    set((state) => commit(state, { ...state.program, defaultBonuses: bonuses })),
 
   addTrick: (runIndex, manoeuvreId, atIndex) =>
     set((state) => {
@@ -180,8 +200,7 @@ export const useProgramStore = create<ProgramState>()(
         tricks.splice(atIndex ?? tricks.length, 0, newTrick);
         return { ...r, tricks };
       });
-      const program = { ...state.program, runs };
-      return { program, violations: recompute(program) };
+      return commit(state, { ...state.program, runs });
     }),
 
   removeTrick: (trickId) =>
@@ -190,8 +209,10 @@ export const useProgramStore = create<ProgramState>()(
         ...r,
         tricks: r.tricks.filter((t) => t.id !== trickId),
       }));
-      const program = { ...state.program, runs };
-      return { program, violations: recompute(program), selectedTrickId: state.selectedTrickId === trickId ? null : state.selectedTrickId };
+      return {
+        ...commit(state, { ...state.program, runs }),
+        selectedTrickId: state.selectedTrickId === trickId ? null : state.selectedTrickId,
+      };
     }),
 
   moveTrick: (trickId, toRunIndex, toIndex) =>
@@ -211,8 +232,7 @@ export const useProgramStore = create<ProgramState>()(
       if (loc.runIndex === toRunIndex && loc.trickIndex < toIndex) insertAt = toIndex - 1;
       targetTricks.splice(Math.min(insertAt, targetTricks.length), 0, trick);
       runs[toRunIndex] = { ...target, tricks: targetTricks };
-      const program = { ...state.program, runs };
-      return { program, violations: recompute(program) };
+      return commit(state, { ...state.program, runs });
     }),
 
   setTrickSide: (trickId, side) =>
@@ -221,8 +241,7 @@ export const useProgramStore = create<ProgramState>()(
         ...r,
         tricks: r.tricks.map((t) => (t.id === trickId ? { ...t, side } : t)),
       }));
-      const program = { ...state.program, runs };
-      return { program, violations: recompute(program) };
+      return commit(state, { ...state.program, runs });
     }),
 
   toggleBonus: (trickId, bonusId) =>
@@ -240,8 +259,7 @@ export const useProgramStore = create<ProgramState>()(
           };
         }),
       }));
-      const program = { ...state.program, runs };
-      return { program, violations: recompute(program) };
+      return commit(state, { ...state.program, runs });
     }),
 
   selectTrick: (trickId) => set({ selectedTrickId: trickId }),
@@ -249,15 +267,39 @@ export const useProgramStore = create<ProgramState>()(
   resetRun: (runIndex) =>
     set((state) => {
       const runs = state.program.runs.map((r, i) => (i === runIndex ? { ...r, tricks: [] } : r));
-      const program = { ...state.program, runs };
-      return { program, violations: recompute(program), selectedTrickId: null };
+      return { ...commit(state, { ...state.program, runs }), selectedTrickId: null };
     }),
 
   resetProgram: () =>
     set((state) => {
       const runs = state.program.runs.map((r) => ({ ...r, tricks: [] }));
-      const program = { ...state.program, runs };
-      return { program, violations: recompute(program), selectedTrickId: null };
+      return { ...commit(state, { ...state.program, runs }), selectedTrickId: null };
+    }),
+
+  undo: () =>
+    set((state) => {
+      if (state.past.length === 0) return state;
+      const prev = state.past[state.past.length - 1];
+      return {
+        program: prev,
+        violations: recompute(prev),
+        past: state.past.slice(0, -1),
+        future: [...state.future, state.program],
+        selectedTrickId: null,
+      };
+    }),
+
+  redo: () =>
+    set((state) => {
+      if (state.future.length === 0) return state;
+      const next = state.future[state.future.length - 1];
+      return {
+        program: next,
+        violations: recompute(next),
+        past: [...state.past, state.program],
+        future: state.future.slice(0, -1),
+        selectedTrickId: null,
+      };
     }),
     }),
     {
@@ -281,6 +323,8 @@ export const useProgramStore = create<ProgramState>()(
             if (m && !m.noSide && t.side === null) t.side = 'L';
           }
         }
+        state.past = [];
+        state.future = [];
         state.violations = recompute(state.program);
       },
     },
