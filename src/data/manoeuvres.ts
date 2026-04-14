@@ -51,10 +51,7 @@ export const MANOEUVRES: Manoeuvre[] = [
       'Twisted SAT: twisted on the entry, must stay twisted for 2 turns, can be exited untwisted',
       'Forbidden connection to SAT-based combo manoeuvres',
     ],
-    forbiddenConnectionTo: [
-      'x_chopper_to_sat', 'misty_to_sat', 'sat_to_helicopter', 'helicopter_to_sat',
-      'mactwist_to_sat', 'satfly',
-    ],
+    forbiddenConnectionTo: ['sat_to_helicopter', 'satfly'],
     cannotBeLastTwo: false,
     mustBeFirst: false,
     repetitionAllowed: false,

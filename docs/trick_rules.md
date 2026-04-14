@@ -35,10 +35,11 @@ Each manoeuvre may have forbidden connections - the manoeuvre
 listed in the right column cannot directly follow the one
 on the left.
 
-"SAT-based combo manoeuvres" means combo tricks that include
-SAT as a component: X-Chopper to SAT, Misty to SAT,
-SAT to Helicopter, Helicopter to SAT, Mactwist to SAT,
-SatFly.
+"SAT-based combo manoeuvres" means combo tricks that start
+from SAT (i.e. begin with a SAT entry): SAT to Helicopter,
+SatFly. Combos that end with SAT (Misty to SAT, X-Chopper to
+SAT, Mactwist to SAT, Helicopter to SAT) start with a
+different entry, so they are allowed after a plain SAT.
 
 | Manoeuvre                         | Forbidden connection to           |
 | --------------------------------- | --------------------------------- |
