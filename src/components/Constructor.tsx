@@ -16,6 +16,7 @@ import { MAX_RUNS } from '../data/competition-types';
 import { runTechnicity } from '../scoring/technicity';
 import { runBonus } from '../scoring/bonus';
 import { exclusionsByTrick } from '../scoring/eligibility';
+import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
 import type { Manoeuvre, PlacedTrick } from '../rules/types';
 import TrickInfoCard from './TrickInfoCard';
@@ -251,6 +252,7 @@ export default function Constructor() {
                   bonus={runBonus(run, MANOEUVRES_BY_ID)}
                   awtMode={program.awtMode}
                   choreoPenalty={choreoPenaltyPerRun[runIndex] ?? 0}
+                  symmetry={runSymmetry(run.tricks, MANOEUVRES_BY_ID)}
                   highlights={highlights}
                   ignored={exclusionsByTrick(run, MANOEUVRES_BY_ID)}
                   onSelectTrick={selectTrick}
@@ -318,6 +320,7 @@ function RunColumn({
   bonus,
   awtMode,
   choreoPenalty,
+  symmetry,
   highlights,
   ignored,
   onSelectTrick,
@@ -330,6 +333,7 @@ function RunColumn({
   bonus: number;
   awtMode: boolean;
   choreoPenalty: number;
+  symmetry: ReturnType<typeof runSymmetry>;
   highlights: Map<string, 'error' | 'warning'>;
   ignored: Map<string, string[]>;
   onSelectTrick: (id: string | null) => void;
@@ -398,6 +402,21 @@ function RunColumn({
             >
               <span>Choreo</span>
               <span className="font-mono">-{choreoPenalty}%</span>
+            </div>
+          )}
+          {symmetry.sided > 0 && (
+            <div
+              className={`flex justify-between ${
+                symmetry.balanced
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : 'text-amber-600 dark:text-amber-400'
+              }`}
+              title="Trick directions balance (1/8) - same number of tricks in both directions. Odd number: difference of 1 is OK"
+            >
+              <span>Symmetry</span>
+              <span className="font-mono">
+                {symmetry.balanced ? '+1' : '0'}/8 ({symmetry.left}L/{symmetry.right}R)
+              </span>
             </div>
           )}
         </div>

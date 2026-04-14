@@ -10,6 +10,7 @@ import { validateTumblingInfRhythmic } from './validators/tumbling-inf-rhythmic'
 import { validateAwtMistyToMisty } from './validators/awt-misty-to-misty';
 import { validateBonusLimits } from './validators/bonus-limits';
 import { validateRepetition } from './validators/repetition';
+import { validateSymmetry } from './validators/symmetry';
 
 export type Validator = (program: Program, manoeuvres: Record<string, Manoeuvre>) => Violation[];
 
@@ -24,6 +25,7 @@ const validators: Validator[] = [
   validateAwtMistyToMisty,
   validateBonusLimits,
   validateRepetition,
+  validateSymmetry,
 ];
 
 /**
