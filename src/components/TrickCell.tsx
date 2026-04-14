@@ -10,10 +10,11 @@ interface Props {
   highlight: 'none' | 'error' | 'warning';
   selected: boolean;
   ignoredReasons?: string[];
+  unrewardedBonuses?: Set<string>;
   onSelect: () => void;
 }
 
-export default function TrickCell({ trick, highlight, selected, ignoredReasons, onSelect }: Props) {
+export default function TrickCell({ trick, highlight, selected, ignoredReasons, unrewardedBonuses, onSelect }: Props) {
   const ignored = (ignoredReasons?.length ?? 0) > 0;
   const manoeuvre = MANOEUVRES_BY_ID[trick.manoeuvreId];
   const removeTrick = useProgramStore((s) => s.removeTrick);
@@ -96,9 +97,15 @@ export default function TrickCell({ trick, highlight, selected, ignoredReasons, 
         <div className="mt-1 flex flex-wrap gap-1">
           {trick.selectedBonuses.map((b) => {
             const def = manoeuvre.availableBonuses.find((ab) => ab.id === b);
+            const notCounted = unrewardedBonuses?.has(b);
             return (
-              <span key={b} className="text-[10px] px-1 py-0.5 rounded bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200">
-                {def?.label ?? b}
+              <span
+                key={b}
+                title={notCounted ? 'Bonus not counted: §4.3 - twisted/flipped awarded only once per run for repetition-allowed tricks' : undefined}
+                className={`text-[10px] px-1 py-0.5 rounded ${notCounted ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200' : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'}`}
+              >
+                <span className={notCounted ? 'line-through' : ''}>{def?.label ?? b}</span>
+                {notCounted && <span className="ml-1">(not counted)</span>}
               </span>
             );
           })}
