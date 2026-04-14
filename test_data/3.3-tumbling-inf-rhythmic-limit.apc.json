@@ -1,0 +1,24 @@
+{
+  "format": "acro-program-constructor",
+  "version": 1,
+  "name": "3.3 More than 2 tumbling/infinity/rhythmic related manoeuvres per run",
+  "exportedAt": "2026-04-14T12:00:00.000Z",
+  "program": {
+    "awtMode": false,
+    "runs": [
+      {
+        "id": "r1",
+        "tricks": [
+          { "id": "r1t1", "manoeuvreId": "anti_rhythmic_sat", "side": null, "selectedBonuses": [] },
+          { "id": "r1t2", "manoeuvreId": "tumbling", "side": null, "selectedBonuses": [] },
+          { "id": "r1t3", "manoeuvreId": "mac_twist_to_tumbling", "side": null, "selectedBonuses": [] },
+          { "id": "r1t4", "manoeuvreId": "sat", "side": "R", "selectedBonuses": [] },
+          { "id": "r1t5", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r1t6", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      }
+    ],
+    "repeatAfterRuns": 0,
+    "defaultBonuses": []
+  }
+}

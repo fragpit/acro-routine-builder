@@ -412,19 +412,17 @@ function RunColumn({
               <span className="font-mono">-{choreoPenalty}%</span>
             </div>
           )}
-          {symmetry.sided > 0 && (
-            <div
-              className={`flex justify-between ${
-                symmetry.balanced
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : 'text-amber-600 dark:text-amber-400'
-              }`}
-              title="Trick directions balance (1/8) - same number of tricks in both directions. Odd number: difference of 1 is OK"
-            >
-              <span>Choreo(sym)</span>
-              <span className="font-mono">{symmetry.balanced ? '+1' : '+0'}</span>
-            </div>
-          )}
+          <div
+            className={`flex justify-between ${
+              symmetry.balanced
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-amber-600 dark:text-amber-400'
+            }`}
+            title="Trick directions balance (1/8) - same number of tricks in both directions. Odd number: difference of 1 is OK"
+          >
+            <span>Choreo(sym)</span>
+            <span className="font-mono">{symmetry.balanced ? '+1' : '+0'}</span>
+          </div>
         </div>
       )}
     </div>

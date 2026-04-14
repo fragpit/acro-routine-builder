@@ -30,7 +30,7 @@ export function runSymmetry(
     else if (t.side === 'R') right++;
   }
   const sided = left + right;
-  const balanced = Math.abs(left - right) <= 1;
+  const balanced = sided >= 2 && Math.abs(left - right) <= 1;
   return { left, right, sided, balanced };
 }
 
@@ -40,12 +40,16 @@ export function validateSymmetry(
 ): Violation[] {
   const violations: Violation[] = [];
   program.runs.forEach((run, runIndex) => {
+    if (run.tricks.length === 0) return;
     const sym = runSymmetry(run.tricks, manoeuvres);
-    if (sym.sided === 0 || sym.balanced) return;
-    const cells = run.tricks
+    if (sym.balanced) return;
+    const sidedCells = run.tricks
       .map((t, trickIndex) => ({ t, trickIndex }))
       .filter(({ t }) => isSided(t, manoeuvres[t.manoeuvreId]))
       .map(({ trickIndex }) => ({ runIndex, trickIndex }));
+    const cells = sidedCells.length > 0
+      ? sidedCells
+      : run.tricks.map((_, trickIndex) => ({ runIndex, trickIndex }));
     violations.push({
       ruleId: 'symmetry',
       severity: 'warning',

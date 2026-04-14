@@ -1,0 +1,48 @@
+{
+  "format": "acro-program-constructor",
+  "version": 1,
+  "name": "3.5 Bonus limits per run: >5 twisted, >3 reversed, >2 flipped",
+  "exportedAt": "2026-04-14T12:00:00.000Z",
+  "program": {
+    "awtMode": false,
+    "runs": [
+      {
+        "id": "r1",
+        "tricks": [
+          { "id": "r1t1", "manoeuvreId": "sat", "side": "R", "selectedBonuses": ["twisted"] },
+          { "id": "r1t2", "manoeuvreId": "misty_flip", "side": "L", "selectedBonuses": ["twisted"] },
+          { "id": "r1t3", "manoeuvreId": "helicopter", "side": "R", "selectedBonuses": ["twisted"] },
+          { "id": "r1t4", "manoeuvreId": "asymetric_sat", "side": "L", "selectedBonuses": ["twisted"] },
+          { "id": "r1t5", "manoeuvreId": "mac_twist", "side": "R", "selectedBonuses": ["twisted"] },
+          { "id": "r1t6", "manoeuvreId": "twister", "side": "L", "selectedBonuses": ["twisted"] },
+          { "id": "r1t7", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r1t8", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r2",
+        "tricks": [
+          { "id": "r2t1", "manoeuvreId": "cowboy", "side": "L", "selectedBonuses": ["reverse"] },
+          { "id": "r2t2", "manoeuvreId": "supercowboy", "side": "R", "selectedBonuses": ["reverse"] },
+          { "id": "r2t3", "manoeuvreId": "corkscrew", "side": "L", "selectedBonuses": ["reverse"] },
+          { "id": "r2t4", "manoeuvreId": "joker", "side": "R", "selectedBonuses": ["reverse"] },
+          { "id": "r2t5", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r2t6", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r3",
+        "tricks": [
+          { "id": "r3t1", "manoeuvreId": "tumbling", "side": null, "selectedBonuses": ["flip"] },
+          { "id": "r3t2", "manoeuvreId": "stall", "side": null, "selectedBonuses": ["flip"] },
+          { "id": "r3t3", "manoeuvreId": "super_stall_to_infinity", "side": null, "selectedBonuses": ["flip"] },
+          { "id": "r3t4", "manoeuvreId": "sat", "side": "R", "selectedBonuses": [] },
+          { "id": "r3t5", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r3t6", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      }
+    ],
+    "repeatAfterRuns": 0,
+    "defaultBonuses": []
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "format": "acro-program-constructor",
+  "version": 1,
+  "name": "1.2 flipped manoeuvre cannot be in the last two",
+  "exportedAt": "2026-04-14T12:00:00.000Z",
+  "program": {
+    "awtMode": false,
+    "runs": [
+      {
+        "id": "r1",
+        "tricks": [
+          { "id": "r1t1", "manoeuvreId": "sat", "side": "R", "selectedBonuses": [] },
+          { "id": "r1t2", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r1t3", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] },
+          { "id": "r1t4", "manoeuvreId": "stall", "side": null, "selectedBonuses": ["flip"] }
+        ]
+      }
+    ],
+    "repeatAfterRuns": 0,
+    "defaultBonuses": []
+  }
+}

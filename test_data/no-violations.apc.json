@@ -1,0 +1,35 @@
+{
+  "format": "acro-program-constructor",
+  "version": 1,
+  "name": "Clean program: no violations",
+  "exportedAt": "2026-04-14T12:00:00.000Z",
+  "program": {
+    "awtMode": false,
+    "runs": [
+      {
+        "id": "r1",
+        "tricks": [
+          { "id": "r1t1", "manoeuvreId": "sat", "side": "R", "selectedBonuses": [] },
+          { "id": "r1t2", "manoeuvreId": "misty_to_sat", "side": "L", "selectedBonuses": [] },
+          { "id": "r1t3", "manoeuvreId": "helicopter", "side": "R", "selectedBonuses": [] },
+          { "id": "r1t4", "manoeuvreId": "misty_flip", "side": "L", "selectedBonuses": [] },
+          { "id": "r1t5", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r1t6", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r2",
+        "tricks": [
+          { "id": "r2t1", "manoeuvreId": "asymetric_sat", "side": "L", "selectedBonuses": [] },
+          { "id": "r2t2", "manoeuvreId": "mac_twist", "side": "R", "selectedBonuses": [] },
+          { "id": "r2t3", "manoeuvreId": "twister", "side": "L", "selectedBonuses": [] },
+          { "id": "r2t4", "manoeuvreId": "sat_to_helicopter", "side": "R", "selectedBonuses": [] },
+          { "id": "r2t5", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r2t6", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      }
+    ],
+    "repeatAfterRuns": 0,
+    "defaultBonuses": []
+  }
+}

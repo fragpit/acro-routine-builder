@@ -30,6 +30,11 @@ describe('runSymmetry', () => {
     expect(runSymmetry(r.tricks, MANOEUVRES_BY_ID).balanced).toBe(true);
   });
 
+  it('flags a single sided trick as unbalanced', () => {
+    const r = run(placedTrick('sat', { side: 'L' }));
+    expect(runSymmetry(r.tricks, MANOEUVRES_BY_ID).balanced).toBe(false);
+  });
+
   it('flags difference of 2 as unbalanced', () => {
     const r = run(
       placedTrick('sat', { side: 'L' }),
@@ -62,8 +67,22 @@ describe('validateSymmetry', () => {
     expect(v[0].affectedCells.every((c) => c.runIndex === 0)).toBe(true);
   });
 
-  it('ignores empty and noSide-only runs', () => {
-    const p = prog([run(), run(placedTrick('tail_slide', { side: null }))]);
+  it('ignores empty runs', () => {
+    const p = prog([run()]);
     expect(validateSymmetry(p, MANOEUVRES_BY_ID)).toEqual([]);
+  });
+
+  it('warns for noSide-only runs with tricks', () => {
+    const p = prog([run(placedTrick('tail_slide', { side: null }))]);
+    const v = validateSymmetry(p, MANOEUVRES_BY_ID);
+    expect(v).toHaveLength(1);
+    expect(v[0].severity).toBe('warning');
+  });
+
+  it('warns when a single sided trick cannot be balanced', () => {
+    const p = prog([run(placedTrick('sat', { side: 'L' }))]);
+    const v = validateSymmetry(p, MANOEUVRES_BY_ID);
+    expect(v).toHaveLength(1);
+    expect(v[0].severity).toBe('warning');
   });
 });

@@ -60,6 +60,9 @@ implementation status. Short version:
 - `src/io/` - JSON and markdown import/export
 - `src/store/` - Zustand store with localStorage persistence
 - `src/components/` - UI (Constructor, palette, cells, docs pages, etc.)
+- `test_data/` - ready-to-import `.apc.json` fixtures for manual UI
+  testing, one per business rule (see
+  [test_data/README.md](test_data/README.md))
 
 ## Documentation
 

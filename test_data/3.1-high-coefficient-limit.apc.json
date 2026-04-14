@@ -1,0 +1,24 @@
+{
+  "format": "acro-program-constructor",
+  "version": 1,
+  "name": "3.1 More than 2 manoeuvres with coefficient >= 1.95 per run",
+  "exportedAt": "2026-04-14T12:00:00.000Z",
+  "program": {
+    "awtMode": false,
+    "runs": [
+      {
+        "id": "r1",
+        "tricks": [
+          { "id": "r1t1", "manoeuvreId": "esfera", "side": null, "selectedBonuses": [] },
+          { "id": "r1t2", "manoeuvreId": "mac_twist_to_tumbling", "side": null, "selectedBonuses": [] },
+          { "id": "r1t3", "manoeuvreId": "x_chopper_to_tumbling", "side": null, "selectedBonuses": [] },
+          { "id": "r1t4", "manoeuvreId": "sat", "side": "R", "selectedBonuses": [] },
+          { "id": "r1t5", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r1t6", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      }
+    ],
+    "repeatAfterRuns": 0,
+    "defaultBonuses": []
+  }
+}

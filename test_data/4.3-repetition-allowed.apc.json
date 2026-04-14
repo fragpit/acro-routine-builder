@@ -1,0 +1,48 @@
+{
+  "format": "acro-program-constructor",
+  "version": 1,
+  "name": "4.3 repetition allowed (tail slide / wingover / full stall)",
+  "exportedAt": "2026-04-14T12:00:00.000Z",
+  "program": {
+    "awtMode": false,
+    "runs": [
+      {
+        "id": "r1",
+        "tricks": [
+          { "id": "r1t1", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] },
+          { "id": "r1t2", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r2",
+        "tricks": [
+          { "id": "r2t1", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] },
+          { "id": "r2t2", "manoeuvreId": "stall", "side": null, "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r3",
+        "tricks": [
+          { "id": "r3t1", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r3t2", "manoeuvreId": "stall", "side": null, "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r4",
+        "tricks": [
+          { "id": "r4t1", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] },
+          { "id": "r4t2", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r5",
+        "tricks": [
+          { "id": "r5t1", "manoeuvreId": "stall", "side": null, "selectedBonuses": [] },
+          { "id": "r5t2", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      }
+    ],
+    "repeatAfterRuns": 0,
+    "defaultBonuses": []
+  }
+}

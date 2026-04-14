@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Синхро (synchro) is out of scope. Ignore `docs/sporting_code_aerobatics_2025_synchro.md` and do not add synchro-related features.
 - **Never edit** `docs/sporting_code_aerobatics_2025.md` unless explicitly asked. It is the reference doc converted from the FAI PDF and must stay verbatim.
 - The source of truth for trick restrictions is [docs/trick_rules.md](docs/trick_rules.md). When changing or adding a validator, cross-check with that file.
+- Manual UI test fixtures live in [test_data/](test_data/), one `.apc.json` per business rule. **Whenever you add or change a validator / business rule, re-check the matching fixture (or add a new one) so the fixture set stays aligned with the code.** See [test_data/README.md](test_data/README.md) for the file-to-rule mapping.
 
 ## Commands
 
