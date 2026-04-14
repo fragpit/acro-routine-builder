@@ -16,6 +16,14 @@ describe('runBonus', () => {
     expect(runBonus(r, MANOEUVRES_BY_ID)).toBeCloseTo(3.5 + 4.5 + 7, 5);
   });
 
+  it('skips repeated twisted/flipped bonus on repetition-allowed manoeuvres', () => {
+    const r = run(
+      placedTrick('stall', { side: null, selectedBonuses: ['twisted'] }),
+      placedTrick('stall', { side: null, selectedBonuses: ['twisted', 'flip'] }),
+    );
+    expect(runBonus(r, MANOEUVRES_BY_ID)).toBeCloseTo(2.5 + 4.5, 5);
+  });
+
   it('excludes bonuses of scoring-ineligible tricks', () => {
     const excluded = placedTrick('tumbling', { selectedBonuses: ['flip'] });
     const r = run(

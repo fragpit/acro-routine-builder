@@ -1,4 +1,5 @@
 import type { Manoeuvre, Run } from '../rules/types';
+import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { excludedFromScoring } from './eligibility';
 
 /**
@@ -11,12 +12,15 @@ import { excludedFromScoring } from './eligibility';
  */
 export function runBonus(run: Run, manoeuvres: Record<string, Manoeuvre>): number {
   const excluded = excludedFromScoring(run, manoeuvres);
+  const unrewarded = unrewardedBonusesByTrick(run, manoeuvres);
   let total = 0;
   for (const t of run.tricks) {
     if (excluded.has(t.id)) continue;
     const m = manoeuvres[t.manoeuvreId];
     if (!m) continue;
+    const skip = unrewarded.get(t.id);
     for (const bonusId of t.selectedBonuses) {
+      if (skip?.has(bonusId)) continue;
       const def = m.availableBonuses.find((ab) => ab.id === bonusId);
       if (def) total += def.percent;
     }

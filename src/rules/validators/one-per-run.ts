@@ -25,7 +25,7 @@ export function validateOnePerRun(
     const countsById = new Map<string, number[]>();
     run.tricks.forEach((t, i) => {
       const m = manoeuvres[t.manoeuvreId];
-      if (m?.noSide) {
+      if (m?.noSide && !m.repetitionAllowed) {
         const arr = countsById.get(m.id) ?? [];
         arr.push(i);
         countsById.set(m.id, arr);
