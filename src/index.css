@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+input[type="number"] {
+  color-scheme: light;
+}
+.dark input[type="number"] {
+  color-scheme: dark;
+}
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: oklch(0.55 0.17 240);
+  cursor: pointer;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(148 163 184 / 0.4) transparent;
+}
+.dark * {
+  scrollbar-color: rgb(71 85 105 / 0.6) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgb(148 163 184 / 0.4);
+  border-radius: 4px;
+}
+.dark *::-webkit-scrollbar-thumb {
+  background: rgb(71 85 105 / 0.6);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(100 116 139 / 0.7);
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: rgb(100 116 139 / 0.8);
+}
