@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { PlacedTrick, Program, Run, Side, Violation } from '../rules/types';
-import { DEFAULT_RUNS, MAX_RUNS } from '../data/competition-types';
+import { DEFAULT_RUNS } from '../data/competition-types';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { validateProgram } from '../rules/engine';
 
@@ -84,7 +84,7 @@ export const useProgramStore = create<ProgramState>()(
   program: {
     awtMode: false,
     runs: Array.from({ length: DEFAULT_RUNS }, () => emptyRun()),
-    repeatAfterRuns: MAX_RUNS,
+    repeatAfterRuns: DEFAULT_RUNS,
     defaultBonuses: [],
   },
   violations: [],
@@ -134,7 +134,7 @@ export const useProgramStore = create<ProgramState>()(
       const program: Program = {
         awtMode: false,
         runs: Array.from({ length: DEFAULT_RUNS }, () => emptyRun()),
-        repeatAfterRuns: MAX_RUNS,
+        repeatAfterRuns: DEFAULT_RUNS,
         defaultBonuses: [],
       };
       return {
