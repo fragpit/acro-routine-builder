@@ -345,7 +345,7 @@ export default function Constructor() {
           <div
             className={`px-2 py-1 rounded text-sm text-white ${altHeld ? 'bg-emerald-700' : 'bg-sky-700'}`}
           >
-            {altHeld ? 'Copying +' : 'Moving...'}
+            {altHeld ? 'Copying...' : 'Moving...'}
           </div>
         )}
       </DragOverlay>
