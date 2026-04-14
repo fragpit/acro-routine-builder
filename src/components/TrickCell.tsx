@@ -9,10 +9,12 @@ interface Props {
   trickIndex: number;
   highlight: 'none' | 'error' | 'warning';
   selected: boolean;
+  ignoredReasons?: string[];
   onSelect: () => void;
 }
 
-export default function TrickCell({ trick, highlight, selected, onSelect }: Props) {
+export default function TrickCell({ trick, highlight, selected, ignoredReasons, onSelect }: Props) {
+  const ignored = (ignoredReasons?.length ?? 0) > 0;
   const manoeuvre = MANOEUVRES_BY_ID[trick.manoeuvreId];
   const removeTrick = useProgramStore((s) => s.removeTrick);
   const setTrickSide = useProgramStore((s) => s.setTrickSide);
@@ -34,11 +36,22 @@ export default function TrickCell({ trick, highlight, selected, onSelect }: Prop
         ${isDragging ? 'opacity-40' : ''}
         ${highlight === 'error' ? 'border-red-500 bg-red-100 dark:bg-red-950/40' : highlight === 'warning' ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30' : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800'}
         ${selected ? 'ring-2 ring-sky-500' : ''}
+        ${ignored ? 'opacity-50' : ''}
       `}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <div className="truncate">{manoeuvre.name}</div>
+          <div className="truncate flex items-center gap-2">
+            <span className={ignored ? 'line-through' : ''}>{manoeuvre.name}</span>
+            {ignored && (
+              <span
+                className="text-[10px] uppercase tracking-wide text-slate-500 shrink-0"
+                title={`Ignored: ${ignoredReasons!.join('; ')}`}
+              >
+                ignored ({ignoredReasons!.join('; ')})
+              </span>
+            )}
+          </div>
           <div className="text-xs text-slate-500 dark:text-slate-400">{manoeuvre.coefficient.toFixed(2)}</div>
         </div>
         <div className="flex items-center gap-1">

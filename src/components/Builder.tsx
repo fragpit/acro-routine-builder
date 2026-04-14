@@ -15,6 +15,7 @@ import { BONUS_CATALOG, MANOEUVRES, MANOEUVRES_BY_ID } from '../data/manoeuvres'
 import { MAX_RUNS } from '../data/competition-types';
 import { runTechnicity } from '../scoring/technicity';
 import { runBonus } from '../scoring/bonus';
+import { exclusionsByTrick } from '../scoring/eligibility';
 import { useProgramStore } from '../store/program-store';
 import type { Manoeuvre, PlacedTrick } from '../rules/types';
 import TrickInfoCard from './TrickInfoCard';
@@ -251,6 +252,7 @@ export default function Builder() {
                   awtMode={program.awtMode}
                   choreoPenalty={choreoPenaltyPerRun[runIndex] ?? 0}
                   highlights={highlights}
+                  ignored={exclusionsByTrick(run, MANOEUVRES_BY_ID)}
                   onSelectTrick={selectTrick}
                   selectedTrickId={selectedTrickId}
                   onReset={() => resetRun(runIndex)}
@@ -317,6 +319,7 @@ function RunColumn({
   awtMode,
   choreoPenalty,
   highlights,
+  ignored,
   onSelectTrick,
   selectedTrickId,
   onReset,
@@ -328,6 +331,7 @@ function RunColumn({
   awtMode: boolean;
   choreoPenalty: number;
   highlights: Map<string, 'error' | 'warning'>;
+  ignored: Map<string, string[]>;
   onSelectTrick: (id: string | null) => void;
   selectedTrickId: string | null;
   onReset: () => void;
@@ -361,6 +365,7 @@ function RunColumn({
                   trickIndex={i}
                   highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
                   selected={selectedTrickId === t.id}
+                  ignoredReasons={ignored.get(t.id)}
                   onSelect={() => onSelectTrick(t.id)}
                 />
                 <DropZone runIndex={runIndex} insertIndex={i + 1} />

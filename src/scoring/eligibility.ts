@@ -18,7 +18,18 @@ export function excludedFromScoring(
   run: Run,
   manoeuvres: Record<string, Manoeuvre>,
 ): Set<string> {
-  const excluded = new Set<string>();
+  return new Set(exclusionsByTrick(run, manoeuvres).keys());
+}
+
+/**
+ * Same as excludedFromScoring but returns a per-trick reason string for UI
+ * display (e.g. "more than 5 twisted manoeuvres").
+ */
+export function exclusionsByTrick(
+  run: Run,
+  manoeuvres: Record<string, Manoeuvre>,
+): Map<string, string[]> {
+  const reasons = new Map<string, string[]>();
   let highCoeffCount = 0;
   const bonusCount: Record<BonusCategory, number> = { twisted: 0, reversed: 0, flipped: 0 };
   for (const t of run.tricks) {
@@ -30,20 +41,21 @@ export function excludedFromScoring(
       const cat = m.availableBonuses.find((ab) => ab.id === b)?.countsAs;
       if (cat) cats.add(cat);
     }
-    const wouldExceedHigh = isHigh && highCoeffCount >= HIGH_COEFF_LIMIT;
-    let wouldExceedBonus = false;
+    const trickReasons: string[] = [];
+    if (isHigh && highCoeffCount >= HIGH_COEFF_LIMIT) {
+      trickReasons.push(`more than ${HIGH_COEFF_LIMIT} manoeuvres with coefficient \u2265 ${HIGH_COEFF_THRESHOLD}`);
+    }
     for (const cat of cats) {
       if (bonusCount[cat] >= BONUS_LIMITS[cat]) {
-        wouldExceedBonus = true;
-        break;
+        trickReasons.push(`more than ${BONUS_LIMITS[cat]} ${cat} manoeuvres`);
       }
     }
-    if (wouldExceedHigh || wouldExceedBonus) {
-      excluded.add(t.id);
+    if (trickReasons.length > 0) {
+      reasons.set(t.id, trickReasons);
       continue;
     }
     if (isHigh) highCoeffCount++;
     for (const cat of cats) bonusCount[cat]++;
   }
-  return excluded;
+  return reasons;
 }
