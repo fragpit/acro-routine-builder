@@ -137,7 +137,7 @@ export default function MobileFileControls() {
               if (e.key === 'Escape') setPanel(null);
             }}
             placeholder="Program name..."
-            className="w-full px-2 py-1.5 text-sm rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 focus:border-sky-500 outline-none"
+            className="w-full px-2 py-1.5 text-base rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 focus:border-sky-500 outline-none"
           />
           {savedNames.length > 0 && (
             <>

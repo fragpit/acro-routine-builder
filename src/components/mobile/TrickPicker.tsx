@@ -42,7 +42,7 @@ export default function TrickPicker({ open, onClose, onPick }: Props) {
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Search tricks..."
-            className="flex-1 px-3 py-2 text-sm rounded bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
+            className="flex-1 px-3 py-2 text-base rounded bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
           />
           <button
             type="button"
