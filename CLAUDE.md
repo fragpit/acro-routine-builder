@@ -2,7 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-⚠️ Супер важное правило! Всегда пиши в чат сообщение, что прочитал этот файл. "Прочитал локальный CLAUDE.md"
+> [!IMPORTANT]
+> Always announce in chat that you have read this file: "Read local CLAUDE.md".
 
 ## Scope rules
 
@@ -42,12 +43,27 @@ Validation runs synchronously on every state change - the dataset is small enoug
 
 ### 3. UI (`src/components/`, `src/store/`, `src/hooks/`)
 
-- Flat component layout (no nested folders). Routing is HashRouter so Pages works without redirects. Main routes: `/` (Home), `/constructor` (Constructor), `/docs/rules`, `/docs/tricks`.
+- Flat component layout except for `src/components/mobile/`, which is the adaptive mobile layer. Routing is HashRouter so Pages works without redirects. Main routes: `/` (Home), `/constructor` (Constructor), `/docs/rules`, `/docs/tricks`.
 - `store/program-store.ts` is a Zustand store with localStorage persistence. It is the only place that mutates the `Program`. Components read selectors; validators receive a snapshot.
-- `@dnd-kit` drives drag-and-drop between palette and run cells. Touch sensors are included from the start.
+- `@dnd-kit` drives drag-and-drop between palette and run cells on desktop. Touch sensors are included, but the mobile layer uses a tap-to-arm / tap-to-insert pattern instead of real DnD (easier to hit on a phone).
 - `TrickInfoCard` is a side panel (not a popover) opened on cell click; it shows the trick description and the bonus checkboxes with mutual-exclusion disabling.
 - Light/dark theme toggle lives in `hooks/useTheme.ts` and persists to localStorage.
 - Decorative background (paraglider SVG pattern + mountain range) is in `index.css` and wired in via fixed layers in `App.tsx` with `z-index: -1`; the App root has `position: relative; z-index: 10` so those fixed layers stay behind content.
+
+### Mobile layer (`src/components/mobile/`)
+
+Activated via `useIsMobile()` (matchMedia `(max-width: 1023px)`) inside `Constructor.tsx`. Reuses the store, validators, scoring and data unchanged - only the presentation differs. Docs pages (`RulesDocs`, `TricksDocs`) also adapt on narrow viewports via an off-canvas drawer sidebar; that logic is inline in those components, not in `mobile/`.
+
+- `ConstructorMobile.tsx` - root; owns `armedManoeuvreId` (palette arm) and `armedMoveTrickId` (move arm), which are mutually exclusive. Routes tap-on-slot to `addTrick` or `moveTrick`.
+- `PaletteStrip.tsx` - `[+ Add trick]` button opening `TrickPicker`, plus up to 5 recently-used tricks kept in `localStorage` under `apc.recent-tricks`. No top-level search - search lives inside the picker.
+- `TrickPicker.tsx` - full-screen bottom-sheet with all 38 tricks sorted by coefficient and an autofocus search input.
+- `TrickCellMobile.tsx` - cell is a `<div role="button">` (not `<button>`) so the inner L/R side toggles can be real `<button>` elements without HTML nesting violations.
+- `TrickSheet.tsx` - bottom-sheet with trick info and Move/Duplicate/Remove actions. Move re-arms the cell so it can be placed via any insert-slot (including a different run). Duplicate and Remove close the sheet.
+- `RunSwiper.tsx` - scroll-snap horizontal pager. A `programmaticRef` flag suppresses `onScroll`-driven index updates during smooth scroll triggered by external navigation (e.g. violation jump), otherwise mid-scroll events would land on the wrong page.
+- `RunMobile.tsx` - per-run view. Footer has two 3-column chip grids: technicity / bonus / symmetry and twisted / reversed / flipped utilization (over-limit slot counts in red).
+- `ViolationsBar.tsx` - collapsed bar with violation count; tap expands; violation entries jump to the affected run.
+- `MobileMenu.tsx` - right-side drawer with `MobileFileControls` (Save / Load / Export / Import as a 2-column grid), undo/redo, program settings and danger zone.
+- Shared icons (undo/redo/file actions etc.) live in `src/components/icons.tsx` as inline Lucide-style SVGs and are used from both desktop and mobile code.
 
 ### Data flow
 
@@ -61,7 +77,7 @@ A single boolean `awtMode` on the Program. Structural differences are minimal (M
 
 ## Deploy
 
-`.github/workflows/deploy.yml` publishes to GitHub Pages on push to `main` or `init`. `vite.config.ts` sets `base` to the repo name. `ci.yml` runs typecheck / lint / tests on PRs.
+`.github/workflows/deploy.yml` publishes to GitHub Pages on semver tags (`v*.*.*`) - push a tag to cut a release, do not rely on main pushes. `vite.config.ts` sets `base` to the repo name. `ci.yml` runs typecheck / lint / tests on PRs.
 
 ## Coding conventions
 

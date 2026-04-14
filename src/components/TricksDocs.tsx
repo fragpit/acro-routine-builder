@@ -10,6 +10,7 @@ export default function TricksDocs() {
   const [query, setQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortBy>('section');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [listOpen, setListOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const activeTrickId = searchParams.get('trick');
@@ -25,6 +26,7 @@ export default function TricksDocs() {
     document
       .getElementById(`trick-${id}`)
       ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setListOpen(false);
   };
 
   const copyTrickLink = async (id: string) => {
@@ -57,8 +59,20 @@ export default function TricksDocs() {
   }, [query, sortBy, sortDir]);
 
   return (
-    <div className="h-full flex min-h-0">
-      <aside className="w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col">
+    <div className="h-full flex min-h-0 relative">
+      {listOpen && (
+        <button
+          type="button"
+          aria-label="Close trick list"
+          onClick={() => setListOpen(false)}
+          className="lg:hidden fixed inset-0 z-30 bg-slate-900/60"
+        />
+      )}
+      <aside
+        className={`w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col fixed lg:static inset-y-0 left-0 z-40 transition-transform lg:translate-x-0 ${
+          listOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <div className="p-3 border-b border-slate-200 dark:border-slate-700 space-y-2">
           <div className="flex items-center justify-between">
             <div className="text-xs uppercase text-slate-500">Tricks</div>
@@ -116,6 +130,14 @@ export default function TricksDocs() {
         </nav>
       </aside>
       <div className="flex-1 overflow-auto">
+        <button
+          type="button"
+          onClick={() => setListOpen(true)}
+          className="lg:hidden sticky top-0 z-10 w-full px-4 py-2 text-sm flex items-center gap-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200"
+        >
+          <span>≡</span>
+          <span>Tricks ({list.length})</span>
+        </button>
         <div className="max-w-4xl mx-auto px-4 py-4 space-y-3">
           {list.map((m) => (
             <TrickEntry

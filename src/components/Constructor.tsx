@@ -28,8 +28,17 @@ import TrickInfoCard from './TrickInfoCard';
 import ViolationsPanel from './ViolationsPanel';
 import TrickCell from './TrickCell';
 import ProgramControls from './ProgramControls';
+import ConstructorMobile from './mobile/ConstructorMobile';
+import { useIsMobile } from '../hooks/useIsMobile';
+import { IconUndo, IconRedo } from './icons';
 
 export default function Constructor() {
+  const isMobile = useIsMobile();
+  if (isMobile) return <ConstructorMobile />;
+  return <ConstructorDesktop />;
+}
+
+function ConstructorDesktop() {
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const addTrick = useProgramStore((s) => s.addTrick);
@@ -276,9 +285,9 @@ export default function Constructor() {
                 disabled={!canUndo}
                 title="Undo (Cmd/Ctrl+Z)"
                 aria-label="Undo"
-                className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
+                className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
               >
-                ↶
+                <IconUndo />
               </button>
               <button
                 type="button"
@@ -286,9 +295,9 @@ export default function Constructor() {
                 disabled={!canRedo}
                 title="Redo (Cmd/Ctrl+Shift+Z)"
                 aria-label="Redo"
-                className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
+                className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
               >
-                ↷
+                <IconRedo />
               </button>
               <button
                 type="button"

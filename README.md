@@ -25,6 +25,12 @@ Live app: <https://fragpit.github.io/acro-program-constructor/>
 - Program import/export: JSON roundtrip + human-readable markdown report
 - Light/dark theme, persisted in localStorage
 - Online documentation: FAI Sporting Code and generated trick reference
+- **Mobile UI**: on viewports below 1024px the constructor switches to a
+  touch-first layout - swipe between runs, tap-to-insert palette with
+  a full-screen trick picker and recent tricks, bottom-sheet for trick
+  details, and a right-side drawer menu for Save/Load/Export/settings
+  (shares the same Zustand store as the desktop view, so state is
+  identical across layouts)
 
 ## Stack
 
@@ -70,6 +76,10 @@ implementation status. Short version:
 - `src/io/` - JSON and markdown import/export
 - `src/store/` - Zustand store with localStorage persistence
 - `src/components/` - UI (Constructor, palette, cells, docs pages, etc.)
+- `src/components/mobile/` - adaptive mobile layer rendered below the
+  `lg:` breakpoint (reuses store, validators and scoring unchanged)
+- `src/hooks/useIsMobile.ts` - media-query hook driving the
+  desktop/mobile split
 - `test_data/` - ready-to-import `.apc.json` fixtures for manual UI
   testing, one per business rule (see
   [test_data/README.md](test_data/README.md))

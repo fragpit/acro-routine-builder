@@ -39,6 +39,7 @@ function extractToc(md: string): TocEntry[] {
 
 export default function RulesDocs() {
   const [query, setQuery] = useState('');
+  const [tocOpen, setTocOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const toc = useMemo(() => extractToc(rulesSource), []);
   const filteredToc = useMemo(() => {
@@ -58,11 +59,24 @@ export default function RulesDocs() {
   const goToSection = (slug: string) => {
     setSearchParams({ s: slug }, { replace: false });
     document.getElementById(slug)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTocOpen(false);
   };
 
   return (
-    <div className="h-full flex min-h-0">
-      <aside className="w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col">
+    <div className="h-full flex min-h-0 relative">
+      {tocOpen && (
+        <button
+          type="button"
+          aria-label="Close contents"
+          onClick={() => setTocOpen(false)}
+          className="lg:hidden fixed inset-0 z-30 bg-slate-900/60"
+        />
+      )}
+      <aside
+        className={`w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col fixed lg:static inset-y-0 left-0 z-40 transition-transform lg:translate-x-0 ${
+          tocOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
           <div className="text-xs uppercase text-slate-500 mb-2">Contents</div>
           <input
@@ -92,7 +106,15 @@ export default function RulesDocs() {
         </nav>
       </aside>
       <div className="flex-1 overflow-auto">
-        <article className="max-w-3xl mx-auto px-6 py-6 prose prose-slate dark:prose-invert prose-headings:scroll-mt-4 prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-code:text-sky-700 dark:prose-code:text-sky-300">
+        <button
+          type="button"
+          onClick={() => setTocOpen(true)}
+          className="lg:hidden sticky top-0 z-10 w-full px-4 py-2 text-sm flex items-center gap-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200"
+        >
+          <span>≡</span>
+          <span>Contents</span>
+        </button>
+        <article className="max-w-3xl mx-auto px-4 lg:px-6 py-6 prose prose-slate dark:prose-invert prose-headings:scroll-mt-4 prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-code:text-sky-700 dark:prose-code:text-sky-300">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{

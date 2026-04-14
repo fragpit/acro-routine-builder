@@ -12,7 +12,8 @@ export default function App() {
       <div aria-hidden className="mountain-bg" />
       <header className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-4 bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm relative z-10">
         <Link to="/" className="font-semibold hover:text-sky-600 dark:hover:text-sky-400">
-          Acro Program Constructor (v{__APP_VERSION__})
+          <span className="lg:hidden">APC (v{__APP_VERSION__})</span>
+          <span className="hidden lg:inline">Acro Program Constructor (v{__APP_VERSION__})</span>
         </Link>
         <nav className="ml-auto flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
           <Link to="/docs/rules" className="hover:text-sky-600 dark:hover:text-sky-400">Rules</Link>
