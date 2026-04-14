@@ -15,7 +15,8 @@ function isSided(t: PlacedTrick, m: Manoeuvre | undefined): boolean {
  * Choreography criterion "Trick directions balance" (FAI 3.2, 1/8 of choreo):
  * a run should contain the same number of tricks in both directions. An odd
  * total is fine as long as the difference is exactly 1, so a single sided
- * trick also counts as balanced. Tricks without a side (`noSide`) are ignored.
+ * trick also counts as balanced. Tricks without a side (`noSide`) are ignored
+ * in the count, and a run made up entirely of them is considered balanced.
  */
 export function runSymmetry(
   tricks: PlacedTrick[],
@@ -30,7 +31,7 @@ export function runSymmetry(
     else if (t.side === 'R') right++;
   }
   const sided = left + right;
-  const balanced = sided >= 1 && Math.abs(left - right) <= 1;
+  const balanced = Math.abs(left - right) <= 1;
   return { left, right, sided, balanced };
 }
 

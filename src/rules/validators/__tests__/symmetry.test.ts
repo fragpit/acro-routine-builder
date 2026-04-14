@@ -72,11 +72,9 @@ describe('validateSymmetry', () => {
     expect(validateSymmetry(p, MANOEUVRES_BY_ID)).toEqual([]);
   });
 
-  it('warns for noSide-only runs with tricks', () => {
+  it('does not warn for noSide-only runs with tricks', () => {
     const p = prog([run(placedTrick('tail_slide', { side: null }))]);
-    const v = validateSymmetry(p, MANOEUVRES_BY_ID);
-    expect(v).toHaveLength(1);
-    expect(v[0].severity).toBe('warning');
+    expect(validateSymmetry(p, MANOEUVRES_BY_ID)).toEqual([]);
   });
 
   it('does not warn for a single sided trick', () => {
