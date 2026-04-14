@@ -20,6 +20,7 @@ import { runTechnicity } from '../scoring/technicity';
 import { runBonus } from '../scoring/bonus';
 import { runBonusUsage, BONUS_LIMITS } from '../scoring/bonus-usage';
 import { exclusionsByTrick } from '../scoring/eligibility';
+import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
 import type { Manoeuvre, PlacedTrick } from '../rules/types';
@@ -318,6 +319,7 @@ export default function Constructor() {
                   symmetry={runSymmetry(run.tricks, MANOEUVRES_BY_ID)}
                   highlights={highlights}
                   ignored={exclusionsByTrick(run, MANOEUVRES_BY_ID)}
+                  unrewardedBonuses={unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID)}
                   onSelectTrick={selectTrick}
                   selectedTrickId={selectedTrickId}
                   onReset={() => resetRun(runIndex)}
@@ -393,6 +395,7 @@ function RunColumn({
   symmetry,
   highlights,
   ignored,
+  unrewardedBonuses,
   onSelectTrick,
   selectedTrickId,
   onReset,
@@ -407,6 +410,7 @@ function RunColumn({
   symmetry: ReturnType<typeof runSymmetry>;
   highlights: Map<string, 'error' | 'warning'>;
   ignored: Map<string, string[]>;
+  unrewardedBonuses: Map<string, Set<string>>;
   onSelectTrick: (id: string | null) => void;
   selectedTrickId: string | null;
   onReset: () => void;
@@ -441,6 +445,7 @@ function RunColumn({
                   highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
                   selected={selectedTrickId === t.id}
                   ignoredReasons={ignored.get(t.id)}
+                  unrewardedBonuses={unrewardedBonuses.get(t.id)}
                   onSelect={() => onSelectTrick(t.id)}
                 />
                 <DropZone runIndex={runIndex} insertIndex={i + 1} />
