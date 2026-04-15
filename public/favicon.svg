@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="peak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cbd5e1"/>
+      <stop offset="1" stop-color="#94a3b8"/>
+    </linearGradient>
+    <clipPath id="r">
+      <rect x="0" y="0" width="512" height="512" rx="96" ry="96"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#r)">
+    <rect x="0" y="0" width="512" height="512" fill="url(#sky)"/>
+
+    <!-- back mountain range (light, higher peaks) -->
+    <path d="M0 512 L0 330 L60 295 L120 320 L190 245 L260 310 L330 260 L400 315 L470 285 L512 305 L512 512 Z"
+          fill="url(#peak)" opacity="0.7"/>
+
+    <!-- front mountain range (darker slate) -->
+    <path d="M0 512 L0 395 L55 370 L130 405 L200 355 L270 400 L345 360 L420 400 L480 375 L512 390 L512 512 Z"
+          fill="#64748b" opacity="0.85"/>
+
+    <!-- paraglider: matches the app's paraglider-bg outline style -->
+    <g stroke="#0f172a" fill="none" stroke-width="14" stroke-linecap="round">
+      <!-- canopy -->
+      <path d="M110 200 Q256 110 402 200"/>
+      <!-- suspension lines converging to pilot -->
+      <line x1="130" y1="206" x2="256" y2="300"/>
+      <line x1="256" y1="196" x2="256" y2="300"/>
+      <line x1="382" y1="206" x2="256" y2="300"/>
+    </g>
+    <!-- pilot -->
+    <circle cx="256" cy="300" r="16" fill="#0f172a"/>
+  </g>
+</svg>
