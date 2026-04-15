@@ -31,7 +31,6 @@ export default function TricksDocs() {
   };
 
   const copyTrickLink = async (id: string) => {
-    goToTrick(id);
     const url = `${window.location.origin}${window.location.pathname}#/docs/tricks?trick=${encodeURIComponent(id)}`;
     try {
       await navigator.clipboard.writeText(url);

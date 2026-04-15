@@ -106,7 +106,6 @@ export default function RulesDocs() {
   };
 
   const copySectionLink = async (slug: string) => {
-    goToSection(slug);
     const url = `${window.location.origin}${window.location.pathname}#/docs/rules?s=${encodeURIComponent(slug)}`;
     try {
       await navigator.clipboard.writeText(url);
