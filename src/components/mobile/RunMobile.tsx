@@ -18,6 +18,8 @@ interface Props {
   onOpenTrick: (trickId: string) => void;
   highlights: Map<string, 'error' | 'warning'>;
   choreoPenalty: number;
+  statsExpanded: boolean;
+  onToggleStats: () => void;
 }
 
 export default function RunMobile({
@@ -30,6 +32,8 @@ export default function RunMobile({
   onOpenTrick,
   highlights,
   choreoPenalty,
+  statsExpanded,
+  onToggleStats,
 }: Props) {
   const technicity = runTechnicity(run, MANOEUVRES_BY_ID);
   const bonus = runBonus(run, MANOEUVRES_BY_ID);
@@ -80,23 +84,55 @@ export default function RunMobile({
       </div>
 
       {run.tricks.length > 0 && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-600 dark:text-slate-300">
-          <div className="grid grid-cols-4 gap-2">
-            <Stat label="TC" value={technicity.toFixed(3)} />
-            <Stat label={awtMode ? 'Bonus ≤' : 'Bonus'} value={`+${bonus.toFixed(1)}%`} />
-            <Stat
-              label="Sym"
-              value={symmetry.balanced ? '+1' : '+0'}
-              tone={symmetry.balanced ? 'ok' : 'warn'}
-            />
-            <SlotStat label="Twisted" used={bonusUsage.twisted} max={BONUS_LIMITS.twisted} />
-            <SlotStat label="Reversed" used={bonusUsage.reversed} max={BONUS_LIMITS.reversed} />
-            <SlotStat label="Flipped" used={bonusUsage.flipped} max={BONUS_LIMITS.flipped} />
-            {choreoPenalty > 0 && (
-              <Stat label="Choreo" value={`-${choreoPenalty}%`} tone="warn" />
-            )}
+        statsExpanded ? (
+          <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-600 dark:text-slate-300">
+            <button
+              type="button"
+              onClick={onToggleStats}
+              aria-label="Collapse stats"
+              aria-expanded
+              className="w-full grid grid-cols-4 gap-2 text-left"
+            >
+              <Stat label="TC" value={technicity.toFixed(3)} />
+              <Stat label={awtMode ? 'Bonus ≤' : 'Bonus'} value={`+${bonus.toFixed(1)}%`} />
+              <Stat
+                label="Sym"
+                value={symmetry.balanced ? '+1' : '+0'}
+                tone={symmetry.balanced ? 'ok' : 'warn'}
+              />
+              <SlotStat label="Twisted" used={bonusUsage.twisted} max={BONUS_LIMITS.twisted} />
+              <SlotStat label="Reversed" used={bonusUsage.reversed} max={BONUS_LIMITS.reversed} />
+              <SlotStat label="Flipped" used={bonusUsage.flipped} max={BONUS_LIMITS.flipped} />
+              {choreoPenalty > 0 && (
+                <Stat label="Choreo" value={`-${choreoPenalty}%`} tone="warn" />
+              )}
+            </button>
           </div>
-        </div>
+        ) : (
+          <button
+            type="button"
+            onClick={onToggleStats}
+            aria-label="Expand stats"
+            aria-expanded={false}
+            className="grid grid-cols-3 items-center px-3 py-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-200"
+          >
+            <span className="justify-self-start font-mono">
+              <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
+                TC
+              </span>
+              {technicity.toFixed(3)}
+            </span>
+            <span className="justify-self-center text-slate-400 dark:text-slate-500" aria-hidden>
+              ⌃
+            </span>
+            <span className="justify-self-end font-mono">
+              <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
+                {awtMode ? 'Bonus ≤' : 'Bonus'}
+              </span>
+              {`+${bonus.toFixed(1)}%`}
+            </span>
+          </button>
+        )
       )}
     </div>
   );

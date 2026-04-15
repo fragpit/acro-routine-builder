@@ -22,6 +22,7 @@ export default function ConstructorMobile() {
   const [activeRunIndex, setActiveRunIndex] = useState(0);
   const [sheetTrickId, setSheetTrickId] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [statsExpanded, setStatsExpanded] = useState(false);
 
   function armPalette(id: string | null) {
     setArmedMoveTrickId(null);
@@ -136,6 +137,8 @@ export default function ConstructorMobile() {
             onOpenTrick={setSheetTrickId}
             highlights={highlights}
             choreoPenalty={choreoPenaltyPerRun[i] ?? 0}
+            statsExpanded={statsExpanded}
+            onToggleStats={() => setStatsExpanded((v) => !v)}
           />
         )}
       />
