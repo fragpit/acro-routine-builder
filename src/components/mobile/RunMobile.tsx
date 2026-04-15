@@ -16,6 +16,7 @@ interface Props {
   movingTrickId: string | null;
   onInsertAt: (runIndex: number, index: number) => void;
   onOpenTrick: (trickId: string) => void;
+  onResetRun: (runIndex: number) => void;
   highlights: Map<string, 'error' | 'warning'>;
   choreoPenalty: number;
   statsExpanded: boolean;
@@ -30,6 +31,7 @@ export default function RunMobile({
   movingTrickId,
   onInsertAt,
   onOpenTrick,
+  onResetRun,
   highlights,
   choreoPenalty,
   statsExpanded,
@@ -79,6 +81,17 @@ export default function RunMobile({
                 <InsertSlot armed={isArmed} onTap={() => insertAt(i + 1)} />
               </div>
             ))}
+            <div className="pt-1 flex justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm(`Clear run ${runIndex + 1}?`)) onResetRun(runIndex);
+                }}
+                className="text-xs text-slate-500 hover:text-red-500 hover:border-red-300 dark:hover:border-red-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/40"
+              >
+                reset run
+              </button>
+            </div>
           </>
         )}
       </div>

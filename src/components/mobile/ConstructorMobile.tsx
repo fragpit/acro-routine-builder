@@ -84,7 +84,7 @@ export default function ConstructorMobile() {
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-slate-50 dark:bg-slate-900">
-      <header className="shrink-0 flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+      <header className="shrink-0 flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pt-[calc(0.5rem+env(safe-area-inset-top))]">
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
             {currentName ?? <span className="italic font-normal text-slate-400">Untitled</span>}
@@ -135,6 +135,7 @@ export default function ConstructorMobile() {
             movingTrickId={armedMoveTrickId}
             onInsertAt={handleInsertAt}
             onOpenTrick={setSheetTrickId}
+            onResetRun={resetRun}
             highlights={highlights}
             choreoPenalty={choreoPenaltyPerRun[i] ?? 0}
             statsExpanded={statsExpanded}
@@ -143,49 +144,28 @@ export default function ConstructorMobile() {
         )}
       />
 
-      <div className="shrink-0 grid grid-cols-3 items-center px-3 py-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
-        <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 justify-self-start">
-          Run {safeActive + 1}{' '}
-          <span className="text-slate-400 text-xs font-normal">
-            of {program.runs.length}
-          </span>
-        </div>
-        <div
-          className="flex items-center justify-center gap-1.5"
-          role="tablist"
-          aria-label="Run indicator"
-        >
-          {program.runs.length > 1 &&
-            program.runs.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActiveRunIndex(i)}
-                role="tab"
-                aria-selected={i === safeActive}
-                aria-label={`Run ${i + 1}`}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                  i === safeActive ? 'bg-sky-600' : 'bg-slate-300 dark:bg-slate-600'
-                }`}
-              />
-            ))}
-        </div>
-        <div className="justify-self-end">
-          {program.runs[safeActive]?.tricks.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                if (confirm(`Clear run ${safeActive + 1}?`)) resetRun(safeActive);
-              }}
-              className="text-xs text-slate-500 hover:text-red-500"
-            >
-              reset
-            </button>
-          )}
-        </div>
-      </div>
-
       <ViolationsBar onJumpTo={setActiveRunIndex} />
+
+      <div
+        className="shrink-0 flex items-center justify-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 pb-[calc(0.5rem+env(safe-area-inset-bottom))] min-h-[env(safe-area-inset-bottom)]"
+        role="tablist"
+        aria-label="Run indicator"
+      >
+        {program.runs.length > 1 &&
+          program.runs.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setActiveRunIndex(i)}
+              role="tab"
+              aria-selected={i === safeActive}
+              aria-label={`Run ${i + 1}`}
+              className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                i === safeActive ? 'bg-sky-600' : 'bg-slate-300 dark:bg-slate-600'
+              }`}
+            />
+          ))}
+      </div>
 
       <TrickSheet
         trickId={sheetTrickId}
