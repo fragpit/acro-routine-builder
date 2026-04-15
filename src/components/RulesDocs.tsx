@@ -18,6 +18,31 @@ function slugify(text: string): string {
     .replace(/\s+/g, '-');
 }
 
+function AnchorButton({
+  slug,
+  onCopy,
+}: {
+  slug: string;
+  onCopy: (slug: string) => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        onCopy(slug);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1500);
+      }}
+      title="Copy link to this section"
+      className="text-sm font-normal text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+    >
+      {copied ? 'copied' : '#'}
+    </button>
+  );
+}
+
 function extractToc(md: string): TocEntry[] {
   const entries: TocEntry[] = [];
   const lines = md.split('\n');
@@ -60,6 +85,16 @@ export default function RulesDocs() {
     setSearchParams({ s: slug }, { replace: false });
     document.getElementById(slug)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setTocOpen(false);
+  };
+
+  const copySectionLink = async (slug: string) => {
+    goToSection(slug);
+    const url = `${window.location.origin}${window.location.pathname}#/docs/rules?s=${encodeURIComponent(slug)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // clipboard may be unavailable on insecure contexts
+    }
   };
 
   return (
@@ -120,17 +155,21 @@ export default function RulesDocs() {
             components={{
               h2: ({ children, ...props }) => {
                 const text = String(children);
+                const slug = slugify(text);
                 return (
-                  <h2 id={slugify(text)} {...props}>
-                    {children}
+                  <h2 id={slug} {...props} className="group flex items-center gap-2">
+                    <span>{children}</span>
+                    <AnchorButton slug={slug} onCopy={copySectionLink} />
                   </h2>
                 );
               },
               h3: ({ children, ...props }) => {
                 const text = String(children);
+                const slug = slugify(text);
                 return (
-                  <h3 id={slugify(text)} {...props}>
-                    {children}
+                  <h3 id={slug} {...props} className="group flex items-center gap-2">
+                    <span>{children}</span>
+                    <AnchorButton slug={slug} onCopy={copySectionLink} />
                   </h3>
                 );
               },
