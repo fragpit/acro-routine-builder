@@ -36,8 +36,8 @@ export default function MobileMenu({ open, onClose }: Props) {
         onClick={onClose}
         className="absolute inset-0 bg-slate-900/60"
       />
-      <div className="relative w-80 max-w-[85vw] h-full bg-white dark:bg-slate-900 shadow-xl flex flex-col">
-        <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+      <div className="relative w-80 max-w-[85vw] h-full bg-white dark:bg-slate-900 shadow-xl flex flex-col pr-[env(safe-area-inset-right)]">
+        <div className="shrink-0 flex items-center justify-between px-4 py-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] border-b border-slate-200 dark:border-slate-700">
           <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">Program</div>
           <button
             type="button"
@@ -48,7 +48,7 @@ export default function MobileMenu({ open, onClose }: Props) {
             ✕
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-5 text-sm">
+        <div className="flex-1 overflow-y-auto p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] space-y-5 text-sm">
           <section>
             <h3 className="text-[11px] uppercase text-slate-500 mb-2">File</h3>
             <MobileFileControls />
