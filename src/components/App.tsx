@@ -9,7 +9,7 @@ export default function App() {
   const location = useLocation();
   const hideHeaderOnMobile = location.pathname === '/constructor';
   return (
-    <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-[100dvh] lg:h-full">
+    <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-full">
       <div aria-hidden className="paraglider-bg" />
       <div aria-hidden className="mountain-bg" />
       <header className={`${hideHeaderOnMobile ? 'hidden lg:flex' : 'flex'} px-4 py-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] lg:pt-3 border-b border-slate-200 dark:border-slate-700 items-center gap-4 bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm relative z-10`}>
