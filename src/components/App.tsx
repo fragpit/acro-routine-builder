@@ -7,7 +7,7 @@ import RulesDocs from './RulesDocs';
 
 export default function App() {
   return (
-    <div className="h-full flex flex-col text-slate-900 dark:text-slate-100 relative z-10">
+    <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 lg:h-full">
       <div aria-hidden className="paraglider-bg" />
       <div aria-hidden className="mountain-bg" />
       <header className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-4 bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm relative z-10">
@@ -39,7 +39,7 @@ export default function App() {
           <ThemeToggle />
         </nav>
       </header>
-      <main className="flex-1 min-h-0">
+      <main className="h-[100dvh] lg:flex-1 lg:min-h-0 lg:h-auto">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/constructor" element={<Constructor />} />
