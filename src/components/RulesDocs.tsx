@@ -173,6 +173,16 @@ export default function RulesDocs() {
                   </h3>
                 );
               },
+              h4: ({ children, ...props }) => {
+                const text = String(children);
+                const slug = slugify(text);
+                return (
+                  <h4 id={slug} {...props} className="group flex items-center gap-2">
+                    <span>{children}</span>
+                    <AnchorButton slug={slug} onCopy={copySectionLink} />
+                  </h4>
+                );
+              },
             }}
           >
             {rulesSource}
