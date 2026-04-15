@@ -25,7 +25,7 @@
           fill="#64748b" opacity="0.85"/>
 
     <!-- paraglider: matches the app's paraglider-bg outline style -->
-    <g stroke="#1e293b" fill="none" stroke-width="14" stroke-linecap="round">
+    <g stroke="#334155" fill="none" stroke-width="14" stroke-linecap="round">
       <!-- canopy -->
       <path d="M110 200 Q256 110 402 200"/>
       <!-- suspension lines converging to pilot -->
@@ -34,6 +34,6 @@
       <line x1="382" y1="206" x2="256" y2="300"/>
     </g>
     <!-- pilot -->
-    <circle cx="256" cy="300" r="16" fill="#1e293b"/>
+    <circle cx="256" cy="300" r="16" fill="#334155"/>
   </g>
 </svg>
