@@ -106,23 +106,19 @@ export default function RunMobile({
               aria-expanded
               className="w-full flex flex-col gap-1.5 text-left"
             >
-              <span
-                className="self-center inline-flex items-center justify-center h-6 w-10 rounded-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-300 shadow-sm"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="self-center w-4 h-4 text-slate-400 dark:text-slate-500"
                 aria-hidden
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-3.5 h-3.5"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </span>
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
               <span className="grid grid-cols-4 gap-2">
               <Stat label="TC" value={technicity.toFixed(3)} />
               <Stat label={awtMode ? 'Bonus ≤' : 'Bonus'} value={`+${bonus.toFixed(1)}%`} />
