@@ -51,7 +51,7 @@ export default function MobileMenu({ open, onClose }: Props) {
         <div className="flex-1 overflow-y-auto p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] space-y-5 text-sm">
           <section>
             <h3 className="text-[11px] uppercase text-slate-500 mb-2">File</h3>
-            <MobileFileControls />
+            <MobileFileControls onImported={onClose} />
           </section>
 
           <section>

@@ -5,7 +5,11 @@ import { exportProgramMarkdown } from '../../io/program-markdown';
 
 type PanelMode = 'save' | 'load' | null;
 
-export default function MobileFileControls() {
+interface MobileFileControlsProps {
+  onImported?: () => void;
+}
+
+export default function MobileFileControls({ onImported }: MobileFileControlsProps = {}) {
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const currentName = useProgramStore((s) => s.currentName);
@@ -57,6 +61,7 @@ export default function MobileFileControls() {
         if (!confirm('Replace the current program with the imported one?')) return;
       }
       importProgram(imported, name);
+      onImported?.();
     } catch (err) {
       alert(`Import failed: ${err instanceof Error ? err.message : String(err)}`);
     }
