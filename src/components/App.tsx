@@ -9,10 +9,10 @@ export default function App() {
   const location = useLocation();
   const hideHeaderOnMobile = location.pathname === '/constructor';
   return (
-    <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 lg:h-full">
+    <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-[100dvh] lg:h-full">
       <div aria-hidden className="paraglider-bg" />
       <div aria-hidden className="mountain-bg" />
-      <header className={`${hideHeaderOnMobile ? 'hidden lg:flex' : 'flex'} px-4 py-3 border-b border-slate-200 dark:border-slate-700 items-center gap-4 bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm relative z-10`}>
+      <header className={`${hideHeaderOnMobile ? 'hidden lg:flex' : 'flex'} px-4 py-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] lg:pt-3 border-b border-slate-200 dark:border-slate-700 items-center gap-4 bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm relative z-10`}>
         <Link to="/" className="font-semibold hover:text-sky-600 dark:hover:text-sky-400">
           <span className="lg:hidden">APC (v{__APP_VERSION__})</span>
           <span className="hidden lg:inline">Acro Program Constructor (v{__APP_VERSION__})</span>
@@ -41,7 +41,7 @@ export default function App() {
           <ThemeToggle />
         </nav>
       </header>
-      <main className="h-[100dvh] lg:flex-1 lg:min-h-0 lg:h-auto">
+      <main className="flex-1 min-h-0">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/constructor" element={<Constructor />} />
