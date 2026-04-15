@@ -1,8 +1,5 @@
 # FAI Sporting Code Section 7B - Paragliding Aerobatics 2025 (Solo)
 
-Synchro-specific rules are in a
-[separate document](sporting_code_aerobatics_2025_synchro.md).
-
 ## 1. Manoeuvre definitions
 
 ### 1.1 Solo manoeuvres
