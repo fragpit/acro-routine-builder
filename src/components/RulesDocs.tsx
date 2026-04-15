@@ -36,7 +36,7 @@ function AnchorButton({
         window.setTimeout(() => setCopied(false), 1500);
       }}
       title="Copy link to this section"
-      className="text-sm font-normal text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+      className="text-sm font-normal text-slate-400 hover:text-sky-600 dark:hover:text-sky-400"
     >
       {copied ? 'copied' : '#'}
     </button>
@@ -157,7 +157,7 @@ export default function RulesDocs() {
                 const text = String(children);
                 const slug = slugify(text);
                 return (
-                  <h2 id={slug} {...props} className="group flex items-center gap-2">
+                  <h2 id={slug} {...props} className="flex items-center gap-2">
                     <span>{children}</span>
                     <AnchorButton slug={slug} onCopy={copySectionLink} />
                   </h2>
@@ -167,7 +167,7 @@ export default function RulesDocs() {
                 const text = String(children);
                 const slug = slugify(text);
                 return (
-                  <h3 id={slug} {...props} className="group flex items-center gap-2">
+                  <h3 id={slug} {...props} className="flex items-center gap-2">
                     <span>{children}</span>
                     <AnchorButton slug={slug} onCopy={copySectionLink} />
                   </h3>
@@ -177,7 +177,7 @@ export default function RulesDocs() {
                 const text = String(children);
                 const slug = slugify(text);
                 return (
-                  <h4 id={slug} {...props} className="group flex items-center gap-2">
+                  <h4 id={slug} {...props} className="flex items-center gap-2">
                     <span>{children}</span>
                     <AnchorButton slug={slug} onCopy={copySectionLink} />
                   </h4>
