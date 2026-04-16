@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { BONUS_CATALOG } from '../../data/manoeuvres';
 import { MAX_RUNS } from '../../data/competition-types';
 import { useProgramStore } from '../../store/program-store';
+import { useScoreSettings } from '../../store/score-settings';
 import MobileFileControls from './MobileFileControls';
+import DistributionEditor from '../DistributionEditor';
 import ThemeToggle from '../ThemeToggle';
 import { IconUndo, IconRedo } from '../icons';
 import NumberStepper from '../NumberStepper';
@@ -20,6 +22,8 @@ export default function MobileMenu({ open, onClose }: Props) {
   const setDefaultBonuses = useProgramStore((s) => s.setDefaultBonuses);
   const setAwtMode = useProgramStore((s) => s.setAwtMode);
   const resetProgram = useProgramStore((s) => s.resetProgram);
+  const distribution = useScoreSettings((s) => s.distribution);
+  const setDistribution = useScoreSettings((s) => s.setDistribution);
   const undo = useProgramStore((s) => s.undo);
   const redo = useProgramStore((s) => s.redo);
   const canUndo = useProgramStore((s) => s.past.length > 0);
@@ -153,6 +157,16 @@ export default function MobileMenu({ open, onClose }: Props) {
                 )}
               </div>
             )}
+          </section>
+
+          <section className="space-y-2">
+            <h3 className="text-[11px] uppercase text-slate-500">
+              Score distribution
+            </h3>
+            <DistributionEditor
+              distribution={distribution}
+              onChange={setDistribution}
+            />
           </section>
 
           <section>

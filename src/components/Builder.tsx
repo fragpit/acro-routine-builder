@@ -20,14 +20,18 @@ import { runTechnicity } from '../scoring/technicity';
 import { runBonus } from '../scoring/bonus';
 import { runBonusUsage, BONUS_LIMITS } from '../scoring/bonus-usage';
 import { exclusionsByTrick } from '../scoring/eligibility';
+import { runScoreBreakdown, runScoreBreakdownAwt, type ScoreDistribution } from '../scoring/final-score';
 import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
-import type { Manoeuvre, PlacedTrick } from '../rules/types';
+import { useScoreSettings } from '../store/score-settings';
+import type { Manoeuvre, PlacedTrick, Run } from '../rules/types';
 import TrickInfoCard from './TrickInfoCard';
 import ViolationsPanel from './ViolationsPanel';
 import TrickCell from './TrickCell';
 import ProgramControls from './ProgramControls';
+import FinalScorePanel from './FinalScorePanel';
+import DistributionEditor from './DistributionEditor';
 import BuilderMobile from './mobile/BuilderMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { IconUndo, IconRedo } from './icons';
@@ -57,6 +61,8 @@ function BuilderDesktop() {
   const canRedo = useProgramStore((s) => s.future.length > 0);
   const selectedTrickId = useProgramStore((s) => s.selectedTrickId);
   const selectTrick = useProgramStore((s) => s.selectTrick);
+  const distribution = useScoreSettings((s) => s.distribution);
+  const setDistribution = useScoreSettings((s) => s.setDistribution);
 
   const [activeDrag, setActiveDrag] = useState<{ type: 'palette' | 'cell'; id: string } | null>(null);
   const altHeldRef = useRef(false);
@@ -87,6 +93,7 @@ function BuilderDesktop() {
   );
 
   const [defaultBonusesOpen, setDefaultBonusesOpen] = useState(false);
+  const [distributionOpen, setDistributionOpen] = useState(false);
   const [paletteFilter, setPaletteFilter] = useState('');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const sortedAvailable = useMemo(
@@ -277,6 +284,33 @@ function BuilderDesktop() {
                 </>
               )}
             </div>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setDistributionOpen((v) => !v)}
+                className="px-2 py-0.5 rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-slate-400"
+                title="Score distribution: Technical / Choreography / Landing weight percentages"
+              >
+                Score dist.
+                <span className="ml-1 text-xs text-slate-500">
+                  {distribution.technical}/{distribution.choreo}/{distribution.landing}
+                </span>
+              </button>
+              {distributionOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setDistributionOpen(false)}
+                  />
+                  <div className="absolute left-0 top-full mt-1 z-20 w-56 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg p-3">
+                    <DistributionEditor
+                      distribution={distribution}
+                      onChange={setDistribution}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
             <div className="ml-auto flex items-center gap-2">
               <button
                 type="button"
@@ -317,6 +351,7 @@ function BuilderDesktop() {
               {program.runs.map((run, runIndex) => (
                 <RunColumn
                   key={run.id}
+                  run={run}
                   runIndex={runIndex}
                   tricks={run.tricks}
                   technicity={runTechnicity(run, MANOEUVRES_BY_ID)}
@@ -325,6 +360,7 @@ function BuilderDesktop() {
                   awtMode={program.awtMode}
                   choreoPenalty={choreoPenaltyPerRun[runIndex] ?? 0}
                   symmetry={runSymmetry(run.tricks, MANOEUVRES_BY_ID)}
+                  distribution={distribution}
                   highlights={highlights}
                   ignored={exclusionsByTrick(run, MANOEUVRES_BY_ID)}
                   unrewardedBonuses={unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID)}
@@ -393,6 +429,7 @@ function PaletteCard({ manoeuvre }: { manoeuvre: Manoeuvre }) {
 }
 
 function RunColumn({
+  run,
   runIndex,
   tricks,
   technicity,
@@ -401,6 +438,7 @@ function RunColumn({
   awtMode,
   choreoPenalty,
   symmetry,
+  distribution,
   highlights,
   ignored,
   unrewardedBonuses,
@@ -408,6 +446,7 @@ function RunColumn({
   selectedTrickId,
   onReset,
 }: {
+  run: Run;
   runIndex: number;
   tricks: PlacedTrick[];
   technicity: number;
@@ -416,6 +455,7 @@ function RunColumn({
   awtMode: boolean;
   choreoPenalty: number;
   symmetry: ReturnType<typeof runSymmetry>;
+  distribution: ScoreDistribution;
   highlights: Map<string, 'error' | 'warning'>;
   ignored: Map<string, string[]>;
   unrewardedBonuses: Map<string, Set<string>>;
@@ -515,6 +555,13 @@ function RunColumn({
             <span className="font-mono">{symmetry.balanced ? '+1' : '+0'}</span>
           </div>
         </div>
+      )}
+      {tricks.length > 0 && (
+        <FinalScorePanel
+          breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution)}
+          awtMode={awtMode}
+          awtMin={awtMode ? runScoreBreakdownAwt(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, 0.5) : undefined}
+        />
       )}
     </div>
   );

@@ -3,10 +3,12 @@ import { BONUS_LIMITS, runBonusUsage } from '../../scoring/bonus-usage';
 import { runBonus } from '../../scoring/bonus';
 import { runTechnicity } from '../../scoring/technicity';
 import { exclusionsByTrick } from '../../scoring/eligibility';
+import { runScoreBreakdown, runScoreBreakdownAwt, type ScoreDistribution } from '../../scoring/final-score';
 import { unrewardedBonusesByTrick } from '../../rules/repeated-bonus';
 import { runSymmetry } from '../../rules/validators/symmetry';
 import type { Run } from '../../rules/types';
 import TrickCellMobile from './TrickCellMobile';
+import FinalScorePanel from '../FinalScorePanel';
 
 interface Props {
   run: Run;
@@ -19,6 +21,7 @@ interface Props {
   onResetRun: (runIndex: number) => void;
   highlights: Map<string, 'error' | 'warning'>;
   choreoPenalty: number;
+  distribution: ScoreDistribution;
   statsExpanded: boolean;
   onToggleStats: () => void;
 }
@@ -34,6 +37,7 @@ export default function RunMobile({
   onResetRun,
   highlights,
   choreoPenalty,
+  distribution,
   statsExpanded,
   onToggleStats,
 }: Props) {
@@ -171,6 +175,15 @@ export default function RunMobile({
             </span>
           </button>
         )
+      )}
+      {run.tricks.length > 0 && (
+        <div className="bg-white dark:bg-slate-900">
+          <FinalScorePanel
+            breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution)}
+            awtMode={awtMode}
+            awtMin={awtMode ? runScoreBreakdownAwt(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, 0.5) : undefined}
+          />
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useProgramStore } from '../../store/program-store';
+import { useScoreSettings } from '../../store/score-settings';
 import PaletteStrip from './PaletteStrip';
 import RunSwiper from './RunSwiper';
 import RunMobile from './RunMobile';
@@ -15,6 +16,7 @@ export default function BuilderMobile() {
   const moveTrick = useProgramStore((s) => s.moveTrick);
   const copyTrick = useProgramStore((s) => s.copyTrick);
   const resetRun = useProgramStore((s) => s.resetRun);
+  const distribution = useScoreSettings((s) => s.distribution);
 
   const [armedManoeuvreId, setArmedManoeuvreId] = useState<string | null>(null);
   const [armedMoveTrickId, setArmedMoveTrickId] = useState<string | null>(null);
@@ -138,6 +140,7 @@ export default function BuilderMobile() {
             onResetRun={resetRun}
             highlights={highlights}
             choreoPenalty={choreoPenaltyPerRun[i] ?? 0}
+            distribution={distribution}
             statsExpanded={statsExpanded}
             onToggleStats={() => setStatsExpanded((v) => !v)}
           />

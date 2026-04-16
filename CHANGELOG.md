@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Add per-run Final Score calculator with expandable breakdown panel
+- Add configurable score distribution (Technical/Choreo/Landing weights)
+  in burger menu (mobile) and desktop toolbar
+- AWT mode shows Final Score as a range (bonus scaled T=5…10)
+- Default assumptions: T=10 (perfect execution), C=9+symmetry,
+  L=0 (landing off by default)
+- Score distribution persisted to localStorage independently of program
+
 ## v0.4.0
 
 - Rename app from Acro Program Constructor to Acro Routine Builder
