@@ -121,7 +121,15 @@ export default function RunMobile({
               </svg>
               <span className="grid grid-cols-4 gap-2">
               <Stat label="TC" value={technicity.toFixed(3)} />
-              <Stat label={awtMode ? 'Bonus ≤' : 'Bonus'} value={`+${bonus.toFixed(1)}%`} />
+              <Stat
+                label="Bonus"
+                value={
+                  awtMode
+                    ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
+                    : `+${bonus.toFixed(1)}%`
+                }
+                className={awtMode ? 'col-span-2' : undefined}
+              />
               <Stat
                 label="Sym"
                 value={symmetry.balanced ? '+1' : '+0'}
@@ -153,11 +161,13 @@ export default function RunMobile({
             <span className="justify-self-center text-slate-400 dark:text-slate-500" aria-hidden>
               ⌃
             </span>
-            <span className="justify-self-end font-mono">
+            <span className={`justify-self-end font-mono ${awtMode ? 'text-xs' : ''}`}>
               <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
-                {awtMode ? 'Bonus ≤' : 'Bonus'}
+                Bonus
               </span>
-              {`+${bonus.toFixed(1)}%`}
+              {awtMode
+                ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
+                : `+${bonus.toFixed(1)}%`}
             </span>
           </button>
         )
@@ -179,7 +189,7 @@ function InsertSlot({ armed, onTap }: { armed: boolean; onTap: () => void }) {
   );
 }
 
-function Stat({ label, value, tone = 'neutral' }: { label: string; value: string; tone?: 'neutral' | 'ok' | 'warn' }) {
+function Stat({ label, value, tone = 'neutral', className }: { label: string; value: string; tone?: 'neutral' | 'ok' | 'warn'; className?: string }) {
   const valueCls =
     tone === 'ok'
       ? 'text-emerald-600 dark:text-emerald-400'
@@ -187,7 +197,7 @@ function Stat({ label, value, tone = 'neutral' }: { label: string; value: string
         ? 'text-amber-600 dark:text-amber-400'
         : 'text-slate-800 dark:text-slate-100';
   return (
-    <div className="flex flex-col items-center gap-0.5 rounded bg-slate-50 dark:bg-slate-800/60 px-2 py-1.5">
+    <div className={`flex flex-col items-center gap-0.5 rounded bg-slate-50 dark:bg-slate-800/60 px-2 py-1.5 ${className ?? ''}`}>
       <span className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</span>
       <span className={`font-mono text-sm ${valueCls}`}>{value}</span>
     </div>

@@ -472,12 +472,16 @@ function RunColumn({
             className="flex justify-between"
             title={
               awtMode
-                ? 'Upper bound: AWT scales each bonus by the trick technical mark (bonus * T / 10). Shown value assumes T=10 for every trick.'
+                ? 'AWT range: bonus × T/10, where T is the technical mark (5-10). Left = T=5, right = T=10.'
                 : 'AWQ: sum of selected bonus percents (no technical-mark scaling).'
             }
           >
-            <span>Bonus{awtMode ? ' ≤' : ''}</span>
-            <span className="font-mono">+{bonus.toFixed(1)}%</span>
+            <span>Bonus</span>
+            <span className="font-mono">
+              {awtMode
+                ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
+                : `+${bonus.toFixed(1)}%`}
+            </span>
           </div>
           <div
             className="flex justify-between text-slate-500 dark:text-slate-400"
