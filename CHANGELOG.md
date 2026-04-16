@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.25 (2026-04-16)
+
+- Fix `>` and `<` rendered as blockquotes/HTML in Rules docs
+
 ## v0.3.24 (2026-04-16)
 
 - Show AWT bonus as range (+X…Y%) instead of upper bound

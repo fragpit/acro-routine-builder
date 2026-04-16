@@ -94,6 +94,7 @@ A single boolean `awtMode` on the Program. Structural differences are minimal (M
 2. Make the changes.
 3. Commit and push the branch.
 4. Open a PR via GitHub MCP (never `gh` CLI - see user memory).
+5. Add changes to CHANGELOG.md
 
 Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
 
@@ -101,7 +102,6 @@ Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
 
 Do everything above, then **finalize**:
 
-1. Add changes to CHANGELOG.md
 1. Merge the PR (squash).
 2. Switch to the default branch (`main`) and pull.
 3. Bump the release tag. The user must specify `patch`, `minor` or `major`; if they didn't, ask. Bumping rules below.
