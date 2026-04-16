@@ -2,11 +2,19 @@ import { useEffect, useState } from 'react';
 
 export type Theme = 'light' | 'dark';
 
-const STORAGE_KEY = 'apc_theme';
+const STORAGE_KEY = 'arb_theme';
+const LEGACY_KEY = 'apc_theme';
 
 function getInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'dark';
-  const stored = window.localStorage.getItem(STORAGE_KEY);
+  let stored = window.localStorage.getItem(STORAGE_KEY);
+  if (!stored) {
+    stored = window.localStorage.getItem(LEGACY_KEY);
+    if (stored) {
+      window.localStorage.setItem(STORAGE_KEY, stored);
+      window.localStorage.removeItem(LEGACY_KEY);
+    }
+  }
   if (stored === 'light' || stored === 'dark') return stored;
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }

@@ -2,12 +2,20 @@ import { useState } from 'react';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import TrickPicker from './TrickPicker';
 
-const RECENT_KEY = 'apc.recent-tricks';
+const RECENT_KEY = 'arb.recent-tricks';
+const LEGACY_KEY = 'apc.recent-tricks';
 const MAX_RECENT = 5;
 
 function loadRecent(): string[] {
   try {
-    const raw = localStorage.getItem(RECENT_KEY);
+    let raw = localStorage.getItem(RECENT_KEY);
+    if (!raw) {
+      raw = localStorage.getItem(LEGACY_KEY);
+      if (raw) {
+        localStorage.setItem(RECENT_KEY, raw);
+        localStorage.removeItem(LEGACY_KEY);
+      }
+    }
     if (!raw) return [];
     const arr = JSON.parse(raw);
     if (!Array.isArray(arr)) return [];

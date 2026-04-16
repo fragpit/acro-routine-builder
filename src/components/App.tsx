@@ -1,27 +1,27 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Home from './Home';
-import Constructor from './Constructor';
+import Builder from './Builder';
 import ThemeToggle from './ThemeToggle';
 import TricksDocs from './TricksDocs';
 import RulesDocs from './RulesDocs';
 
 export default function App() {
   const location = useLocation();
-  const hideHeaderOnMobile = location.pathname === '/constructor';
+  const hideHeaderOnMobile = location.pathname === '/builder';
   return (
     <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-[100lvh] lg:h-full">
       <div aria-hidden className="paraglider-bg" />
       <div aria-hidden className="mountain-bg" />
       <header className={`${hideHeaderOnMobile ? 'hidden lg:flex' : 'flex'} px-4 py-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] lg:pt-3 border-b border-slate-200 dark:border-slate-700 items-center gap-4 bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm relative z-10`}>
         <Link to="/" className="font-semibold hover:text-sky-600 dark:hover:text-sky-400">
-          <span className="lg:hidden">APC (v{__APP_VERSION__})</span>
-          <span className="hidden lg:inline">Acro Program Constructor (v{__APP_VERSION__})</span>
+          <span className="lg:hidden">ARB (v{__APP_VERSION__})</span>
+          <span className="hidden lg:inline">Acro Routine Builder (v{__APP_VERSION__})</span>
         </Link>
         <nav className="ml-auto flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
           <Link to="/docs/rules" className="hover:text-sky-600 dark:hover:text-sky-400">Rules</Link>
           <Link to="/docs/tricks" className="hover:text-sky-600 dark:hover:text-sky-400">Tricks</Link>
           <a
-            href="https://github.com/fragpit/acro-program-constructor/issues"
+            href="https://github.com/fragpit/acro-routine-builder/issues"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub issues"
@@ -44,7 +44,7 @@ export default function App() {
       <main className="flex-1 min-h-0">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/constructor" element={<Constructor />} />
+          <Route path="/builder" element={<Builder />} />
           <Route path="/docs/rules" element={<RulesDocs />} />
           <Route path="/docs/tricks" element={<TricksDocs />} />
         </Routes>

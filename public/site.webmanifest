@@ -1,7 +1,7 @@
 {
-  "name": "Acro Program Constructor",
-  "short_name": "Acro Program",
-  "description": "Paragliding acro program constructor (SIV / AWT / AWQ).",
+  "name": "Acro Routine Builder",
+  "short_name": "Acro Routine",
+  "description": "Paragliding acro routine builder (SIV / AWT / AWQ).",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -1,4 +1,4 @@
-# Plan: Acro Program Constructor
+# Plan: Acro Routine Builder
 
 ## Context
 
@@ -23,8 +23,8 @@ GitHub Pages without extra setup):
    links to documentation:
    - Competition rules (FAI Sporting Code)
    - Trick reference with restrictions
-2. **Constructor** (`/constructor`) - main screen. AWT/AWQ is toggled via an
-   "AWT mode" checkbox right in the constructor header (off by default =
+2. **Builder** (`/builder`) - main screen. AWT/AWQ is toggled via an
+   "AWT mode" checkbox right in the builder header (off by default =
    AWQ). The structural difference between AWT and AWQ is minimal -
    only the Misty-to-Misty ban in AWT (section 4.4). The bonus
    formula differs for scoring (phase 3), but that does not change
@@ -42,7 +42,7 @@ phase.
 
 **UI is in English** - we don't use Russian strings in the interface.
 
-## Constructor screen layout
+## Builder screen layout
 
 Three main sections:
 
@@ -149,7 +149,7 @@ src/
 ├── components/                # flat structure, no nested folders
 │   ├── App.tsx                # root layout + routing + paraglider/mountain background
 │   ├── Home.tsx
-│   ├── Constructor.tsx        # constructor with runs and palette
+│   ├── Builder.tsx            # builder with runs and palette
 │   ├── ProgramControls.tsx    # runs/repeat-gap/AWT/import/export
 │   ├── TrickCell.tsx
 │   ├── TrickInfoCard.tsx      # side panel with description and bonuses
@@ -307,7 +307,7 @@ TRICK PALETTE - side column spanning the full screen height.
 
 ```text
 ┌──────────────────────────────────────────────────┐
-│  Acro Program Constructor     Rules Tricks  ☀/🌙  │
+│  Acro Routine Builder         Rules Tricks  ☀/🌙  │
 ├───────────┬──────────────────────────────────────┤
 │           │ Runs: [3]  [x] AWT mode              │
 ├───────────┼──────────────────────────────────────┤
@@ -338,10 +338,10 @@ TRICK PALETTE - side column spanning the full screen height.
 
 1. Dev environment: `.mise.toml` (node 22), `.gitignore`.
 2. Scaffolding: Vite + React + TS + Tailwind + dnd-kit + Zustand + Vitest.
-3. Routing (HashRouter): home, constructor (`/constructor` without parameters).
+3. Routing (HashRouter): home, builder (`/builder` without parameters).
 4. Data: all 38 solo tricks in `manoeuvres.ts` including `description`
    (bullet points from the sporting code) and `sectionNumber`.
-5. "AWT mode" checkbox in the constructor header (off by default = AWQ).
+5. "AWT mode" checkbox in the builder header (off by default = AWQ).
 6. Trick palette (sort by coefficient with direction toggle, search).
 7. Trick details card (click / hover on a trick in the palette or
    a cell in a run) in the sporting_code format.
@@ -379,7 +379,7 @@ passes, the app works in the browser. No deploy yet.
 6. Per-run technicity calculation - basic average of coefficients,
    shown at the bottom of the run column. Full formula with limits -
    in phase 3.
-7. UI: "Repeat gap" control in the constructor header.
+7. UI: "Repeat gap" control in the builder header.
 8. localStorage persistence (phase 1).
 9. Unit tests for bonus-limits, repetition, technicity.
 

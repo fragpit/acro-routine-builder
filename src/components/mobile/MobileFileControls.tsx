@@ -45,7 +45,7 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
 
   function onExportJson() {
     const base = currentName ?? 'program';
-    download(safeFileName(base, 'apc.json'), exportProgramJson(program, currentName), 'application/json');
+    download(safeFileName(base, 'arb.json'), exportProgramJson(program, currentName), 'application/json');
   }
 
   function onExportMarkdown() {

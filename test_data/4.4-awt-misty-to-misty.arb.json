@@ -1,16 +1,16 @@
 {
-  "format": "acro-program-constructor",
+  "format": "acro-routine-builder",
   "version": 1,
-  "name": "1.1 Flat Stall to Infinity Tumbling must be first",
+  "name": "4.4 AWT mode: Misty to Misty cannot be used",
   "exportedAt": "2026-04-14T12:00:00.000Z",
   "program": {
-    "awtMode": false,
+    "awtMode": true,
     "runs": [
       {
         "id": "r1",
         "tricks": [
           { "id": "r1t1", "manoeuvreId": "sat", "side": "R", "selectedBonuses": [] },
-          { "id": "r1t2", "manoeuvreId": "flat_stall_to_infinity", "side": null, "selectedBonuses": [] },
+          { "id": "r1t2", "manoeuvreId": "misty_to_misty", "side": "L", "selectedBonuses": [] },
           { "id": "r1t3", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
           { "id": "r1t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
         ]

@@ -1,7 +1,7 @@
 {
-  "format": "acro-program-constructor",
+  "format": "acro-routine-builder",
   "version": 1,
-  "name": "3.4 X-Chopper/Misty to Tumbling + stall-to-infinite in same run",
+  "name": "3.6 MacFly/MistyFly/HeliFly/SatFly - once per run",
   "exportedAt": "2026-04-14T12:00:00.000Z",
   "program": {
     "awtMode": false,
@@ -9,8 +9,8 @@
       {
         "id": "r1",
         "tricks": [
-          { "id": "r1t1", "manoeuvreId": "super_stall_to_infinity", "side": null, "selectedBonuses": [] },
-          { "id": "r1t2", "manoeuvreId": "x_chopper_to_tumbling", "side": null, "selectedBonuses": [] },
+          { "id": "r1t1", "manoeuvreId": "macfly", "side": null, "selectedBonuses": [] },
+          { "id": "r1t2", "manoeuvreId": "macfly", "side": null, "selectedBonuses": [] },
           { "id": "r1t3", "manoeuvreId": "sat", "side": "R", "selectedBonuses": [] },
           { "id": "r1t4", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
           { "id": "r1t5", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }

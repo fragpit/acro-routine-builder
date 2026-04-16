@@ -28,18 +28,18 @@ import TrickInfoCard from './TrickInfoCard';
 import ViolationsPanel from './ViolationsPanel';
 import TrickCell from './TrickCell';
 import ProgramControls from './ProgramControls';
-import ConstructorMobile from './mobile/ConstructorMobile';
+import BuilderMobile from './mobile/BuilderMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { IconUndo, IconRedo } from './icons';
 import NumberStepper from './NumberStepper';
 
-export default function Constructor() {
+export default function Builder() {
   const isMobile = useIsMobile();
-  if (isMobile) return <ConstructorMobile />;
-  return <ConstructorDesktop />;
+  if (isMobile) return <BuilderMobile />;
+  return <BuilderDesktop />;
 }
 
-function ConstructorDesktop() {
+function BuilderDesktop() {
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const addTrick = useProgramStore((s) => s.addTrick);

@@ -5,6 +5,17 @@ import { DEFAULT_RUNS } from '../data/competition-types';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { validateProgram } from '../rules/engine';
 
+if (
+  !localStorage.getItem('arb_program') &&
+  localStorage.getItem('apc_program')
+) {
+  localStorage.setItem(
+    'arb_program',
+    localStorage.getItem('apc_program')!,
+  );
+  localStorage.removeItem('apc_program');
+}
+
 let idCounter = 0;
 const nextId = () => `id_${Date.now()}_${++idCounter}`;
 
@@ -324,7 +335,7 @@ export const useProgramStore = create<ProgramState>()(
     }),
     }),
     {
-      name: 'apc_program',
+      name: 'arb_program',
       partialize: (state) => ({
         program: state.program,
         savedPrograms: state.savedPrograms,

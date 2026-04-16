@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.4.0
+
+- Rename app from Acro Program Constructor to Acro Routine Builder
+  (APC -> ARB)
+- Rename `/constructor` route to `/builder`
+- Rename component files (Constructor -> Builder)
+- Update GitHub URLs to match renamed repository
+- Add backward compatibility for importing old `.apc.json` files
+- Migrate localStorage keys from `apc_*` to `arb_*` prefix
+- Rename test data files from `.apc.json` to `.arb.json`
+- Fix deprecated `apple-mobile-web-app-capable` meta tag
+
 ## v0.3.26 (2026-04-16)
 
 - Escape `>` and `<` in sporting code source markdown
