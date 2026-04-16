@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.2
 
 - Fix Final Score going negative when repetition penalty exceeds 100%:
   choreo now clamps to 0
