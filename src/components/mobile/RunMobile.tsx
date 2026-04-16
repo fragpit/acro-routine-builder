@@ -160,7 +160,7 @@ export default function RunMobile({
             <span className="justify-self-center text-slate-400 dark:text-slate-500" aria-hidden>
               ⌃
             </span>
-            <span className="justify-self-end font-mono">
+            <span className={`justify-self-end font-mono ${awtMode ? 'text-xs' : ''}`}>
               <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
                 Bonus
               </span>
