@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fix Final Score going negative when repetition penalty exceeds 100%:
+  choreo now clamps to 0
+
 ## v0.6.1
 
 - Fix Final Score breakdown formula: show the repetition penalty factor

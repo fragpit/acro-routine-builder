@@ -98,7 +98,10 @@ A single boolean `awtMode` on the Program. Structural differences are minimal (M
 2. Make the changes.
 3. Commit and push the branch.
 4. Open a PR via GitHub MCP (never `gh` CLI - see user memory).
-5. Add changes to CHANGELOG.md
+5. Add changes to CHANGELOG.md. Keep entries short - one bullet, a
+   single line if possible, describing the user-visible effect. Put
+   root-cause analysis and implementation detail in the PR body, not
+   in CHANGELOG.
 
 Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
 
