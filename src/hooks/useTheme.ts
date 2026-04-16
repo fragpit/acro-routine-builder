@@ -1,20 +1,11 @@
 import { useEffect, useState } from 'react';
+import { STORAGE_KEYS } from '../store/storage-keys';
 
 export type Theme = 'light' | 'dark';
 
-const STORAGE_KEY = 'arb_theme';
-const LEGACY_KEY = 'apc_theme';
-
 function getInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'dark';
-  let stored = window.localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    stored = window.localStorage.getItem(LEGACY_KEY);
-    if (stored) {
-      window.localStorage.setItem(STORAGE_KEY, stored);
-      window.localStorage.removeItem(LEGACY_KEY);
-    }
-  }
+  const stored = window.localStorage.getItem(STORAGE_KEYS.theme);
   if (stored === 'light' || stored === 'dark') return stored;
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
@@ -32,7 +23,7 @@ export function useTheme(): [Theme, () => void] {
 
   useEffect(() => {
     applyTheme(theme);
-    window.localStorage.setItem(STORAGE_KEY, theme);
+    window.localStorage.setItem(STORAGE_KEYS.theme, theme);
   }, [theme]);
 
   const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
