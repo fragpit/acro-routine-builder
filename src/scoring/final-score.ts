@@ -84,8 +84,8 @@ export function runScoreBreakdown(
 
   const tMark = 10 * (quality.technical / 100);
   const cBase = 9 + (symmetry.balanced ? 1 : 0);
-  const cMark =
-    cBase * (1 - choreoPenalty / 100) * (quality.choreo / 100);
+  const repetitionFactor = Math.max(0, 1 - choreoPenalty / 100);
+  const cMark = cBase * repetitionFactor * (quality.choreo / 100);
   const lMark = 0;
 
   const techFinal = tMark * tc * (distribution.technical / 100);
