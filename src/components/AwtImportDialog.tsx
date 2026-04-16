@@ -106,7 +106,7 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
     setError(null);
     setSearch('');
     try {
-      const full = await fetchCompetition(comp.id);
+      const full = await fetchCompetition(comp._id);
       setCompetition(full);
       const allPilots = extractPilots(full);
       setPilots(allPilots);
@@ -344,7 +344,7 @@ function CompetitionPicker({
       ) : (
         <ul className="space-y-1">
           {competitions.map((c) => (
-            <li key={c.id}>
+            <li key={c._id}>
               <button
                 type="button"
                 onClick={() => onPick(c)}

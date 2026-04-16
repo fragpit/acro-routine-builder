@@ -8,7 +8,13 @@
 const AWT_API_BASE = 'https://api.acroworldtour.com/public';
 
 export interface AwtCompetitionSummary {
-  id: string;
+  /**
+   * MongoDB ObjectId as string. The API exposes it verbatim as `_id`
+   * (not `id`), which is unusual for public JSON APIs - keep the
+   * underscore or `fetchCompetition(comp._id)` will call
+   * `/competitions/undefined`.
+   */
+  _id: string;
   name: string;
   code: string;
   type: 'solo' | 'synchro';

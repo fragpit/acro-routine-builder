@@ -192,7 +192,7 @@ describe('extractPilots / mapCompetitionToProgram', () => {
   });
 
   const competition: AwtCompetitionWithResults = {
-    id: 'test-comp',
+    _id: 'test-comp',
     name: 'Test Comp',
     code: 'test-comp',
     type: 'solo',
