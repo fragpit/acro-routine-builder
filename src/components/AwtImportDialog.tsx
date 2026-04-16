@@ -249,7 +249,6 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
             <ImportPreview
               pilotName={mapped.pilotName}
               competitionName={competition.name}
-              awtMode={mapped.program.awtMode}
               runCount={mapped.program.runs.length}
               totalTricks={mapped.program.runs.reduce(
                 (sum, r) => sum + r.tricks.length,
@@ -455,14 +454,12 @@ function PilotPicker({
 function ImportPreview({
   pilotName,
   competitionName,
-  awtMode,
   runCount,
   totalTricks,
   unmapped,
 }: {
   pilotName: string;
   competitionName: string;
-  awtMode: boolean;
   runCount: number;
   totalTricks: number;
   unmapped: UnmappedTrick[];
@@ -475,7 +472,7 @@ function ImportPreview({
         </h3>
         <p className="text-sm text-slate-500 dark:text-slate-400">{competitionName}</p>
       </div>
-      <dl className="grid grid-cols-3 gap-2 text-sm">
+      <dl className="grid grid-cols-2 gap-2 text-sm">
         <div className="rounded border border-slate-200 dark:border-slate-700 p-2">
           <dt className="text-xs uppercase text-slate-500">Runs</dt>
           <dd className="font-semibold text-slate-800 dark:text-slate-200">{runCount}</dd>
@@ -483,12 +480,6 @@ function ImportPreview({
         <div className="rounded border border-slate-200 dark:border-slate-700 p-2">
           <dt className="text-xs uppercase text-slate-500">Tricks</dt>
           <dd className="font-semibold text-slate-800 dark:text-slate-200">{totalTricks}</dd>
-        </div>
-        <div className="rounded border border-slate-200 dark:border-slate-700 p-2">
-          <dt className="text-xs uppercase text-slate-500">Mode</dt>
-          <dd className="font-semibold text-slate-800 dark:text-slate-200">
-            {awtMode ? 'AWT' : 'AWQ'}
-          </dd>
         </div>
       </dl>
       {unmapped.length > 0 && (
