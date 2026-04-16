@@ -5,14 +5,24 @@ interface Props {
   breakdown: RunScoreBreakdown;
   awtMode: boolean;
   awtMin?: RunScoreBreakdown;
+  /**
+   * Direction the breakdown appears relative to the header when expanded.
+   * On desktop the panel is at the top of its container and the breakdown
+   * flows downward, so the chevron should invite a "down" motion when
+   * collapsed. On mobile the panel is near the bottom of the viewport and
+   * visually expands upward. Default: `up` (mobile convention).
+   */
+  expandsDown?: boolean;
 }
 
 export default function FinalScorePanel({
   breakdown,
   awtMode,
   awtMin,
+  expandsDown = false,
 }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const chevronFlipped = expandsDown ? !expanded : expanded;
 
   const scoreLabel = awtMode && awtMin
     ? `${awtMin.total.toFixed(3)}…${breakdown.total.toFixed(3)}`
@@ -41,7 +51,7 @@ export default function FinalScorePanel({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={`w-3 h-3 text-slate-400 transition-transform ${expanded ? 'rotate-180' : ''}`}
+            className={`w-3 h-3 text-slate-400 transition-transform ${chevronFlipped ? 'rotate-180' : ''}`}
             aria-hidden
           >
             <polyline points="6 15 12 9 18 15" />

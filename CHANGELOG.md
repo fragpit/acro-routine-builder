@@ -6,6 +6,10 @@
   (e.g. `× 87%(rep)` for -13%) and read the symmetry bonus from the
   actual value instead of reverse-engineering it from `cMark`, which
   mis-rendered as `0(sym)` once the penalty dragged the number down
+- Flip the desktop Final Score chevron to match the panel's expansion
+  direction: v when collapsed (breakdown will flow downward), ^ when
+  expanded. Mobile stays ^-when-collapsed because the panel visually
+  grows upward there
 
 ## v0.6.0
 
