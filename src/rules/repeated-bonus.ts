@@ -1,4 +1,5 @@
 import type { Manoeuvre, Run } from './types';
+import { getBonusCategory } from './bonus-category';
 
 /**
  * 4.3 second paragraph: for repetition-allowed manoeuvres (Tail Slide,
@@ -17,7 +18,7 @@ export function unrewardedBonusesByTrick(
     if (!m || !m.repetitionAllowed) continue;
     const trickCategories = new Set<'twisted' | 'flipped'>();
     for (const bonusId of t.selectedBonuses) {
-      const cat = m.availableBonuses.find((ab) => ab.id === bonusId)?.countsAs;
+      const cat = getBonusCategory(m, bonusId);
       if (cat === 'twisted' || cat === 'flipped') trickCategories.add(cat);
     }
     for (const cat of trickCategories) {
@@ -27,8 +28,7 @@ export function unrewardedBonusesByTrick(
         continue;
       }
       for (const bonusId of t.selectedBonuses) {
-        const def = m.availableBonuses.find((ab) => ab.id === bonusId);
-        if (def?.countsAs !== cat) continue;
+        if (getBonusCategory(m, bonusId) !== cat) continue;
         const set = result.get(t.id) ?? new Set<string>();
         set.add(bonusId);
         result.set(t.id, set);

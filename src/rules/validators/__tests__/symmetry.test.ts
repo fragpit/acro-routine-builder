@@ -1,12 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { runSymmetry, validateSymmetry } from '../symmetry';
 import { MANOEUVRES_BY_ID } from '../../../data/manoeuvres';
-import { placedTrick, run } from './helpers';
-import type { Program } from '../../types';
-
-function prog(runs: ReturnType<typeof run>[]): Program {
-  return { awtMode: false, runs, repeatAfterRuns: runs.length, defaultBonuses: [] };
-}
+import { placedTrick, run, program } from './helpers';
 
 describe('runSymmetry', () => {
   it('counts sided tricks and ignores noSide ones', () => {
@@ -48,12 +43,12 @@ describe('runSymmetry', () => {
 
 describe('validateSymmetry', () => {
   it('returns no violation for balanced run', () => {
-    const p = prog([run(placedTrick('sat', { side: 'L' }), placedTrick('sat', { side: 'R' }))]);
+    const p = program([run(placedTrick('sat', { side: 'L' }), placedTrick('sat', { side: 'R' }))]);
     expect(validateSymmetry(p, MANOEUVRES_BY_ID)).toEqual([]);
   });
 
   it('warns per-run when unbalanced', () => {
-    const p = prog([
+    const p = program([
       run(
         placedTrick('sat', { side: 'L' }),
         placedTrick('sat', { side: 'L' }),
@@ -68,17 +63,17 @@ describe('validateSymmetry', () => {
   });
 
   it('ignores empty runs', () => {
-    const p = prog([run()]);
+    const p = program([run()]);
     expect(validateSymmetry(p, MANOEUVRES_BY_ID)).toEqual([]);
   });
 
   it('does not warn for noSide-only runs with tricks', () => {
-    const p = prog([run(placedTrick('tail_slide', { side: null }))]);
+    const p = program([run(placedTrick('tail_slide', { side: null }))]);
     expect(validateSymmetry(p, MANOEUVRES_BY_ID)).toEqual([]);
   });
 
   it('does not warn for a single sided trick', () => {
-    const p = prog([run(placedTrick('sat', { side: 'L' }))]);
+    const p = program([run(placedTrick('sat', { side: 'L' }))]);
     expect(validateSymmetry(p, MANOEUVRES_BY_ID)).toEqual([]);
   });
 });

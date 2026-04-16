@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useProgramStore } from '../store/program-store';
 import { exportProgramJson, importProgramJson } from '../io/program-json';
 import { exportProgramMarkdown } from '../io/program-markdown';
+import { download, safeFileName } from '../io/download';
 
 export default function ProgramControls() {
   const program = useProgramStore((s) => s.program);
@@ -56,23 +57,6 @@ export default function ProgramControls() {
   function openSave() {
     setSaveName(currentName ?? '');
     setOpenMenu(openMenu === 'save' ? null : 'save');
-  }
-
-  function safeFileName(base: string, ext: string): string {
-    const cleaned = base.replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^_+|_+$/g, '');
-    return `${cleaned || 'program'}.${ext}`;
-  }
-
-  function download(filename: string, content: string, mime: string) {
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
   }
 
   function onExportJson() {

@@ -1,11 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { validateRepetition } from '../repetition';
 import { MANOEUVRES_BY_ID } from '../../../data/manoeuvres';
-import { placedTrick, run } from './helpers';
-import type { Program } from '../../types';
+import { placedTrick, run, program } from './helpers';
 
-function prog(runs: ReturnType<typeof run>[], repeatAfterRuns = 5): Program {
-  return { awtMode: false, runs, repeatAfterRuns, defaultBonuses: [] };
+function prog(runs: ReturnType<typeof run>[], repeatAfterRuns = 5) {
+  return program(runs, false, repeatAfterRuns);
 }
 
 describe('validateRepetition', () => {

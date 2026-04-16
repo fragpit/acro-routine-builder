@@ -11,4 +11,5 @@ dev-dist/
 coverage/
 .claude/
 *.tsbuildinfo
+.vite/
 

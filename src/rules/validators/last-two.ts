@@ -1,4 +1,5 @@
 import type { Program, Manoeuvre, Violation } from '../types';
+import { getBonusCategory } from '../bonus-category';
 
 /**
  * 1.2: Certain manoeuvres cannot be in the last two positions of a run.
@@ -24,10 +25,9 @@ export function validateLastTwo(
           affectedCells: [{ runIndex, trickIndex: idx }],
         });
       }
-      const hasFlip = trick.selectedBonuses.some((b) => {
-        const def = m.availableBonuses.find((ab) => ab.id === b);
-        return def?.countsAs === 'flipped';
-      });
+      const hasFlip = trick.selectedBonuses.some(
+        (b) => getBonusCategory(m, b) === 'flipped',
+      );
       if (hasFlip) {
         violations.push({
           ruleId: 'last-two',

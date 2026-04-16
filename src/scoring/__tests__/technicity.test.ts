@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { runTechnicity, programTechnicity } from '../technicity';
+import { runTechnicity } from '../technicity';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { placedTrick, run } from '../../rules/validators/__tests__/helpers';
 
@@ -33,18 +33,5 @@ describe('technicity', () => {
     );
     const t = runTechnicity(r, MANOEUVRES_BY_ID);
     expect(t).toBeCloseTo((1.95 + 1.95) / 2, 5);
-  });
-
-  it('programTechnicity returns per-run array', () => {
-    const t = programTechnicity(
-      {
-        awtMode: false,
-        repeatAfterRuns: 2,
-        defaultBonuses: [],
-        runs: [run(placedTrick('sat')), run(placedTrick('stall'))],
-      },
-      MANOEUVRES_BY_ID,
-    );
-    expect(t).toEqual([1.25, 1.6]);
   });
 });

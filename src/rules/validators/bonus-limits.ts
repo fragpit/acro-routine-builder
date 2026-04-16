@@ -1,10 +1,6 @@
 import type { BonusCategory, Manoeuvre, Program, Violation } from '../types';
-
-const LIMITS: Record<BonusCategory, number> = {
-  twisted: 5,
-  reversed: 3,
-  flipped: 2,
-};
+import { getBonusCategory } from '../bonus-category';
+import { BONUS_LIMITS } from '../../data/competition-types';
 
 /**
  * 3.5: Per-run bonus category limits. Max 5 twisted / 3 reversed / 2 flipped
@@ -26,18 +22,18 @@ export function validateBonusLimits(
       if (!m) return;
       const categories = new Set<BonusCategory>();
       for (const bonusId of t.selectedBonuses) {
-        const def = m.availableBonuses.find((ab) => ab.id === bonusId);
-        if (def?.countsAs) categories.add(def.countsAs);
+        const cat = getBonusCategory(m, bonusId);
+        if (cat) categories.add(cat);
       }
       for (const c of categories) byCategory[c].push({ trickIndex });
     });
-    (Object.keys(LIMITS) as BonusCategory[]).forEach((cat) => {
+    (Object.keys(BONUS_LIMITS) as BonusCategory[]).forEach((cat) => {
       const cells = byCategory[cat];
-      if (cells.length > LIMITS[cat]) {
+      if (cells.length > BONUS_LIMITS[cat]) {
         violations.push({
           ruleId: `bonus-limits-${cat}`,
           severity: 'warning',
-          description: `Run ${runIndex + 1}: more than ${LIMITS[cat]} ${cat} manoeuvres (${cells.length})`,
+          description: `Run ${runIndex + 1}: more than ${BONUS_LIMITS[cat]} ${cat} manoeuvres (${cells.length})`,
           affectedCells: cells.map((c) => ({ runIndex, trickIndex: c.trickIndex })),
         });
       }

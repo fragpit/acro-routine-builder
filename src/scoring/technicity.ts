@@ -1,4 +1,4 @@
-import type { Manoeuvre, Program, Run } from '../rules/types';
+import type { Manoeuvre, Run } from '../rules/types';
 import { excludedFromScoring } from './eligibility';
 
 /**
@@ -16,8 +16,4 @@ export function runTechnicity(run: Run, manoeuvres: Record<string, Manoeuvre>): 
     .slice(0, 3);
   if (coeffs.length === 0) return 0;
   return coeffs.reduce((s, c) => s + c, 0) / coeffs.length;
-}
-
-export function programTechnicity(program: Program, manoeuvres: Record<string, Manoeuvre>): number[] {
-  return program.runs.map((r) => runTechnicity(r, manoeuvres));
 }

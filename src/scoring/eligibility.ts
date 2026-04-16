@@ -1,12 +1,10 @@
 import type { BonusCategory, Manoeuvre, Run } from '../rules/types';
-
-const BONUS_LIMITS: Record<BonusCategory, number> = {
-  twisted: 5,
-  reversed: 3,
-  flipped: 2,
-};
-const HIGH_COEFF_LIMIT = 2;
-const HIGH_COEFF_THRESHOLD = 1.95;
+import { getBonusCategory } from '../rules/bonus-category';
+import {
+  BONUS_LIMITS,
+  HIGH_COEFF_LIMIT,
+  HIGH_COEFF_THRESHOLD,
+} from '../data/competition-types';
 
 /**
  * Returns the set of placed-trick ids that will not be scored in the given run
@@ -38,7 +36,7 @@ export function exclusionsByTrick(
     const isHigh = m.coefficient >= HIGH_COEFF_THRESHOLD;
     const cats = new Set<BonusCategory>();
     for (const b of t.selectedBonuses) {
-      const cat = m.availableBonuses.find((ab) => ab.id === b)?.countsAs;
+      const cat = getBonusCategory(m, b);
       if (cat) cats.add(cat);
     }
     const trickReasons: string[] = [];

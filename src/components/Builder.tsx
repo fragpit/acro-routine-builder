@@ -35,6 +35,7 @@ import DistributionEditor from './DistributionEditor';
 import QualityCorrectionEditor from './QualityCorrectionEditor';
 import BuilderMobile from './mobile/BuilderMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { useChoreoPenaltyPerRun, useViolationHighlights } from '../hooks/useScoringDerived';
 import { IconUndo, IconRedo } from './icons';
 import NumberStepper from './NumberStepper';
 
@@ -116,28 +117,8 @@ function BuilderDesktop() {
     return null;
   }, [selectedTrickId, program.runs]);
 
-  const highlights = useMemo(() => {
-    const map = new Map<string, 'error' | 'warning'>();
-    for (const v of violations) {
-      for (const c of v.affectedCells) {
-        const key = `${c.runIndex}:${c.trickIndex}`;
-        if (v.severity === 'error' || !map.has(key)) map.set(key, v.severity);
-      }
-    }
-    return map;
-  }, [violations]);
-
-  const choreoPenaltyPerRun = useMemo(() => {
-    const totals: Record<number, number> = {};
-    for (const v of violations) {
-      if (!v.choreoPenaltyByRun) continue;
-      for (const [runIndex, pct] of Object.entries(v.choreoPenaltyByRun)) {
-        const i = Number(runIndex);
-        totals[i] = (totals[i] ?? 0) + pct;
-      }
-    }
-    return totals;
-  }, [violations]);
+  const highlights = useViolationHighlights(violations);
+  const choreoPenaltyPerRun = useChoreoPenaltyPerRun(violations);
 
   const programTotal = useMemo(() => {
     const hasTricks = program.runs.some((r) => r.tricks.length > 0);
@@ -547,8 +528,6 @@ function RunColumn({
               <div key={t.id}>
                 <TrickCell
                   trick={t}
-                  runIndex={runIndex}
-                  trickIndex={i}
                   highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
                   selected={selectedTrickId === t.id}
                   ignoredReasons={ignored.get(t.id)}

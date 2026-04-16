@@ -5,8 +5,6 @@ import { useProgramStore } from '../store/program-store';
 
 interface Props {
   trick: PlacedTrick;
-  runIndex: number;
-  trickIndex: number;
   highlight: 'none' | 'error' | 'warning';
   selected: boolean;
   ignoredReasons?: string[];

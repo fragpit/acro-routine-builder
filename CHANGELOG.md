@@ -4,6 +4,21 @@
 
 - Move Undo/Redo buttons to the mobile header next to the burger menu
 - Flip chevron arrows: point up when collapsed, down when expanded
+- Refactor: code hygiene pass (no user-visible changes)
+  - Extract `safeFileName` / `download` into `src/io/download.ts`
+    (was duplicated between desktop and mobile file controls)
+  - Extract `getBonusCategory` helper in `src/rules/`, used by four
+    validators / scoring modules
+  - Consolidate bonus category limits and high-coefficient cap in
+    `src/data/competition-types.ts` (was duplicated)
+  - Centralize localStorage keys in `src/store/storage-keys.ts` and
+    drop legacy `apc_*` migration shims
+  - Extract `useViolationHighlights` and `useChoreoPenaltyPerRun`
+    hooks used by both desktop and mobile builders
+  - Remove unused `TrickCell` props, `programTechnicity` dead wrapper
+    and `resetIds` test helper
+  - Ignore `.vite/` dev-server cache
+  - Document follow-up refactorings in `docs/todo.md`
 
 ## v0.5.0
 

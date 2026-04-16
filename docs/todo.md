@@ -53,9 +53,11 @@
 
 ## P3 - техдолг и чистка
 
-- [ ] **Проверить размер Builder.tsx (442 строки)**. Логику
+- [ ] **Проверить размер Builder.tsx (722 строки)**. Логику
   DnD-сенсоров, sensors config и layout стоит вынести в хуки
-  (`useProgramDnd`, `useTrickPalette`).
+  (`useProgramDnd`, `useTrickPalette`). Частично начато:
+  `useViolationHighlights` и `useChoreoPenaltyPerRun` вынесены в
+  [useScoringDerived.ts](../src/hooks/useScoringDerived.ts).
 - [ ] **Общий helper для selectors Zustand** - сейчас в каждом
   компоненте свой селектор.
 - [ ] **E2E-тесты** (Playwright) на ключевой флоу: drag trick -> see
@@ -67,3 +69,29 @@
 - [ ] **Lighthouse / bundle-size** пройтись по production-сборке:
   react-markdown + remark-gfm тяжёлые, можно lazy-load документацию
   через React.lazy, чтобы не тащить в initial bundle конструктора.
+
+## Refactoring
+
+Follow-up рефакторинги, которые намеренно не вошли в PR по code
+hygiene. Требуют отдельной визуальной/поведенческой верификации и
+либо слишком большую поверхность изменений для одного PR, либо
+меняют re-render / pixel-diff.
+
+- [ ] **Декомпозиция Builder.tsx**. Пять inline-субкомпонентов
+  (`PaletteCard`, `RunColumn`, `DropZone`, `BonusSlot`, `EmptyDropZone`)
+  на ~260 строк. Риск: dnd-kit context coupling и мемоизация. Вынести
+  в `src/components/builder/` отдельным PR с визуальной проверкой
+  drag-and-drop.
+- [ ] **RunMobile.tsx: сократить количество пропсов** (сейчас 13).
+  `distribution`, `quality`, `awtMode` можно читать селекторами
+  Zustand напрямую в `FinalScorePanel` и `TrickCellMobile`. Меняет
+  re-render surface - нужна проверка отсутствия лишних перерисовок.
+- [ ] **Типизация dnd-kit drag-data**. Сейчас в
+  [Builder.tsx](../src/components/Builder.tsx) четыре каста
+  `as { type: 'palette' | 'cell'; ... }`. Завести union type
+  `DragData` + guard-функции, убрать касты.
+- [ ] **Консолидация дублированных иконок**. Inline SVG иконки в
+  [MobileFileControls.tsx](../src/components/mobile/MobileFileControls.tsx)
+  можно вынести в shared
+  [icons.tsx](../src/components/icons.tsx). Нужен pixel-diff,
+  потому что геометрия иконок немного отличается.
