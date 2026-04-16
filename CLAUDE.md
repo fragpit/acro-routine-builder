@@ -31,7 +31,7 @@ Single-page React app, fully static, deployed to GitHub Pages. No backend, no pe
 
 ### 1. Data (`src/data/`)
 
-Static catalog. `manoeuvres.ts` holds all 38 solo tricks with a single schema that powers everything downstream: validators, scoring, the constructor UI and the generated trick reference. Each manoeuvre carries structured fields (`coefficient`, `groups`, `forbiddenConnectionTo`, `availableBonuses`, `mutualExclusions`, `awtExcluded`, etc.) plus a `description` array of bullet points lifted from the sporting code. Keep this one source of truth - do not fork trick data into UI components.
+Static catalog. `manoeuvres.ts` holds all 38 solo tricks with a single schema that powers everything downstream: validators, scoring, the builder UI and the generated trick reference. Each manoeuvre carries structured fields (`coefficient`, `groups`, `forbiddenConnectionTo`, `availableBonuses`, `mutualExclusions`, `awtExcluded`, etc.) plus a `description` array of bullet points lifted from the sporting code. Keep this one source of truth - do not fork trick data into UI components.
 
 ### 2. Business logic (`src/rules/`, `src/scoring/`, `src/io/`) - pure TS, no React
 
@@ -43,7 +43,7 @@ Validation runs synchronously on every state change - the dataset is small enoug
 
 ### 3. UI (`src/components/`, `src/store/`, `src/hooks/`)
 
-- Flat component layout except for `src/components/mobile/`, which is the adaptive mobile layer. Routing is HashRouter so Pages works without redirects. Main routes: `/` (Home), `/constructor` (Constructor), `/docs/rules`, `/docs/tricks`.
+- Flat component layout except for `src/components/mobile/`, which is the adaptive mobile layer. Routing is HashRouter so Pages works without redirects. Main routes: `/` (Home), `/builder` (Builder), `/docs/rules`, `/docs/tricks`.
 - `store/program-store.ts` is a Zustand store with localStorage persistence. It is the only place that mutates the `Program`. Components read selectors; validators receive a snapshot.
 - `@dnd-kit` drives drag-and-drop between palette and run cells on desktop. Touch sensors are included, but the mobile layer uses a tap-to-arm / tap-to-insert pattern instead of real DnD (easier to hit on a phone).
 - `TrickInfoCard` is a side panel (not a popover) opened on cell click; it shows the trick description and the bonus checkboxes with mutual-exclusion disabling.
@@ -52,9 +52,9 @@ Validation runs synchronously on every state change - the dataset is small enoug
 
 ### Mobile layer (`src/components/mobile/`)
 
-Activated via `useIsMobile()` (matchMedia `(max-width: 1023px)`) inside `Constructor.tsx`. Reuses the store, validators, scoring and data unchanged - only the presentation differs. Docs pages (`RulesDocs`, `TricksDocs`) also adapt on narrow viewports via an off-canvas drawer sidebar; that logic is inline in those components, not in `mobile/`.
+Activated via `useIsMobile()` (matchMedia `(max-width: 1023px)`) inside `Builder.tsx`. Reuses the store, validators, scoring and data unchanged - only the presentation differs. Docs pages (`RulesDocs`, `TricksDocs`) also adapt on narrow viewports via an off-canvas drawer sidebar; that logic is inline in those components, not in `mobile/`.
 
-- `ConstructorMobile.tsx` - root; owns `armedManoeuvreId` (palette arm) and `armedMoveTrickId` (move arm), which are mutually exclusive. Routes tap-on-slot to `addTrick` or `moveTrick`.
+- `BuilderMobile.tsx` - root; owns `armedManoeuvreId` (palette arm) and `armedMoveTrickId` (move arm), which are mutually exclusive. Routes tap-on-slot to `addTrick` or `moveTrick`.
 - `PaletteStrip.tsx` - `[+ Add trick]` button opening `TrickPicker`, plus up to 5 recently-used tricks kept in `localStorage` under `arb.recent-tricks`. No top-level search - search lives inside the picker.
 - `TrickPicker.tsx` - full-screen bottom-sheet with all 38 tricks sorted by coefficient and an autofocus search input.
 - `TrickCellMobile.tsx` - cell is a `<div role="button">` (not `<button>`) so the inner L/R side toggles can be real `<button>` elements without HTML nesting violations.
@@ -68,7 +68,7 @@ Activated via `useIsMobile()` (matchMedia `(max-width: 1023px)`) inside `Constru
 ### Data flow
 
 1. User drags a trick → Zustand action mutates `Program`.
-2. `Constructor` re-renders, calls `validateProgram(program)`.
+2. `Builder` re-renders, calls `validateProgram(program)`.
 3. `ViolationsPanel` lists issues; `TrickCell` highlights affected cells via `affectedCells: { runIndex, trickIndex }[]`.
 
 ### AWT vs AWQ

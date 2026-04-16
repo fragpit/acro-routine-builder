@@ -16,7 +16,7 @@
 ## P1 - функциональные пробелы
 
 - [ ] **Поиск в палитре триков**. В плане упомянут (`phase 1 / trick
-  palette: sort + search`), но в [Constructor.tsx](../src/components/Constructor.tsx)
+  palette: sort + search`), но в [Builder.tsx](../src/components/Builder.tsx)
   поиска не видно.
 - [ ] **Переключатель направления сортировки** палитры (`sort by
   coefficient with direction toggle` из плана).
@@ -53,7 +53,7 @@
 
 ## P3 - техдолг и чистка
 
-- [ ] **Проверить размер Constructor.tsx (442 строки)**. Логику
+- [ ] **Проверить размер Builder.tsx (442 строки)**. Логику
   DnD-сенсоров, sensors config и layout стоит вынести в хуки
   (`useProgramDnd`, `useTrickPalette`).
 - [ ] **Общий helper для selectors Zustand** - сейчас в каждом

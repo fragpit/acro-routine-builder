@@ -792,7 +792,7 @@ export const MANOEUVRES_BY_ID: Record<string, Manoeuvre> = Object.fromEntries(
 );
 
 /**
- * Distinct bonuses across all manoeuvres, keyed by id. Used by the constructor
+ * Distinct bonuses across all manoeuvres, keyed by id. Used by the builder
  * UI to populate the default-bonus selector.
  */
 export const BONUS_CATALOG: BonusDefinition[] = (() => {

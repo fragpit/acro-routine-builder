@@ -4,7 +4,7 @@ Ready-to-import `.arb.json` programs for manual UI testing. Each file
 targets one business rule from
 [../docs/trick_rules.md](../docs/trick_rules.md) and is named after it.
 
-Import via the Constructor: **Load from file** → pick a file below.
+Import via the Builder: **Load from file** → pick a file below.
 
 ## Files
 

@@ -7,7 +7,7 @@ import TrickSheet from './TrickSheet';
 import ViolationsBar from './ViolationsBar';
 import MobileMenu from './MobileMenu';
 
-export default function ConstructorMobile() {
+export default function BuilderMobile() {
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const currentName = useProgramStore((s) => s.currentName);

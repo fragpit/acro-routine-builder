@@ -7,7 +7,7 @@ A service for building competition programs for AWT/AWQ events.
 On the home page the user picks the competition type they want to
 build a run for.
 
-After that the user lands on the constructor screen. The constructor screen
+After that the user lands on the builder screen. The builder screen
 consists of:
 
 - a trick list

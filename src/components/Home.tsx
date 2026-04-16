@@ -9,7 +9,7 @@ export default function Home() {
         Build an AWT/AWQ program under FAI Sporting Code 2025 rules.
       </p>
       <Link
-        to="/constructor"
+        to="/builder"
         className="inline-block px-6 py-4 text-lg rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-sky-500 dark:hover:border-sky-500 transition text-sky-700 dark:text-sky-300 font-semibold"
       >
         Open

@@ -1,13 +1,13 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Home from './Home';
-import Constructor from './Constructor';
+import Builder from './Builder';
 import ThemeToggle from './ThemeToggle';
 import TricksDocs from './TricksDocs';
 import RulesDocs from './RulesDocs';
 
 export default function App() {
   const location = useLocation();
-  const hideHeaderOnMobile = location.pathname === '/constructor';
+  const hideHeaderOnMobile = location.pathname === '/builder';
   return (
     <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-[100lvh] lg:h-full">
       <div aria-hidden className="paraglider-bg" />
@@ -44,7 +44,7 @@ export default function App() {
       <main className="flex-1 min-h-0">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/constructor" element={<Constructor />} />
+          <Route path="/builder" element={<Builder />} />
           <Route path="/docs/rules" element={<RulesDocs />} />
           <Route path="/docs/tricks" element={<TricksDocs />} />
         </Routes>
