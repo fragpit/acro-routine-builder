@@ -1,5 +1,4 @@
 import type { ScoreDistribution } from '../scoring/final-score';
-import { DEFAULT_DISTRIBUTION } from '../scoring/final-score';
 
 interface Props {
   distribution: ScoreDistribution;
@@ -58,14 +57,6 @@ function linkedStep(
     return null;
   }
   return { technical: newT, choreo: newC, landing: newL };
-}
-
-export function isDistributionDefault(d: ScoreDistribution) {
-  return (
-    d.technical === DEFAULT_DISTRIBUTION.technical &&
-    d.choreo === DEFAULT_DISTRIBUTION.choreo &&
-    d.landing === DEFAULT_DISTRIBUTION.landing
-  );
 }
 
 export default function DistributionEditor({
