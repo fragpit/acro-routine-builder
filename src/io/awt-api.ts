@@ -5,7 +5,16 @@
  * GitHub Pages can call them directly. No authentication is required.
  */
 
+import { cachedJson } from './api-cache';
+
 const AWT_API_BASE = 'https://api.acroworldtour.com/public';
+
+// Competitions list changes infrequently (new events added once or twice
+// a month); 30 minutes balances freshness against request volume.
+const COMPETITIONS_LIST_TTL_MS = 30 * 60 * 1000;
+// Once a competition is `closed`, its results are frozen. Cache for a
+// week. Open / init competitions (live events) skip the cache entirely.
+const COMPETITION_DETAIL_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 export interface AwtCompetitionSummary {
   /**
@@ -94,12 +103,23 @@ async function getJson<T>(url: string): Promise<T> {
 
 /** List all competitions (both solo and synchro, all states). */
 export async function fetchCompetitions(): Promise<AwtCompetitionSummary[]> {
-  return getJson<AwtCompetitionSummary[]>(`${AWT_API_BASE}/competitions/`);
+  return cachedJson<AwtCompetitionSummary[]>(
+    `${AWT_API_BASE}/competitions/`,
+    getJson,
+    { ttlMs: COMPETITIONS_LIST_TTL_MS },
+  );
 }
 
 /** Fetch a single competition including per-run flight results. */
 export async function fetchCompetition(id: string): Promise<AwtCompetitionWithResults> {
-  return getJson<AwtCompetitionWithResults>(
+  return cachedJson<AwtCompetitionWithResults>(
     `${AWT_API_BASE}/competitions/${encodeURIComponent(id)}`,
+    getJson,
+    {
+      ttlMs: COMPETITION_DETAIL_TTL_MS,
+      shouldCache: (comp) => comp.state === 'closed',
+    },
   );
 }
+
+export { clearApiCache } from './api-cache';

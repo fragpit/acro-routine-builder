@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  clearApiCache,
   fetchCompetition,
   fetchCompetitions,
   type AwtCompetitionSummary,
@@ -183,6 +184,24 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
               Preview
             </BreadcrumbButton>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              clearApiCache();
+              setCompetitions(null);
+              setCompetition(null);
+              setPilots([]);
+              setSelectedCivlid(null);
+              setStep('competition');
+              setSearch('');
+              setError(null);
+            }}
+            className="shrink-0 text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 px-2 text-xs"
+            aria-label="Refresh from API"
+            title="Clear cache and reload from API"
+          >
+            ↻
+          </button>
           <button
             type="button"
             onClick={onClose}
