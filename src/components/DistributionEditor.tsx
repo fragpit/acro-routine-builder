@@ -35,24 +35,21 @@ function linkedStep(
   key: keyof ScoreDistribution,
   delta: number,
 ): ScoreDistribution | null {
+  let newT: number, newC: number, newL: number;
   if (key === 'landing') {
     const ld = delta * 2;
-    const newLanding = clamp(d.landing + ld);
-    const actualDelta = (newLanding - d.landing) / 2;
-    const newT = clamp(d.technical - actualDelta);
-    const newC = clamp(d.choreo - actualDelta);
-    if (
-      newT === d.technical &&
-      newC === d.choreo &&
-      newLanding === d.landing
-    ) {
-      return null;
-    }
-    return { technical: newT, choreo: newC, landing: newLanding };
+    newL = clamp(d.landing + ld);
+    const half = (newL - d.landing) / 2;
+    newT = clamp(d.technical - half);
+    newC = clamp(d.choreo - half);
+  } else {
+    newT = clamp(d.technical + delta);
+    newC = clamp(d.choreo + delta);
+    newL = clamp(
+      d.landing - (newT - d.technical) - (newC - d.choreo),
+    );
   }
-  const newT = clamp(d.technical + delta);
-  const newC = clamp(d.choreo + delta);
-  const newL = clamp(d.landing - (newT - d.technical) - (newC - d.choreo));
+  if (newT + newC + newL > 100) return null;
   if (
     newT === d.technical &&
     newC === d.choreo &&
@@ -67,11 +64,6 @@ export default function DistributionEditor({
   distribution,
   onChange,
 }: Props) {
-  const total =
-    distribution.technical +
-    distribution.choreo +
-    distribution.landing;
-  const over = total > 100;
   const isDefault =
     distribution.technical === DEFAULT_DISTRIBUTION.technical &&
     distribution.choreo === DEFAULT_DISTRIBUTION.choreo &&
@@ -131,22 +123,8 @@ export default function DistributionEditor({
           </div>
         );
       })}
-      <div className="flex items-center justify-between text-xs">
-        <span
-          className={
-            total === 100
-              ? 'text-emerald-600 dark:text-emerald-400'
-              : over
-                ? 'text-red-600 dark:text-red-400 font-semibold'
-                : 'text-amber-600 dark:text-amber-400'
-          }
-        >
-          Total: {total}%
-          {total !== 100 && (
-            over ? ' (over 100!)' : ' (must be 100%)'
-          )}
-        </span>
-        {!isDefault && (
+      {!isDefault && (
+        <div className="flex justify-end">
           <button
             type="button"
             onClick={() => onChange({ ...DEFAULT_DISTRIBUTION })}
@@ -154,8 +132,8 @@ export default function DistributionEditor({
           >
             reset
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
