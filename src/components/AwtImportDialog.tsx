@@ -188,32 +188,34 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
               Preview
             </BreadcrumbButton>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              clearApiCache();
-              setCompetitions(null);
-              setCompetition(null);
-              setPilots([]);
-              setSelectedCivlid(null);
-              setStep('competition');
-              setSearch('');
-              setError(null);
-            }}
-            className="shrink-0 text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 px-2 text-xs"
-            aria-label="Refresh from API"
-            title="Clear cache and reload from API"
-          >
-            ↻
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="shrink-0 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-2"
-            aria-label="Close dialog"
-          >
-            ✕
-          </button>
+          <div className="shrink-0 flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => {
+                clearApiCache();
+                setCompetitions(null);
+                setCompetition(null);
+                setPilots([]);
+                setSelectedCivlid(null);
+                setStep('competition');
+                setSearch('');
+                setError(null);
+              }}
+              className="text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 px-2 text-xs"
+              aria-label="Refresh from API"
+              title="Clear cache and reload from API"
+            >
+              ↻
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-2"
+              aria-label="Close dialog"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
