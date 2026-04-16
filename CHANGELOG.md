@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Rename app from Acro Program Constructor to Acro Routine Builder
+  (APC -> ARB)
+- Add backward compatibility for importing old `.apc.json` files
+- Migrate localStorage keys from `apc_*` to `arb_*` prefix
+- Rename test data files from `.apc.json` to `.arb.json`
+
 ## v0.3.26 (2026-04-16)
 
 - Escape `>` and `<` in sporting code source markdown

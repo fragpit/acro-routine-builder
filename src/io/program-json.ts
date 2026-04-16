@@ -1,7 +1,8 @@
 import type { Program } from '../rules/types';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 
-const FORMAT = 'acro-program-constructor';
+const FORMAT = 'acro-routine-builder';
+const LEGACY_FORMAT = 'acro-program-constructor';
 const VERSION = 1;
 
 /**
@@ -9,7 +10,7 @@ const VERSION = 1;
  * marker and version so future schema changes can be detected on import.
  */
 export interface ProgramFile {
-  format: typeof FORMAT;
+  format: typeof FORMAT | typeof LEGACY_FORMAT;
   version: number;
   name: string | null;
   exportedAt: string;
@@ -51,7 +52,7 @@ export function importProgramJson(text: string): ImportResult {
   }
   if (!parsed || typeof parsed !== 'object') throw new Error('Empty or invalid file');
   const file = parsed as Partial<ProgramFile>;
-  if (file.format !== FORMAT) {
+  if (file.format !== FORMAT && file.format !== LEGACY_FORMAT) {
     throw new Error(`Unknown format: expected "${FORMAT}"`);
   }
   if (typeof file.version !== 'number' || file.version > VERSION) {

@@ -172,7 +172,7 @@ export default function MobileMenu({ open, onClose }: Props) {
           </section>
 
           <section>
-            <h3 className="text-[11px] uppercase text-slate-500 mb-2">APC (v{__APP_VERSION__})</h3>
+            <h3 className="text-[11px] uppercase text-slate-500 mb-2">ARB (v{__APP_VERSION__})</h3>
             <div className="flex items-center gap-1.5">
               <Link
                 to="/"

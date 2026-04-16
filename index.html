@@ -10,14 +10,14 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Acro Program" />
-    <title>Acro Program Constructor</title>
+    <meta name="apple-mobile-web-app-title" content="Acro Routine" />
+    <title>Acro Routine Builder</title>
   </head>
   <body>
     <script>
       (function () {
         try {
-          var t = localStorage.getItem('apc_theme');
+          var t = localStorage.getItem('arb_theme') || localStorage.getItem('apc_theme');
           if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
           if (t === 'dark') document.documentElement.classList.add('dark');
         } catch (e) {}

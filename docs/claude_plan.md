@@ -1,4 +1,4 @@
-# Plan: Acro Program Constructor
+# Plan: Acro Routine Builder
 
 ## Context
 
@@ -307,7 +307,7 @@ TRICK PALETTE - side column spanning the full screen height.
 
 ```text
 ┌──────────────────────────────────────────────────┐
-│  Acro Program Constructor     Rules Tricks  ☀/🌙  │
+│  Acro Routine Builder         Rules Tricks  ☀/🌙  │
 ├───────────┬──────────────────────────────────────┤
 │           │ Runs: [3]  [x] AWT mode              │
 ├───────────┼──────────────────────────────────────┤

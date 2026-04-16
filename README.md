@@ -1,4 +1,4 @@
-# Acro Program Constructor
+# Acro Routine Builder
 
 Web app for paragliding acro pilots to build competition programs (AWT/AWQ)
 under FAI Sporting Code 2025 rules. Drag tricks into runs, get real-time
@@ -80,7 +80,7 @@ implementation status. Short version:
   `lg:` breakpoint (reuses store, validators and scoring unchanged)
 - `src/hooks/useIsMobile.ts` - media-query hook driving the
   desktop/mobile split
-- `test_data/` - ready-to-import `.apc.json` fixtures for manual UI
+- `test_data/` - ready-to-import `.arb.json` fixtures for manual UI
   testing, one per business rule (see
   [test_data/README.md](test_data/README.md))
 

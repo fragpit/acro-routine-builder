@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="h-full flex items-center justify-center p-6">
       <div className="max-w-3xl w-full text-center flex flex-col items-center -translate-y-[10vh]">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-3">Acro Program Constructor</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold mb-3">Acro Routine Builder</h1>
       <p className="text-lg text-slate-500 dark:text-slate-400 mb-8">
         Build an AWT/AWQ program under FAI Sporting Code 2025 rules.
       </p>

@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Синхро (synchro) is out of scope. Ignore `docs/sporting_code_aerobatics_2025_synchro.md` and do not add synchro-related features.
 - **Never edit** `docs/sporting_code_aerobatics_2025.md` unless explicitly asked. It is the reference doc converted from the FAI PDF and must stay verbatim.
 - The source of truth for trick restrictions is [docs/trick_rules.md](docs/trick_rules.md). When changing or adding a validator, cross-check with that file.
-- Manual UI test fixtures live in [test_data/](test_data/), one `.apc.json` per business rule. **Whenever you add or change a validator / business rule, re-check the matching fixture (or add a new one) so the fixture set stays aligned with the code.** See [test_data/README.md](test_data/README.md) for the file-to-rule mapping.
+- Manual UI test fixtures live in [test_data/](test_data/), one `.arb.json` per business rule. **Whenever you add or change a validator / business rule, re-check the matching fixture (or add a new one) so the fixture set stays aligned with the code.** See [test_data/README.md](test_data/README.md) for the file-to-rule mapping.
 
 ## Commands
 
@@ -55,7 +55,7 @@ Validation runs synchronously on every state change - the dataset is small enoug
 Activated via `useIsMobile()` (matchMedia `(max-width: 1023px)`) inside `Constructor.tsx`. Reuses the store, validators, scoring and data unchanged - only the presentation differs. Docs pages (`RulesDocs`, `TricksDocs`) also adapt on narrow viewports via an off-canvas drawer sidebar; that logic is inline in those components, not in `mobile/`.
 
 - `ConstructorMobile.tsx` - root; owns `armedManoeuvreId` (palette arm) and `armedMoveTrickId` (move arm), which are mutually exclusive. Routes tap-on-slot to `addTrick` or `moveTrick`.
-- `PaletteStrip.tsx` - `[+ Add trick]` button opening `TrickPicker`, plus up to 5 recently-used tricks kept in `localStorage` under `apc.recent-tricks`. No top-level search - search lives inside the picker.
+- `PaletteStrip.tsx` - `[+ Add trick]` button opening `TrickPicker`, plus up to 5 recently-used tricks kept in `localStorage` under `arb.recent-tricks`. No top-level search - search lives inside the picker.
 - `TrickPicker.tsx` - full-screen bottom-sheet with all 38 tricks sorted by coefficient and an autofocus search input.
 - `TrickCellMobile.tsx` - cell is a `<div role="button">` (not `<button>`) so the inner L/R side toggles can be real `<button>` elements without HTML nesting violations.
 - `TrickSheet.tsx` - bottom-sheet with trick info and Move/Duplicate/Remove actions. Move re-arms the cell so it can be placed via any insert-slot (including a different run). Duplicate and Remove close the sheet.
