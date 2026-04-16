@@ -117,7 +117,7 @@ Do everything above, then **finalize**:
 - Before bumping, **always** run `git tag -l --sort=-v:refname | head -5` to see the current latest tag. Do not trust `package.json` as the source of truth - it has drifted from tags before.
 - Compute the next tag from the latest existing tag (not from `package.json`): `patch` → `vX.Y.Z+1`, `minor` → `vX.Y+1.0`, `major` → `vX+1.0.0`.
 - Also bump `package.json` `version` to match, commit as `Bump version to X.Y.Z`, push to `main`.
-- In the same `Bump version` commit, rename the `## Unreleased` heading in `CHANGELOG.md` to `## vX.Y.Z` and add a fresh empty `## Unreleased` section above it. The tag IS the release, so the changelog must move in lockstep - otherwise entries linger under `Unreleased` long after they shipped (this has happened and required a retroactive fixup).
+- In the same `Bump version` commit, rename the `## Unreleased` heading in `CHANGELOG.md` to `## vX.Y.Z`. Do **not** add a fresh empty `## Unreleased` placeholder - when the next change lands, the PR that introduces it is responsible for re-adding the heading. The tag IS the release, so the changelog must move in lockstep - otherwise entries linger under `Unreleased` long after they shipped (this has happened and required a retroactive fixup).
 - Create the tag annotated (`git tag -a vX.Y.Z -m "..."`) - lightweight tags fail here because of a forced-annotated git config. Push with `git push origin vX.Y.Z`.
 - The tag push may report "Cannot create ref due to creations being restricted" - that's a protected-ref ruleset being bypassed (admin action). The tag still gets created; no action needed.
 

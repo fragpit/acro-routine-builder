@@ -1,7 +1,5 @@
 # Changelog
 
-## Unreleased
-
 ## v0.6.1
 
 - Fix Final Score breakdown formula: show the repetition penalty factor
