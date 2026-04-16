@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Fix Final Score breakdown formula: show the repetition penalty factor
+  (e.g. `× 87%(rep)` for -13%) and read the symmetry bonus from the
+  actual value instead of reverse-engineering it from `cMark`, which
+  mis-rendered as `0(sym)` once the penalty dragged the number down
 - Move Undo/Redo buttons to the mobile header next to the burger menu
 - Flip chevron arrows: point up when collapsed, down when expanded
 - Refactor: code hygiene pass (no user-visible changes)
