@@ -39,6 +39,8 @@ export interface RunScoreBreakdown {
   lMark: number;
   tc: number;
   bonusPercent: number;
+  symmetryBalanced: boolean;
+  choreoPenalty: number;
   distribution: ScoreDistribution;
   quality: QualityCorrection;
   techFinal: number;
@@ -101,6 +103,8 @@ export function runScoreBreakdown(
     lMark,
     tc,
     bonusPercent,
+    symmetryBalanced: symmetry.balanced,
+    choreoPenalty,
     distribution,
     quality,
     techFinal: ceilTo3(techFinal),

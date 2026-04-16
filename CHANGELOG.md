@@ -2,8 +2,17 @@
 
 ## Unreleased
 
-- Move Undo/Redo buttons to the mobile header next to the burger menu
-- Flip chevron arrows: point up when collapsed, down when expanded
+- Fix Final Score breakdown formula: show the repetition penalty factor
+  (e.g. `× 87%(rep)` for -13%) and read the symmetry bonus from the
+  actual value instead of reverse-engineering it from `cMark`, which
+  mis-rendered as `0(sym)` once the penalty dragged the number down
+- Flip the desktop Final Score chevron to match the panel's expansion
+  direction: v when collapsed (breakdown will flow downward), ^ when
+  expanded. Mobile stays ^-when-collapsed because the panel visually
+  grows upward there
+
+## v0.6.0
+
 - Refactor: code hygiene pass (no user-visible changes)
   - Extract `safeFileName` / `download` into `src/io/download.ts`
     (was duplicated between desktop and mobile file controls)
@@ -19,6 +28,14 @@
     and `resetIds` test helper
   - Ignore `.vite/` dev-server cache
   - Document follow-up refactorings in `docs/todo.md`
+
+## v0.5.2
+
+- Move Undo/Redo buttons to the mobile header next to the burger menu
+
+## v0.5.1
+
+- Flip chevron arrows: point up when collapsed, down when expanded
 
 ## v0.5.0
 

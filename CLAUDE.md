@@ -33,18 +33,22 @@ Single-page React app, fully static, deployed to GitHub Pages. No backend, no pe
 
 Static catalog. `manoeuvres.ts` holds all 38 solo tricks with a single schema that powers everything downstream: validators, scoring, the builder UI and the generated trick reference. Each manoeuvre carries structured fields (`coefficient`, `groups`, `forbiddenConnectionTo`, `availableBonuses`, `mutualExclusions`, `awtExcluded`, etc.) plus a `description` array of bullet points lifted from the sporting code. Keep this one source of truth - do not fork trick data into UI components.
 
+`competition-types.ts` holds shared FAI numeric constants: `DEFAULT_RUNS`, `MAX_RUNS`, `BONUS_LIMITS` (per-run twisted/reversed/flipped caps), `HIGH_COEFF_LIMIT` / `HIGH_COEFF_THRESHOLD`. Import from here instead of re-declaring - duplication of these constants has bitten us before.
+
 ### 2. Business logic (`src/rules/`, `src/scoring/`, `src/io/`) - pure TS, no React
 
 - `rules/engine.ts` exposes `validateProgram(program) => Violation[]`. It fans out to one validator per file under `rules/validators/` and flattens the results. Validators are pure functions `(program, manoeuvres) => Violation[]`. Adding a rule = new file + registration in `engine.ts` + test in `rules/validators/__tests__/`.
+- `rules/bonus-category.ts` exports `getBonusCategory(m, bonusId)` - the canonical way to classify a selected bonus as `twisted` / `reversed` / `flipped`. Use it in validators and scoring instead of re-inlining `availableBonuses.find(...)`.
 - `scoring/` computes per-run technicity, AWT vs AWQ bonus formulas, and `eligibility.ts` (used by the palette to mark tricks as ignored with a reason when structural rules would forbid them).
-- `io/` handles program import/export: `program-json.ts` (JSON roundtrip) and `program-markdown.ts` (human-readable report).
+- `io/` handles program import/export: `program-json.ts` (JSON roundtrip) and `program-markdown.ts` (human-readable report). `io/download.ts` exposes `safeFileName` / `download` helpers reused by desktop and mobile file controls.
 
 Validation runs synchronously on every state change - the dataset is small enough that this is effectively instant.
 
 ### 3. UI (`src/components/`, `src/store/`, `src/hooks/`)
 
 - Flat component layout except for `src/components/mobile/`, which is the adaptive mobile layer. Routing is HashRouter so Pages works without redirects. Main routes: `/` (Home), `/builder` (Builder), `/docs/rules`, `/docs/tricks`.
-- `store/program-store.ts` is a Zustand store with localStorage persistence. It is the only place that mutates the `Program`. Components read selectors; validators receive a snapshot.
+- `store/program-store.ts` is a Zustand store with localStorage persistence. It is the only place that mutates the `Program`. Components read selectors; validators receive a snapshot. `store/storage-keys.ts` is the single source of truth for localStorage keys (contract with every user's browser - do not change values without a migration).
+- `hooks/useScoringDerived.ts` exports `useViolationHighlights` (map of cell key -> severity) and `useChoreoPenaltyPerRun` (sum of `choreoPenaltyByRun` across violations) - shared by desktop and mobile builders so both stay in sync on derived state.
 - `@dnd-kit` drives drag-and-drop between palette and run cells on desktop. Touch sensors are included, but the mobile layer uses a tap-to-arm / tap-to-insert pattern instead of real DnD (easier to hit on a phone).
 - `TrickInfoCard` is a side panel (not a popover) opened on cell click; it shows the trick description and the bonus checkboxes with mutual-exclusion disabling.
 - Light/dark theme toggle lives in `hooks/useTheme.ts` and persists to localStorage.
@@ -113,6 +117,7 @@ Do everything above, then **finalize**:
 - Before bumping, **always** run `git tag -l --sort=-v:refname | head -5` to see the current latest tag. Do not trust `package.json` as the source of truth - it has drifted from tags before.
 - Compute the next tag from the latest existing tag (not from `package.json`): `patch` → `vX.Y.Z+1`, `minor` → `vX.Y+1.0`, `major` → `vX+1.0.0`.
 - Also bump `package.json` `version` to match, commit as `Bump version to X.Y.Z`, push to `main`.
+- In the same `Bump version` commit, rename the `## Unreleased` heading in `CHANGELOG.md` to `## vX.Y.Z` and add a fresh empty `## Unreleased` section above it. The tag IS the release, so the changelog must move in lockstep - otherwise entries linger under `Unreleased` long after they shipped (this has happened and required a retroactive fixup).
 - Create the tag annotated (`git tag -a vX.Y.Z -m "..."`) - lightweight tags fail here because of a forced-annotated git config. Push with `git push origin vX.Y.Z`.
 - The tag push may report "Cannot create ref due to creations being restricted" - that's a protected-ref ruleset being bypassed (admin action). The tag still gets created; no action needed.
 

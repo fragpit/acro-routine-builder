@@ -599,6 +599,7 @@ function RunColumn({
           breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality)}
           awtMode={awtMode}
           awtMin={awtMode ? runScoreBreakdownAwt(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality, 0.5) : undefined}
+          expandsDown
         />
       )}
     </div>
