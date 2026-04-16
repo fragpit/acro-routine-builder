@@ -70,7 +70,11 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
         if (!cancelled) setError(err instanceof Error ? err.message : String(err));
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        // Always clear loading, even if the effect was superseded. The
+        // setCompetitions call above triggers a rerun of this effect,
+        // whose cleanup sets cancelled=true BEFORE .finally runs - so
+        // gating on !cancelled would leave the spinner stuck.
+        setLoading(false);
       });
     return () => {
       cancelled = true;
