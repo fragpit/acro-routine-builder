@@ -479,7 +479,7 @@ function RunColumn({
             <span>Bonus</span>
             <span className="font-mono">
               {awtMode
-                ? `+${(bonus * 0.5).toFixed(1)}…+${bonus.toFixed(1)}%`
+                ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
                 : `+${bonus.toFixed(1)}%`}
             </span>
           </div>

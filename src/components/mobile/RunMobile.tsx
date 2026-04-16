@@ -125,7 +125,7 @@ export default function RunMobile({
                 label="Bonus"
                 value={
                   awtMode
-                    ? `+${(bonus * 0.5).toFixed(1)}…+${bonus.toFixed(1)}%`
+                    ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
                     : `+${bonus.toFixed(1)}%`
                 }
               />
@@ -165,7 +165,7 @@ export default function RunMobile({
                 Bonus
               </span>
               {awtMode
-                ? `+${(bonus * 0.5).toFixed(1)}…+${bonus.toFixed(1)}%`
+                ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
                 : `+${bonus.toFixed(1)}%`}
             </span>
           </button>
