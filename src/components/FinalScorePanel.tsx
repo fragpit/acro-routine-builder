@@ -94,7 +94,7 @@ export default function FinalScorePanel({
               T = 10 (assumed perfect execution)
             </p>
             <p>
-              C = 9 + symmetry({breakdown.cMark > 9 ? '1' : '0'})
+              C = 9 + {breakdown.cMark > 9 ? '1' : '0'}(sym)
               {breakdown.cMark < 9 && ', reduced by repetition penalty'}
             </p>
             {awtMode && (
