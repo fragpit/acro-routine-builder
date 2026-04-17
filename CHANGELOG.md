@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.12
 
 - Feedback button in the header replaces the GitHub icon and opens a
   menu with GitHub Issues and email (mailto) options.
