@@ -10,6 +10,7 @@ import DistributionEditor from '../DistributionEditor';
 import QualityCorrectionEditor from '../QualityCorrectionEditor';
 import ThemeToggle from '../ThemeToggle';
 import NumberStepper from '../NumberStepper';
+import FeedbackMenu from '../FeedbackMenu';
 
 interface Props {
   open: boolean;
@@ -212,18 +213,14 @@ export default function MobileMenu({ open, onClose }: Props) {
               >
                 Tricks
               </Link>
-              <a
-                href="https://github.com/fragpit/acro-routine-builder/issues"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="GitHub issues"
-                aria-label="GitHub issues"
-                className="flex-1 h-9 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
-                  <path d="M12 .5C5.73.5.67 5.57.67 11.85c0 5.02 3.24 9.27 7.74 10.77.57.11.78-.25.78-.55 0-.27-.01-.99-.02-1.95-3.15.69-3.81-1.52-3.81-1.52-.52-1.31-1.26-1.66-1.26-1.66-1.03-.71.08-.69.08-.69 1.14.08 1.74 1.18 1.74 1.18 1.01 1.74 2.66 1.24 3.31.95.1-.74.4-1.24.72-1.53-2.51-.29-5.15-1.26-5.15-5.6 0-1.24.44-2.25 1.17-3.05-.12-.29-.51-1.44.11-3 0 0 .96-.31 3.14 1.16.91-.25 1.89-.38 2.86-.39.97.01 1.95.14 2.86.39 2.18-1.47 3.14-1.16 3.14-1.16.62 1.56.23 2.71.11 3 .73.8 1.17 1.81 1.17 3.05 0 4.35-2.65 5.31-5.17 5.59.41.35.77 1.04.77 2.1 0 1.52-.01 2.75-.01 3.12 0 .3.21.67.79.55 4.49-1.5 7.73-5.75 7.73-10.77C23.33 5.57 18.27.5 12 .5z" />
-                </svg>
-              </a>
+              <div className="flex-1">
+                <FeedbackMenu
+                  triggerClassName="w-full h-9 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
+                  iconSize="sm"
+                  align="right"
+                  direction="up"
+                />
+              </div>
               <ThemeToggle />
             </div>
           </section>

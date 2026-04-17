@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Feedback button in the header replaces the GitHub icon and opens a
+  menu with GitHub Issues and email (mailto) options.
+
 ## v0.6.11
 
 - Orphan bonus ids (e.g. a stale "twisted" left on a trick whose

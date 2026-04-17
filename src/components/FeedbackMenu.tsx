@@ -1,0 +1,99 @@
+import { useEffect, useRef, useState } from 'react';
+import { IconFeedback, IconGithub, IconMail } from './icons';
+
+const FEEDBACK_EMAIL = 'fragpit@gmail.com';
+const GITHUB_ISSUES_URL = 'https://github.com/fragpit/acro-routine-builder/issues';
+
+function buildMailto(): string {
+  const subject = encodeURIComponent('Acro Routine Builder feedback');
+  const body = encodeURIComponent(`\n\n---\nVersion: ${__APP_VERSION__}`);
+  return `mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+interface Props {
+  triggerClassName?: string;
+  iconSize?: 'sm' | 'md';
+  align?: 'right' | 'left';
+  direction?: 'down' | 'up';
+}
+
+/**
+ * Feedback button with a popover listing the available channels
+ * (GitHub Issues, email). Used both in the desktop header and in
+ * the mobile drawer footer.
+ */
+export default function FeedbackMenu({
+  triggerClassName = '',
+  iconSize = 'md',
+  align = 'right',
+  direction = 'down',
+}: Props) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const iconClass = iconSize === 'sm' ? 'w-4 h-4' : 'w-5 h-5';
+  const alignClass = align === 'right' ? 'right-0' : 'left-0';
+  const directionClass = direction === 'up' ? 'bottom-full mb-1' : 'top-full mt-1';
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="Feedback"
+        title="Feedback"
+        className={triggerClassName}
+      >
+        <IconFeedback className={iconClass} />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          aria-label="Feedback options"
+          className={`absolute ${alignClass} ${directionClass} z-40 w-56 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg py-1 text-sm`}
+        >
+          <a
+            href={GITHUB_ISSUES_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
+          >
+            <IconGithub className="w-4 h-4" />
+            <span>GitHub Issues</span>
+          </a>
+          <a
+            href={buildMailto()}
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
+          >
+            <IconMail className="w-4 h-4" />
+            <span>Email</span>
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}

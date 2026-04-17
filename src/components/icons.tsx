@@ -48,3 +48,37 @@ export function IconLink({ className = 'w-4 h-4' }: { className?: string }) {
     </svg>
   );
 }
+
+/** Speech-bubble icon, used as the Feedback button trigger. */
+export function IconFeedback({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+/** Envelope icon, used for the email feedback option. */
+export function IconMail({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <path d="M22 6l-10 7L2 6" />
+    </svg>
+  );
+}
+
+/** GitHub logo (octocat silhouette), used for the GitHub Issues feedback option. */
+export function IconGithub({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 .5C5.73.5.67 5.57.67 11.85c0 5.02 3.24 9.27 7.74 10.77.57.11.78-.25.78-.55 0-.27-.01-.99-.02-1.95-3.15.69-3.81-1.52-3.81-1.52-.52-1.31-1.26-1.66-1.26-1.66-1.03-.71.08-.69.08-.69 1.14.08 1.74 1.18 1.74 1.18 1.01 1.74 2.66 1.24 3.31.95.1-.74.4-1.24.72-1.53-2.51-.29-5.15-1.26-5.15-5.6 0-1.24.44-2.25 1.17-3.05-.12-.29-.51-1.44.11-3 0 0 .96-.31 3.14 1.16.91-.25 1.89-.38 2.86-.39.97.01 1.95.14 2.86.39 2.18-1.47 3.14-1.16 3.14-1.16.62 1.56.23 2.71.11 3 .73.8 1.17 1.81 1.17 3.05 0 4.35-2.65 5.31-5.17 5.59.41.35.77 1.04.77 2.1 0 1.52-.01 2.75-.01 3.12 0 .3.21.67.79.55 4.49-1.5 7.73-5.75 7.73-10.77C23.33 5.57 18.27.5 12 .5z" />
+    </svg>
+  );
+}
