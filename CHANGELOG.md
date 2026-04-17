@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.13
 
 - Header nav now includes a Builder link so you can return to the
   builder from the Rules and Tricks doc pages without going through
