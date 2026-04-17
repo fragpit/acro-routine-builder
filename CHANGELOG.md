@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Close the burger drawer after loading a saved program (same behavior as
+  Import and Import AWT).
+
 ## v0.6.5
 
 - Add burger drawer to desktop builder with File, Program settings,

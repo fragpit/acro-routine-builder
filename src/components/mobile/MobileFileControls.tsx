@@ -194,6 +194,7 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
                 onClick={() => {
                   loadSavedProgram(n);
                   setPanel(null);
+                  onImported?.();
                 }}
                 className="flex-1 text-left text-sm px-2 py-1.5 rounded truncate text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700"
               >
