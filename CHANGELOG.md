@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Larger font in the Rules and Tricks doc pages, including the
+  table-of-contents sidebar, for easier reading.
+
 ## v0.6.7
 
 - AWT import: set Reset gap to 2 when the pilot has 5 runs (superfinal);

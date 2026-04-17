@@ -85,14 +85,14 @@ export default function TricksDocs() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="filter tricks..."
-            className="w-full px-2 py-1 text-sm rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
+            className="w-full px-2 py-1 text-base rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
           />
-          <div className="flex items-center gap-1 text-xs text-slate-500">
+          <div className="flex items-center gap-1 text-sm text-slate-500">
             <span>sort:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortBy)}
-              className="flex-1 text-sm px-1 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700"
+              className="flex-1 text-base px-1 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700"
             >
               <option value="section">Section</option>
               <option value="coeff">Coefficient</option>
@@ -108,7 +108,7 @@ export default function TricksDocs() {
             </button>
           </div>
         </div>
-        <nav className="flex-1 overflow-y-auto p-2 text-sm">
+        <nav className="flex-1 overflow-y-auto p-2 text-base">
           {list.map((m) => (
             <button
               key={m.id}
@@ -120,12 +120,12 @@ export default function TricksDocs() {
                   : 'text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400'
               }`}
             >
-              <span className="font-mono text-xs text-slate-500 mr-2">{m.sectionNumber}</span>
+              <span className="font-mono text-sm text-slate-500 mr-2">{m.sectionNumber}</span>
               {m.name}
             </button>
           ))}
           {list.length === 0 && (
-            <div className="px-2 py-4 text-xs text-slate-500">No tricks match.</div>
+            <div className="px-2 py-4 text-sm text-slate-500">No tricks match.</div>
           )}
         </nav>
       </aside>
@@ -181,9 +181,9 @@ function TrickEntry({
       className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 scroll-mt-4"
     >
       <header className="flex items-baseline gap-3 mb-2">
-        <span className="text-xs font-mono text-slate-500">{m.sectionNumber}</span>
-        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{m.name}</h2>
-        <span className="text-xs text-slate-500 dark:text-slate-400">
+        <span className="text-sm font-mono text-slate-500">{m.sectionNumber}</span>
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{m.name}</h2>
+        <span className="text-sm text-slate-500 dark:text-slate-400">
           coeff {m.coefficient.toFixed(2)}
         </span>
         <button
@@ -201,7 +201,7 @@ function TrickEntry({
         </button>
       </header>
 
-      <ul className="list-disc pl-5 space-y-0.5 text-sm text-slate-700 dark:text-slate-300">
+      <ul className="list-disc pl-5 space-y-0.5 text-base text-slate-700 dark:text-slate-300">
         {m.description.map((line, i) => (
           <li key={i}>{line}</li>
         ))}
@@ -212,7 +212,7 @@ function TrickEntry({
           {flags.map((f) => (
             <span
               key={f}
-              className="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+              className="text-sm px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
             >
               {f}
             </span>
@@ -227,7 +227,7 @@ function TrickEntry({
             {m.availableBonuses.map((b) => (
               <span
                 key={b.id}
-                className="text-xs px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                className="text-sm px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
                 title={b.countsAs ? `counts as ${b.countsAs}` : undefined}
               >
                 {b.label} +{b.percent}%
@@ -235,7 +235,7 @@ function TrickEntry({
             ))}
           </div>
           {m.mutualExclusions.length > 0 && (
-            <div className="mt-1 text-xs text-slate-500">
+            <div className="mt-1 text-sm text-slate-500">
               mutually exclusive:{' '}
               {m.mutualExclusions
                 .map((grp) =>
@@ -252,7 +252,7 @@ function TrickEntry({
       {m.forbiddenConnectionTo.length > 0 && (
         <div className="mt-3">
           <div className="text-xs uppercase text-slate-500 mb-1">Forbidden connection to</div>
-          <div className="flex flex-wrap gap-1.5 text-xs">
+          <div className="flex flex-wrap gap-1.5 text-sm">
             {m.forbiddenConnectionTo.map((id) => {
               const target = MANOEUVRES_BY_ID[id];
               return (
