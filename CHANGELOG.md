@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.8
 
 - Larger font in the Rules and Tricks doc pages, including the
   table-of-contents sidebar, for easier reading.
