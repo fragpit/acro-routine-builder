@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.11
 
 - Orphan bonus ids (e.g. a stale "twisted" left on a trick whose
   catalog entry has no twisted variant) are stripped on import and
