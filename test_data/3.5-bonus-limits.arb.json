@@ -14,7 +14,7 @@
           { "id": "r1t3", "manoeuvreId": "helicopter", "side": "R", "selectedBonuses": ["twisted"] },
           { "id": "r1t4", "manoeuvreId": "asymetric_sat", "side": "L", "selectedBonuses": ["twisted"] },
           { "id": "r1t5", "manoeuvreId": "mac_twist", "side": "R", "selectedBonuses": ["twisted"] },
-          { "id": "r1t6", "manoeuvreId": "twister", "side": "L", "selectedBonuses": ["twisted"] },
+          { "id": "r1t6", "manoeuvreId": "looping", "side": "L", "selectedBonuses": ["twisted"] },
           { "id": "r1t7", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
           { "id": "r1t8", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
         ]

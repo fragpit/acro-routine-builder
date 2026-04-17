@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Orphan bonus ids (e.g. a stale "twisted" left on a trick whose
+  catalog entry has no twisted variant) are stripped on import and
+  load so they no longer render misleading badges or confuse
+  per-run bonus counts.
+
 ## v0.6.10
 
 - Desktop palette now shows up to 5 recently used tricks at the top of

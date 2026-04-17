@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { PlacedTrick, Program, Run, Side, Violation } from '../rules/types';
 import { DEFAULT_RUNS } from '../data/competition-types';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
+import { sanitizeProgram } from '../data/sanitize';
 import { validateProgram } from '../rules/engine';
 import { STORAGE_KEYS } from './storage-keys';
 
@@ -113,7 +114,7 @@ export const useProgramStore = create<ProgramState>()(
       const program: Program = JSON.parse(JSON.stringify(saved));
       if (!Array.isArray(program.defaultBonuses)) program.defaultBonuses = [];
       return {
-        ...commit(state, program),
+        ...commit(state, sanitizeProgram(program)),
         currentName: name,
         selectedTrickId: null,
       };
@@ -150,7 +151,7 @@ export const useProgramStore = create<ProgramState>()(
       const cloned: Program = JSON.parse(JSON.stringify(program));
       if (!Array.isArray(cloned.defaultBonuses)) cloned.defaultBonuses = [];
       return {
-        ...commit(state, cloned),
+        ...commit(state, sanitizeProgram(cloned)),
         currentName: name,
         selectedTrickId: null,
       };
@@ -344,6 +345,11 @@ export const useProgramStore = create<ProgramState>()(
             const m = MANOEUVRES_BY_ID[t.manoeuvreId];
             if (m && !m.noSide && t.side === null) t.side = 'L';
           }
+        }
+        state.program = sanitizeProgram(state.program);
+        const savedKeys = Object.keys(state.savedPrograms);
+        for (const key of savedKeys) {
+          state.savedPrograms[key] = sanitizeProgram(state.savedPrograms[key]);
         }
         state.past = [];
         state.future = [];

@@ -1,5 +1,6 @@
 import type { Program } from '../rules/types';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
+import { sanitizeProgram } from '../data/sanitize';
 
 const FORMAT = 'acro-routine-builder';
 const LEGACY_FORMAT = 'acro-program-constructor';
@@ -58,7 +59,7 @@ export function importProgramJson(text: string): ImportResult {
   if (typeof file.version !== 'number' || file.version > VERSION) {
     throw new Error(`Unsupported version: ${String(file.version)}`);
   }
-  const program = validateProgram(file.program);
+  const program = sanitizeProgram(validateProgram(file.program));
   const name = typeof file.name === 'string' && file.name.trim() ? file.name.trim() : null;
   return { program, name };
 }
