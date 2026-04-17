@@ -34,6 +34,12 @@ export default function FeedbackMenu({
   const alignClass = align === 'right' ? 'right-0' : 'left-0';
   const directionClass = direction === 'up' ? 'bottom-full mb-1' : 'top-full mt-1';
 
+  // Defer closing so the browser processes the link's default action
+  // (follow href / open mail app) before the <a> is unmounted. Without
+  // this, iOS Safari cancels the navigation and click-emulation in
+  // devtools retargets the click onto whatever sits beneath the popover.
+  const closeAfterClick = () => setTimeout(() => setOpen(false), 0);
+
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
@@ -77,8 +83,8 @@ export default function FeedbackMenu({
             target="_blank"
             rel="noopener noreferrer"
             role="menuitem"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
+            onClick={closeAfterClick}
+            className="flex items-center gap-2 px-3 py-2 touch-manipulation text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
           >
             <IconGithub className="w-4 h-4" />
             <span>GitHub Issues</span>
@@ -86,8 +92,8 @@ export default function FeedbackMenu({
           <a
             href={buildMailto()}
             role="menuitem"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
+            onClick={closeAfterClick}
+            className="flex items-center gap-2 px-3 py-2 touch-manipulation text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
           >
             <IconMail className="w-4 h-4" />
             <span>Email</span>
