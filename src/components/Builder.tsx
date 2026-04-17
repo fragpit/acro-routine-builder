@@ -14,13 +14,12 @@ import {
   rectIntersection,
   type CollisionDetection,
 } from '@dnd-kit/core';
-import { BONUS_CATALOG, MANOEUVRES, MANOEUVRES_BY_ID } from '../data/manoeuvres';
-import { MAX_RUNS } from '../data/competition-types';
+import { MANOEUVRES, MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { runTechnicity } from '../scoring/technicity';
 import { runBonus } from '../scoring/bonus';
 import { runBonusUsage, BONUS_LIMITS } from '../scoring/bonus-usage';
 import { exclusionsByTrick } from '../scoring/eligibility';
-import { runScoreBreakdown, runScoreBreakdownAwt, isDistributionDefault, type ScoreDistribution, type QualityCorrection } from '../scoring/final-score';
+import { runScoreBreakdown, runScoreBreakdownAwt, type ScoreDistribution, type QualityCorrection } from '../scoring/final-score';
 import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
@@ -29,15 +28,12 @@ import type { Manoeuvre, PlacedTrick, Run } from '../rules/types';
 import TrickInfoCard from './TrickInfoCard';
 import ViolationsPanel from './ViolationsPanel';
 import TrickCell from './TrickCell';
-import ProgramControls from './ProgramControls';
 import FinalScorePanel from './FinalScorePanel';
-import DistributionEditor from './DistributionEditor';
-import QualityCorrectionEditor from './QualityCorrectionEditor';
+import DesktopMenu from './DesktopMenu';
 import BuilderMobile from './mobile/BuilderMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useChoreoPenaltyPerRun, useViolationHighlights } from '../hooks/useScoringDerived';
-import { IconUndo, IconRedo } from './icons';
-import NumberStepper from './NumberStepper';
+import { IconUndo, IconRedo, IconMenu } from './icons';
 
 export default function Builder() {
   const isMobile = useIsMobile();
@@ -48,13 +44,10 @@ export default function Builder() {
 function BuilderDesktop() {
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
+  const currentName = useProgramStore((s) => s.currentName);
   const addTrick = useProgramStore((s) => s.addTrick);
   const moveTrick = useProgramStore((s) => s.moveTrick);
   const copyTrick = useProgramStore((s) => s.copyTrick);
-  const setRunCount = useProgramStore((s) => s.setRunCount);
-  const setAwtMode = useProgramStore((s) => s.setAwtMode);
-  const setRepeatAfterRuns = useProgramStore((s) => s.setRepeatAfterRuns);
-  const setDefaultBonuses = useProgramStore((s) => s.setDefaultBonuses);
   const resetRun = useProgramStore((s) => s.resetRun);
   const resetProgram = useProgramStore((s) => s.resetProgram);
   const undo = useProgramStore((s) => s.undo);
@@ -64,9 +57,7 @@ function BuilderDesktop() {
   const selectedTrickId = useProgramStore((s) => s.selectedTrickId);
   const selectTrick = useProgramStore((s) => s.selectTrick);
   const distribution = useScoreSettings((s) => s.distribution);
-  const setDistribution = useScoreSettings((s) => s.setDistribution);
   const quality = useScoreSettings((s) => s.quality);
-  const setQuality = useScoreSettings((s) => s.setQuality);
 
   const [activeDrag, setActiveDrag] = useState<{ type: 'palette' | 'cell'; id: string } | null>(null);
   const altHeldRef = useRef(false);
@@ -91,13 +82,34 @@ function BuilderDesktop() {
     };
   }, []);
 
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const mod = e.metaKey || e.ctrlKey;
+      if (!mod || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) return;
+      }
+      const key = e.key.toLowerCase();
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+        e.preventDefault();
+        redo();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [undo, redo]);
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
   );
 
-  const [defaultBonusesOpen, setDefaultBonusesOpen] = useState(false);
-  const [distributionOpen, setDistributionOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [paletteFilter, setPaletteFilter] = useState('');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const sortedAvailable = useMemo(
@@ -206,136 +218,12 @@ function BuilderDesktop() {
 
         <section className="flex-1 flex flex-col min-w-0">
           <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center gap-4 text-sm">
-            <ProgramControls />
-            <div className="h-5 w-px bg-slate-200 dark:bg-slate-700" />
-            <label className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-              Runs:
-              <NumberStepper
-                value={program.runs.length}
-                min={1}
-                max={MAX_RUNS}
-                onChange={setRunCount}
-                ariaLabel="Runs"
-              />
-            </label>
-            <label
-              className="flex items-center gap-2 text-slate-700 dark:text-slate-300"
-              title="Repetition tracker resets every N runs. MAX = no repeats across the whole program. 2 = blocks [1,2], [3,4], [5]..."
+            <span
+              className="text-sm font-semibold text-slate-800 dark:text-slate-200 max-w-[18rem] truncate"
+              title={currentName ?? 'Unsaved program'}
             >
-              Reset gap:
-              <NumberStepper
-                value={program.repeatAfterRuns}
-                min={1}
-                max={MAX_RUNS}
-                onChange={setRepeatAfterRuns}
-                ariaLabel="Reset gap"
-              />
-            </label>
-            <label className="flex items-center gap-2 text-slate-700 dark:text-slate-300" title="Enable AWT-specific rules (Misty to Misty forbidden)">
-              <input
-                type="checkbox"
-                checked={program.awtMode}
-                onChange={(e) => setAwtMode(e.target.checked)}
-              />
-              AWT mode
-            </label>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setDefaultBonusesOpen((v) => !v)}
-                className="px-2 py-0.5 rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-slate-400"
-                title="Bonuses auto-applied to every newly added trick (when compatible)"
-              >
-                Default bonuses
-                {program.defaultBonuses.length > 0 && (
-                  <span className="ml-1 text-xs text-sky-600 dark:text-sky-400">
-                    ({program.defaultBonuses.length})
-                  </span>
-                )}
-              </button>
-              {defaultBonusesOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setDefaultBonusesOpen(false)}
-                  />
-                  <div className="absolute left-0 top-full mt-1 z-20 w-56 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg p-2 space-y-1 max-h-72 overflow-y-auto">
-                    {BONUS_CATALOG.map((b) => {
-                      const checked = program.defaultBonuses.includes(b.id);
-                      return (
-                        <label key={b.id} className="flex items-center gap-2 text-sm cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() => {
-                              const next = checked
-                                ? program.defaultBonuses.filter((x) => x !== b.id)
-                                : [...program.defaultBonuses, b.id];
-                              setDefaultBonuses(next);
-                            }}
-                          />
-                          {b.label}
-                        </label>
-                      );
-                    })}
-                    {program.defaultBonuses.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setDefaultBonuses([])}
-                        className="w-full mt-1 px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-red-500 hover:text-red-600"
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setDistributionOpen((v) => !v)}
-                className="px-2 py-0.5 rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-slate-400"
-                title="Score settings: distribution weights and quality correction"
-              >
-                Score settings
-              </button>
-              {distributionOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setDistributionOpen(false)}
-                  />
-                  <div className="absolute left-0 top-full mt-1 z-20 w-64 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg p-3 space-y-3">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-[11px] uppercase text-slate-500">Distribution</div>
-                        {!isDistributionDefault(distribution) && (
-                          <button
-                            type="button"
-                            onClick={() => setDistribution({ technical: 50, choreo: 50, landing: 0 })}
-                            className="text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-400"
-                          >
-                            reset
-                          </button>
-                        )}
-                      </div>
-                      <DistributionEditor
-                        distribution={distribution}
-                        onChange={setDistribution}
-                      />
-                    </div>
-                    <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
-                      <div className="text-[11px] uppercase text-slate-500 mb-2">Quality correction</div>
-                      <QualityCorrectionEditor
-                        quality={quality}
-                        onChange={setQuality}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+              {currentName ?? <span className="italic font-normal text-slate-400">Untitled</span>}
+            </span>
             <div className="ml-auto flex items-center gap-3">
               {programTotal && (
                 <div className="flex items-center gap-1.5 text-sm" title="Program total score (sum of all runs)">
@@ -348,35 +236,44 @@ function BuilderDesktop() {
                 </div>
               )}
               <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={undo}
-                disabled={!canUndo}
-                title="Undo (Cmd/Ctrl+Z)"
-                aria-label="Undo"
-                className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
-              >
-                <IconUndo />
-              </button>
-              <button
-                type="button"
-                onClick={redo}
-                disabled={!canRedo}
-                title="Redo (Cmd/Ctrl+Shift+Z)"
-                aria-label="Redo"
-                className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
-              >
-                <IconRedo />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm('Clear all tricks from every run?')) resetProgram();
-                }}
-                className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
-              >
-                Reset all
-              </button>
+                <button
+                  type="button"
+                  onClick={undo}
+                  disabled={!canUndo}
+                  title="Undo (Cmd/Ctrl+Z)"
+                  aria-label="Undo"
+                  className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
+                >
+                  <IconUndo />
+                </button>
+                <button
+                  type="button"
+                  onClick={redo}
+                  disabled={!canRedo}
+                  title="Redo (Cmd/Ctrl+Shift+Z)"
+                  aria-label="Redo"
+                  className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-300"
+                >
+                  <IconRedo />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm('Clear all tricks from every run?')) resetProgram();
+                  }}
+                  className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
+                >
+                  Reset all
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen(true)}
+                  title="Open menu"
+                  aria-label="Open menu"
+                  className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
+                >
+                  <IconMenu />
+                </button>
               </div>
             </div>
           </div>
@@ -435,6 +332,8 @@ function BuilderDesktop() {
           </div>
         )}
       </DragOverlay>
+
+      <DesktopMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </DndContext>
   );
 }

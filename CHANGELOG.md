@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add burger drawer to desktop builder with File, Program settings,
+  Default bonuses, Score distribution, and Quality correction - the
+  top toolbar now keeps only the program name, score, undo/redo,
+  Reset all, and the menu button
+
 ## v0.6.4
 
 - Group refresh and close buttons on the right of the AWT import dialog
