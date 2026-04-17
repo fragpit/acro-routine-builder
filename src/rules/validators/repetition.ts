@@ -8,13 +8,17 @@ function isReverse(t: PlacedTrick, m: Manoeuvre): boolean {
 
 function identityKey(t: PlacedTrick, m: Manoeuvre): string {
   const side = m.noSide ? '-' : (t.side ?? '-');
-  return `${m.id}:${side}:${isReverse(t, m) ? 'R' : 'N'}`;
+  return `${m.id}:${side}`;
 }
 
 /**
  * 4.1-4.3: Per-competition repetition. A manoeuvre in the same direction is
- * considered a repetition. Twisted/flipped doesn't change identity; reverse
- * does. Section 4.3 exceptions (repetitionAllowed) skip the check.
+ * considered a repetition. Twisted/flipped doesn't change identity. Per
+ * rule 3.3.1, a reverse manoeuvre is considered a different manoeuvre
+ * altogether - reversed instances are treated as unique and excluded from
+ * repetition tracking entirely (so two reversed Jokers do not collide,
+ * and a reversed Joker does not collide with a non-reversed one).
+ * Section 4.3 exceptions (repetitionAllowed) also skip the check.
  *
  * `repeatAfterRuns` defines how often the repetition tracker resets. Runs
  * are partitioned into fixed blocks of N consecutive runs ([0..N-1],
@@ -31,6 +35,7 @@ export function validateRepetition(
     run.tricks.forEach((t, trickIndex) => {
       const m = manoeuvres[t.manoeuvreId];
       if (!m || m.repetitionAllowed) return;
+      if (isReverse(t, m)) return;
       const key = identityKey(t, m);
       const list = groups.get(key) ?? [];
       list.push({ runIndex, trickIndex, name: m.name });

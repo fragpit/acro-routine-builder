@@ -47,6 +47,46 @@ describe('validateRepetition', () => {
     expect(validateRepetition(p, MANOEUVRES_BY_ID)).toEqual([]);
   });
 
+  it('does not flag two reversed instances of the same manoeuvre', () => {
+    const p = prog([
+      run(placedTrick('joker', { side: 'L', selectedBonuses: ['reverse'] })),
+      run(placedTrick('joker', { side: 'L', selectedBonuses: ['reverse'] })),
+    ]);
+    expect(validateRepetition(p, MANOEUVRES_BY_ID)).toEqual([]);
+  });
+
+  it('does not flag two twisted+reversed instances of the same manoeuvre', () => {
+    const p = prog([
+      run(
+        placedTrick('joker', {
+          side: 'L',
+          selectedBonuses: ['twisted', 'reverse'],
+        }),
+      ),
+      run(
+        placedTrick('joker', {
+          side: 'L',
+          selectedBonuses: ['twisted', 'reverse'],
+        }),
+      ),
+    ]);
+    expect(validateRepetition(p, MANOEUVRES_BY_ID)).toEqual([]);
+  });
+
+  it('reversed instance does not collide with non-reversed siblings', () => {
+    const p = prog([
+      run(placedTrick('joker', { side: 'L' })),
+      run(placedTrick('joker', { side: 'L', selectedBonuses: ['reverse'] })),
+      run(placedTrick('joker', { side: 'L' })),
+    ]);
+    const v = validateRepetition(p, MANOEUVRES_BY_ID);
+    expect(v).toHaveLength(1);
+    expect(v[0].affectedCells).toEqual([
+      { runIndex: 0, trickIndex: 0 },
+      { runIndex: 2, trickIndex: 0 },
+    ]);
+  });
+
   it('treats twisted as same manoeuvre (still flags)', () => {
     const p = prog([
       run(placedTrick('sat', { side: 'L' })),

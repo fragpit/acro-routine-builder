@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Reversed manoeuvres no longer trigger the cross-run repetition
+  warning, matching the rule that a reverse manoeuvre is considered
+  a different manoeuvre altogether.
+
 ## v0.6.8
 
 - Larger font in the Rules and Tricks doc pages, including the
