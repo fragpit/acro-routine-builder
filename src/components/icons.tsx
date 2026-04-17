@@ -49,11 +49,12 @@ export function IconLink({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
-/** Speech-bubble icon, used as the Feedback button trigger. */
+/** Two overlapping speech bubbles, used as the Feedback button trigger. */
 export function IconFeedback({ className = 'w-4 h-4' }: { className?: string }) {
   return (
     <svg {...SVG_PROPS} className={className} aria-hidden="true">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2z" />
+      <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
     </svg>
   );
 }

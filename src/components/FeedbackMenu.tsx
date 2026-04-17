@@ -62,7 +62,7 @@ export default function FeedbackMenu({
         aria-expanded={open}
         aria-label="Feedback"
         title="Feedback"
-        className={triggerClassName}
+        className={`inline-flex items-center justify-center ${triggerClassName}`}
       >
         <IconFeedback className={iconClass} />
       </button>
