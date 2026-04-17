@@ -151,24 +151,24 @@ export default function RulesDocs() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="filter sections..."
-            className="w-full px-2 py-1 text-sm rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
+            className="w-full px-2 py-1 text-base rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
           />
         </div>
-        <nav className="flex-1 overflow-y-auto p-2 text-sm">
+        <nav className="flex-1 overflow-y-auto p-2 text-base">
           {filteredToc.map((t) => (
             <button
               key={t.slug}
               type="button"
               onClick={() => goToSection(t.slug)}
               className={`block w-full text-left py-0.5 px-2 rounded text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-white dark:hover:bg-slate-800 ${
-                t.level === 3 ? 'pl-6 text-xs' : 'font-medium'
+                t.level === 3 ? 'pl-6 text-sm' : 'font-medium'
               }`}
             >
               {t.text}
             </button>
           ))}
           {filteredToc.length === 0 && (
-            <div className="px-2 py-4 text-xs text-slate-500">No sections match.</div>
+            <div className="px-2 py-4 text-sm text-slate-500">No sections match.</div>
           )}
         </nav>
       </aside>

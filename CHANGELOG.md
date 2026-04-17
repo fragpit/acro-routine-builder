@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Larger font in the Rules and Tricks doc pages for easier reading.
+- Larger font in the Rules and Tricks doc pages, including the
+  table-of-contents sidebar, for easier reading.
 
 ## v0.6.7
 
