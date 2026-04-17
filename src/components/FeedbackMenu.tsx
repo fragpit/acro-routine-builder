@@ -76,27 +76,37 @@ export default function FeedbackMenu({
         <div
           role="menu"
           aria-label="Feedback options"
-          className={`absolute ${alignClass} ${directionClass} z-40 w-56 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg py-1 text-sm`}
+          className={`absolute ${alignClass} ${directionClass} z-40 w-64 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg text-sm overflow-hidden`}
         >
+          <div className="px-3 pt-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500">Feedback</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Report a bug or share an idea</div>
+          </div>
           <a
             href={GITHUB_ISSUES_URL}
             target="_blank"
             rel="noopener noreferrer"
             role="menuitem"
             onClick={closeAfterClick}
-            className="flex items-center gap-2 px-3 py-2 touch-manipulation text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
+            className="flex items-center gap-2 px-3 py-2 mt-1 touch-manipulation text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
           >
-            <IconGithub className="w-4 h-4" />
-            <span>GitHub Issues</span>
+            <IconGithub className="w-4 h-4 shrink-0" />
+            <div className="flex flex-col">
+              <span>GitHub Issues</span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400">Needs a GitHub account</span>
+            </div>
           </a>
           <a
             href={buildMailto()}
             role="menuitem"
             onClick={closeAfterClick}
-            className="flex items-center gap-2 px-3 py-2 touch-manipulation text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
+            className="flex items-center gap-2 px-3 py-2 mb-1 touch-manipulation text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
           >
-            <IconMail className="w-4 h-4" />
-            <span>Email</span>
+            <IconMail className="w-4 h-4 shrink-0" />
+            <div className="flex flex-col">
+              <span>Email</span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400">No account needed</span>
+            </div>
           </a>
         </div>
       )}
