@@ -30,7 +30,7 @@ export default function FeedbackMenu({
 }: Props) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const iconClass = iconSize === 'sm' ? 'w-4 h-4' : 'w-5 h-5';
+  const iconClass = iconSize === 'sm' ? 'w-4 h-4' : 'w-6 h-6';
   const alignClass = align === 'right' ? 'right-0' : 'left-0';
   const directionClass = direction === 'up' ? 'bottom-full mb-1' : 'top-full mt-1';
 

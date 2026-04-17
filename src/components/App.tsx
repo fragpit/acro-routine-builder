@@ -22,7 +22,7 @@ export default function App() {
           <Link to="/docs/rules" className="hover:text-sky-600 dark:hover:text-sky-400">Rules</Link>
           <Link to="/docs/tricks" className="hover:text-sky-600 dark:hover:text-sky-400">Tricks</Link>
           <FeedbackMenu
-            triggerClassName="hover:text-sky-600 dark:hover:text-sky-400"
+            triggerClassName="w-8 h-8 rounded border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 transition"
             iconSize="md"
             align="right"
           />
