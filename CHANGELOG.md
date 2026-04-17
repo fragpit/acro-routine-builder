@@ -5,6 +5,11 @@
 - AWT import: set Reset gap to 2 when the pilot has 5 runs (superfinal);
   otherwise it still equals the number of imported runs.
 
+## v0.6.6
+
+- Close the burger drawer after loading a saved program (same behavior as
+  Import and Import AWT).
+
 ## v0.6.5
 
 - Add burger drawer to desktop builder with File, Program settings,
