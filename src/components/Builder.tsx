@@ -219,12 +219,12 @@ function BuilderDesktop() {
         <section className="flex-1 flex flex-col min-w-0">
           <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center gap-4 text-sm">
             <span
-              className="text-sm font-semibold text-slate-800 dark:text-slate-200 max-w-[18rem] truncate"
+              className="text-sm font-semibold text-slate-800 dark:text-slate-200 flex-1 min-w-0 truncate"
               title={currentName ?? 'Unsaved program'}
             >
               {currentName ?? <span className="italic font-normal text-slate-400">Untitled</span>}
             </span>
-            <div className="ml-auto flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               {programTotal && (
                 <div className="flex items-center gap-1.5 text-sm" title="Program total score (sum of all runs)">
                   <span className="text-[11px] uppercase tracking-wide text-slate-500">Score</span>
