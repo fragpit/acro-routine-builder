@@ -291,7 +291,7 @@ export function mapCompetitionToProgram(
     // they want to build against AWT rules.
     awtMode: false,
     runs,
-    repeatAfterRuns: Math.max(1, runs.length || 1),
+    repeatAfterRuns: runs.length === 5 ? 2 : Math.max(1, runs.length || 1),
     defaultBonuses: [],
   };
   return { program, pilotName: pilotName || `Pilot ${civlid}`, unmapped };
