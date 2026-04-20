@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Fixed choreography mark formula so the Cq quality correction and
+  repetition penalty apply only to the subjective base (9). The
+  symmetry bonus is now added as a fixed +1 after those corrections,
+  matching FAI scoring (it can no longer be scaled down or zeroed out
+  by quality/repetition factors).
+
 ## v0.6.17
 
 - Tumbling / infinity / rhythmic related manoeuvres beyond the 2-per-run

@@ -20,12 +20,12 @@ describe('runScoreBreakdown', () => {
       DEFAULT_DISTRIBUTION,
       DEFAULT_QUALITY,
     );
-    // cBase = 10, factor = 0.5, Cq = 0.6 -> cMark = 3
-    expect(bd.cMark).toBeCloseTo(3, 5);
+    // 9 * 0.5(rep) * 0.6(Cq) + 1(sym) = 3.7
+    expect(bd.cMark).toBeCloseTo(3.7, 5);
     expect(bd.choreoFinal).toBeGreaterThan(0);
   });
 
-  it('clamps choreo to zero when penalty exceeds 100%', () => {
+  it('clamps subjective part to zero when penalty exceeds 100%', () => {
     const bd = runScoreBreakdown(
       r,
       MANOEUVRES_BY_ID,
@@ -34,19 +34,30 @@ describe('runScoreBreakdown', () => {
       DEFAULT_DISTRIBUTION,
       DEFAULT_QUALITY,
     );
-    expect(bd.cMark).toBe(0);
-    expect(bd.choreoFinal).toBe(0);
-    // bonus is (tech + choreo) * bonus%, so a zero choreo must not
-    // produce a negative contribution even at 100% bonus
+    // subjective 9 is zeroed, symmetry bonus still contributes +1
+    expect(bd.cMark).toBe(1);
+    expect(bd.choreoFinal).toBeGreaterThan(0);
     expect(bd.bonusFinal).toBeGreaterThanOrEqual(0);
     expect(bd.total).toBeGreaterThan(0);
   });
 
-  it('treats exactly 100% penalty as zero choreo', () => {
+  it('retains only symmetry bonus at exactly 100% penalty', () => {
     const bd = runScoreBreakdown(
       r,
       MANOEUVRES_BY_ID,
       symmetry,
+      100,
+      DEFAULT_DISTRIBUTION,
+      DEFAULT_QUALITY,
+    );
+    expect(bd.cMark).toBe(1);
+  });
+
+  it('zeroes C when symmetry unbalanced and penalty reaches 100%', () => {
+    const bd = runScoreBreakdown(
+      r,
+      MANOEUVRES_BY_ID,
+      { left: 2, right: 0, sided: 2, balanced: false },
       100,
       DEFAULT_DISTRIBUTION,
       DEFAULT_QUALITY,
