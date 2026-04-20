@@ -5,10 +5,11 @@ import { runSymmetry } from '../../rules/validators/symmetry';
 import { useProgramStore } from '../../store/program-store';
 import { useScoreSettings } from '../../store/score-settings';
 import { useChoreoPenaltyPerRun, useViolationHighlights } from '../../hooks/useScoringDerived';
+import { loadRecentTricks, pushRecentTrick } from '../../store/recent-tricks';
 import { IconUndo, IconRedo } from '../icons';
-import PaletteStrip from './PaletteStrip';
 import RunSwiper from './RunSwiper';
 import RunMobile from './RunMobile';
+import TrickPicker from './TrickPicker';
 import TrickSheet from './TrickSheet';
 import ViolationsBar from './ViolationsBar';
 import MobileMenu from './MobileMenu';
@@ -31,10 +32,14 @@ export default function BuilderMobile() {
   const [armedManoeuvreId, setArmedManoeuvreId] = useState<string | null>(null);
   const [armedMoveTrickId, setArmedMoveTrickId] = useState<string | null>(null);
   const [armedCopyTrickId, setArmedCopyTrickId] = useState<string | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [recent, setRecent] = useState<string[]>(() => loadRecentTricks());
   const [activeRunIndex, setActiveRunIndex] = useState(0);
   const [sheetTrickId, setSheetTrickId] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [statsExpanded, setStatsExpanded] = useState(false);
+
+  const anyArmed = !!armedManoeuvreId || !!armedMoveTrickId || !!armedCopyTrickId;
 
   function armPalette(id: string | null) {
     setArmedMoveTrickId(null);
@@ -68,6 +73,11 @@ export default function BuilderMobile() {
       clearArm();
     }
   }
+  function handlePickFromFab(id: string) {
+    setRecent((prev) => pushRecentTrick(prev, id));
+    armPalette(id);
+    setPickerOpen(false);
+  }
 
   const highlights = useViolationHighlights(violations);
   const choreoPenaltyPerRun = useChoreoPenaltyPerRun(violations);
@@ -98,7 +108,7 @@ export default function BuilderMobile() {
   const safeActive = Math.min(activeRunIndex, program.runs.length - 1);
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-slate-50 dark:bg-slate-900">
+    <div className="relative flex flex-col h-full min-h-0 bg-slate-50 dark:bg-slate-900">
       <header className="shrink-0 flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pt-[calc(0.5rem+env(safe-area-inset-top))]">
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
@@ -148,14 +158,14 @@ export default function BuilderMobile() {
         </div>
       </header>
 
-      <PaletteStrip armedManoeuvreId={armedManoeuvreId} onArm={armPalette} />
-
-      {(armedMoveTrickId || armedCopyTrickId) && (
+      {anyArmed && (
         <div className="shrink-0 flex items-center gap-2 px-3 py-2 bg-sky-50 dark:bg-sky-950/40 border-b border-sky-200 dark:border-sky-900 text-xs text-sky-800 dark:text-sky-200">
           <span className="flex-1">
-            {armedMoveTrickId
-              ? 'Tap a slot to move the trick (any run).'
-              : 'Tap a slot to copy the trick (any run).'}
+            {armedManoeuvreId
+              ? 'Tap a slot to insert the trick.'
+              : armedMoveTrickId
+                ? 'Tap a slot to move the trick (any run).'
+                : 'Tap a slot to copy the trick (any run).'}
           </span>
           <button
             type="button"
@@ -176,7 +186,7 @@ export default function BuilderMobile() {
             run={program.runs[i]}
             runIndex={i}
             awtMode={program.awtMode}
-            isArmed={!!armedManoeuvreId || !!armedMoveTrickId || !!armedCopyTrickId}
+            isArmed={anyArmed}
             movingTrickId={armedMoveTrickId}
             onInsertAt={handleInsertAt}
             onOpenTrick={setSheetTrickId}
@@ -226,7 +236,23 @@ export default function BuilderMobile() {
           setSheetTrickId(null);
         }}
       />
+      <TrickPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onPick={handlePickFromFab}
+        recent={recent}
+      />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      {!anyArmed && (
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          aria-label="Add trick"
+          className="absolute z-30 right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] w-14 h-14 rounded-full bg-sky-600 text-white text-3xl leading-none shadow-lg active:bg-sky-700 flex items-center justify-center"
+        >
+          +
+        </button>
+      )}
     </div>
   );
 }
