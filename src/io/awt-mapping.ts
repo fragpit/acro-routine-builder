@@ -32,10 +32,9 @@ export interface MappedFlight {
  * (read from `results.results.overall[]`), not recomputed client-side.
  *
  * `tq` / `cq` map the averaged judges' technical / choreography marks
- * (0-10 scale) to the builder's quality corrections (0-100, floored to
- * the nearest 10 - always rounded down so the prediction stays on the
- * conservative side of the pilot's actual performance). `null` when
- * the competition has no published judge marks for the selected pilot.
+ * (0-10 scale) to the builder's quality corrections (0-100, rounded to
+ * the nearest 10). `null` when the competition has no published judge
+ * marks for the selected pilot.
  */
 export interface AccuracyStats {
   overallScore: number | null;
@@ -284,10 +283,10 @@ export function extractPilots(comp: AwtCompetitionWithResults): PilotSummary[] {
  */
 function roundMarkToQuality(mark: number): number {
   // Judges' marks are on the 0-10 scale; quality corrections are 0-100.
-  // Multiply, floor to the nearest 10 (always round down), clamp.
+  // Multiply, round to the nearest 10, clamp.
   const scaled = mark * 10;
-  const floored = Math.floor(scaled / 10) * 10;
-  return Math.max(0, Math.min(100, floored));
+  const rounded = Math.round(scaled / 10) * 10;
+  return Math.max(0, Math.min(100, rounded));
 }
 
 function extractAccuracy(

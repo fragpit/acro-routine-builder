@@ -216,7 +216,7 @@ describe('extractPilots / mapCompetitionToProgram', () => {
     expect(mapped.unmapped).toEqual([]);
   });
 
-  it('extracts accuracy: overall score + judges-mark averages floored to 10s', () => {
+  it('extracts accuracy: overall score + judges-mark averages rounded to 10s', () => {
     const accComp: AwtCompetitionWithResults = {
       ...competition,
       results: {
@@ -272,39 +272,13 @@ describe('extractPilots / mapCompetitionToProgram', () => {
     };
     const mapped = mapCompetitionToProgram(accComp, 1);
     // Averages skip did_not_start: T avg = (8.4+7.8)/2 = 8.1 -> 81 -> 80
-    // C avg = (7.7+6.1)/2 = 6.9 -> 69 -> 60 (floored, not rounded)
+    // C avg = (7.7+6.1)/2 = 6.9 -> 69 -> 70
     expect(mapped.accuracy.runsUsed).toBe(2);
     expect(mapped.accuracy.judgeTechAvg).toBeCloseTo(8.1, 3);
     expect(mapped.accuracy.judgeChoreoAvg).toBeCloseTo(6.9, 3);
     expect(mapped.accuracy.tq).toBe(80);
-    expect(mapped.accuracy.cq).toBe(60);
-    expect(mapped.accuracy.overallScore).toBe(24.123);
-  });
-
-  it('accuracy flooring keeps exact multiples of 10 (e.g. 8.0 -> 80)', () => {
-    const exactComp: AwtCompetitionWithResults = {
-      ...competition,
-      results: {
-        runs_results: [
-          {
-            results: {
-              overall: [
-                {
-                  pilot: { civlid: 1, name: 'Alice' },
-                  tricks: [],
-                  final_marks: {
-                    judges_mark: { technical: 8.0, choreography: 7.0 },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    };
-    const mapped = mapCompetitionToProgram(exactComp, 1);
-    expect(mapped.accuracy.tq).toBe(80);
     expect(mapped.accuracy.cq).toBe(70);
+    expect(mapped.accuracy.overallScore).toBe(24.123);
   });
 
   it('returns null accuracy when no judges marks are published', () => {
