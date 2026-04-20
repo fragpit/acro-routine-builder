@@ -2,8 +2,10 @@
 
 ## Unreleased
 
-- Bonus is now scaled by the Tq (technical quality) correction, and
-  the score breakdown formula shows the extra `× N%(Tq)` multiplier.
+- Bonus is now scaled by the Tq (technical quality) correction in both
+  AWT and AWQ modes. The score breakdown formula shows the extra
+  `× N%(Tq)` multiplier. AWT no longer displays a `min…max` range for
+  the bonus / total - Tq replaces the previous T=5…10 scaling.
 
 ## v0.6.18
 

@@ -56,11 +56,7 @@ export function exportProgramMarkdown(
     const tc = runTechnicity(run, MANOEUVRES_BY_ID);
     const bonus = runBonus(run, MANOEUVRES_BY_ID);
     lines.push(`- Technicity: ${tc.toFixed(3)}`);
-    lines.push(
-      program.awtMode
-        ? `- Bonus (AWT, T=5…10): +${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
-        : `- Bonus: +${bonus.toFixed(1)}%`,
-    );
+    lines.push(`- Bonus: +${bonus.toFixed(1)}%`);
     const choreo = choreoByRun[i] ?? 0;
     if (choreo > 0) lines.push(`- Choreo penalty: -${choreo}%`);
     lines.push('');

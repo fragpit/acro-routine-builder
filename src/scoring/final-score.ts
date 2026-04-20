@@ -120,39 +120,3 @@ export function runScoreBreakdown(
     total,
   };
 }
-
-/**
- * For AWT mode, compute the score with bonus scaled to a given
- * fraction (T/10 scaling per FAI 3.4.1).
- * fraction=1.0 means T=10 (upper bound), fraction=0.5 means T=5.
- */
-export function runScoreBreakdownAwt(
-  run: Run,
-  manoeuvres: Record<string, Manoeuvre>,
-  symmetry: RunSymmetry,
-  choreoPenalty: number,
-  distribution: ScoreDistribution,
-  quality: QualityCorrection,
-  bonusFraction: number,
-): RunScoreBreakdown {
-  const base = runScoreBreakdown(
-    run,
-    manoeuvres,
-    symmetry,
-    choreoPenalty,
-    distribution,
-    quality,
-  );
-  const scaledBonusFinal = ceilTo3(
-    (base.techFinal + base.choreoFinal) *
-      ((base.bonusPercent * bonusFraction) / 100) *
-      (quality.technical / 100),
-  );
-  const total = ceilTo3(
-    base.techFinal +
-      base.choreoFinal +
-      base.landingFinal +
-      scaledBonusFinal,
-  );
-  return { ...base, bonusFinal: scaledBonusFinal, total };
-}
