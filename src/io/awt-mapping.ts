@@ -25,10 +25,31 @@ export interface MappedFlight {
   unmapped: UnmappedTrick[];
 }
 
+/**
+ * Summary of the pilot's real scoring at the imported competition.
+ *
+ * `overallScore` is the server-aggregated sum of per-run final scores
+ * (read from `results.results.overall[]`), not recomputed client-side.
+ *
+ * `tq` / `cq` map the averaged judges' technical / choreography marks
+ * (0-10 scale) to the builder's quality corrections (0-100, rounded to
+ * the nearest 10). `null` when the competition has no published judge
+ * marks for the selected pilot.
+ */
+export interface AccuracyStats {
+  overallScore: number | null;
+  judgeTechAvg: number | null;
+  judgeChoreoAvg: number | null;
+  tq: number | null;
+  cq: number | null;
+  runsUsed: number;
+}
+
 export interface MappedCompetition {
   program: Program;
   pilotName: string;
   unmapped: UnmappedTrick[];
+  accuracy: AccuracyStats;
 }
 
 /**
@@ -260,6 +281,48 @@ export function extractPilots(comp: AwtCompetitionWithResults): PilotSummary[] {
  * Program. Returns the program plus a list of unmapped tricks so the UI can
  * warn the user before they commit the import.
  */
+function roundMarkToQuality(mark: number): number {
+  // Judges' marks are on the 0-10 scale; quality corrections are 0-100.
+  // Multiply, round to the nearest 10, clamp.
+  const scaled = mark * 10;
+  const rounded = Math.round(scaled / 10) * 10;
+  return Math.max(0, Math.min(100, rounded));
+}
+
+function extractAccuracy(
+  comp: AwtCompetitionWithResults,
+  civlid: number,
+): AccuracyStats {
+  const techMarks: number[] = [];
+  const choreoMarks: number[] = [];
+  const runsResults = comp.results?.runs_results ?? [];
+  for (const runResult of runsResults) {
+    const flights = runResult.results?.overall ?? [];
+    const flight = flights.find((f) => f.pilot?.civlid === civlid);
+    if (!flight || flight.did_not_start) continue;
+    const jm = flight.final_marks?.judges_mark;
+    if (!jm) continue;
+    if (typeof jm.technical === 'number') techMarks.push(jm.technical);
+    if (typeof jm.choreography === 'number') choreoMarks.push(jm.choreography);
+  }
+  const runsUsed = Math.max(techMarks.length, choreoMarks.length);
+  const avg = (arr: number[]) =>
+    arr.length === 0 ? null : arr.reduce((s, v) => s + v, 0) / arr.length;
+  const judgeTechAvg = avg(techMarks);
+  const judgeChoreoAvg = avg(choreoMarks);
+  const overall =
+    comp.results?.results?.overall?.find((e) => e.pilot?.civlid === civlid) ??
+    null;
+  return {
+    overallScore: typeof overall?.score === 'number' ? overall.score : null,
+    judgeTechAvg,
+    judgeChoreoAvg,
+    tq: judgeTechAvg == null ? null : roundMarkToQuality(judgeTechAvg),
+    cq: judgeChoreoAvg == null ? null : roundMarkToQuality(judgeChoreoAvg),
+    runsUsed,
+  };
+}
+
 export function mapCompetitionToProgram(
   comp: AwtCompetitionWithResults,
   civlid: number,
@@ -294,5 +357,10 @@ export function mapCompetitionToProgram(
     repeatAfterRuns: runs.length === 5 ? 2 : Math.max(1, runs.length || 1),
     defaultBonuses: [],
   };
-  return { program, pilotName: pilotName || `Pilot ${civlid}`, unmapped };
+  return {
+    program,
+    pilotName: pilotName || `Pilot ${civlid}`,
+    unmapped,
+    accuracy: extractAccuracy(comp, civlid),
+  };
 }

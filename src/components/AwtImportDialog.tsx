@@ -9,10 +9,12 @@ import {
 import {
   extractPilots,
   mapCompetitionToProgram,
+  type AccuracyStats,
   type PilotSummary,
   type UnmappedTrick,
 } from '../io/awt-mapping';
 import { useProgramStore } from '../store/program-store';
+import { useScoreSettings } from '../store/score-settings';
 
 interface Props {
   open: boolean;
@@ -25,6 +27,7 @@ type Step = 'competition' | 'pilot' | 'preview';
 export default function AwtImportDialog({ open, onClose, onImported }: Props) {
   const program = useProgramStore((s) => s.program);
   const importProgram = useProgramStore((s) => s.importProgram);
+  const setQuality = useScoreSettings((s) => s.setQuality);
 
   const [step, setStep] = useState<Step>('competition');
   const [competitions, setCompetitions] = useState<AwtCompetitionSummary[] | null>(null);
@@ -34,6 +37,7 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [applyAccuracy, setApplyAccuracy] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -52,6 +56,7 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
       setSelectedCivlid(null);
       setSearch('');
       setError(null);
+      setApplyAccuracy(false);
       return;
     }
     if (competitions) return;
@@ -125,6 +130,7 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
   function pickPilot(civlid: number) {
     setSelectedCivlid(civlid);
     setSearch('');
+    setApplyAccuracy(false);
     setStep('preview');
   }
 
@@ -135,6 +141,12 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
     }
     const name = competition ? `${mapped.pilotName} - ${competition.name}` : mapped.pilotName;
     importProgram(mapped.program, name);
+    if (applyAccuracy && mapped.accuracy.tq != null && mapped.accuracy.cq != null) {
+      setQuality({
+        technical: mapped.accuracy.tq,
+        choreo: mapped.accuracy.cq,
+      });
+    }
     onImported?.();
     onClose();
   }
@@ -261,6 +273,9 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
                 0,
               )}
               unmapped={mapped.unmapped}
+              accuracy={mapped.accuracy}
+              applyAccuracy={applyAccuracy}
+              onToggleApplyAccuracy={setApplyAccuracy}
             />
           )}
         </div>
@@ -463,13 +478,20 @@ function ImportPreview({
   runCount,
   totalTricks,
   unmapped,
+  accuracy,
+  applyAccuracy,
+  onToggleApplyAccuracy,
 }: {
   pilotName: string;
   competitionName: string;
   runCount: number;
   totalTricks: number;
   unmapped: UnmappedTrick[];
+  accuracy: AccuracyStats;
+  applyAccuracy: boolean;
+  onToggleApplyAccuracy: (v: boolean) => void;
 }) {
+  const hasQuality = accuracy.tq != null && accuracy.cq != null;
   return (
     <div className="p-4 space-y-4">
       <div>
@@ -487,7 +509,36 @@ function ImportPreview({
           <dt className="text-xs uppercase text-slate-500">Tricks</dt>
           <dd className="font-semibold text-slate-800 dark:text-slate-200">{totalTricks}</dd>
         </div>
+        <div className="col-span-2 rounded border border-slate-200 dark:border-slate-700 p-2">
+          <dt className="text-xs uppercase text-slate-500">Overall score</dt>
+          <dd className="font-semibold text-slate-800 dark:text-slate-200">
+            {accuracy.overallScore != null
+              ? accuracy.overallScore.toFixed(3)
+              : '-'}
+          </dd>
+        </div>
       </dl>
+      <div className="rounded border border-slate-200 dark:border-slate-700 p-3">
+        <label className="flex items-start gap-2 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={applyAccuracy && hasQuality}
+            disabled={!hasQuality}
+            onChange={(e) => onToggleApplyAccuracy(e.target.checked)}
+            className="mt-0.5"
+          />
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-medium text-slate-800 dark:text-slate-200">
+              Apply accuracy
+            </div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {hasQuality
+                ? `Set T correction to ${accuracy.tq}% and C correction to ${accuracy.cq}% from the pilot's judges' marks averaged across ${accuracy.runsUsed} run${accuracy.runsUsed === 1 ? '' : 's'}.`
+                : "Judges' marks are not available for this pilot - accuracy cannot be applied."}
+            </div>
+          </div>
+        </label>
+      </div>
       {unmapped.length > 0 && (
         <div className="rounded border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-3">
           <div className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">

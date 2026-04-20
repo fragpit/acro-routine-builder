@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Competition import preview shows the pilot's overall score and offers
+  an "Apply accuracy" toggle that sets the builder's T/C corrections
+  from the pilot's actual judges' marks at that event.
+
 ## v0.6.19
 
 - Bonus is now scaled by the Tq (technical quality) correction in both

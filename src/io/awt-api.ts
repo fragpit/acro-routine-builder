@@ -59,12 +59,20 @@ export interface AwtUniqueTrick {
   bonus?: number;
 }
 
+export interface AwtJudgesMark {
+  technical?: number;
+  choreography?: number;
+  landing?: number;
+}
+
 export interface AwtFinalMarks {
   score?: number;
   technical?: number;
   choreography?: number;
   landing?: number;
   bonus?: number;
+  judges_mark?: AwtJudgesMark | null;
+  notes?: string[];
 }
 
 export interface AwtFlight {
@@ -78,8 +86,14 @@ export interface AwtRunResults {
   results: Record<string, AwtFlight[] | undefined>;
 }
 
+export interface AwtOverallEntry {
+  pilot?: AwtPilot | null;
+  score?: number;
+}
+
 export interface AwtCompetitionResultsContainer {
   runs_results?: AwtRunResults[];
+  results?: Record<string, AwtOverallEntry[] | undefined>;
 }
 
 export interface AwtCompetitionWithResults extends AwtCompetitionSummary {

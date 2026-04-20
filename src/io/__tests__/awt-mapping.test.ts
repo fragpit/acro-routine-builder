@@ -216,6 +216,91 @@ describe('extractPilots / mapCompetitionToProgram', () => {
     expect(mapped.unmapped).toEqual([]);
   });
 
+  it('extracts accuracy: overall score + judges-mark averages rounded to 10s', () => {
+    const accComp: AwtCompetitionWithResults = {
+      ...competition,
+      results: {
+        runs_results: [
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  final_marks: {
+                    judges_mark: { technical: 8.4, choreography: 7.7 },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  final_marks: {
+                    judges_mark: { technical: 7.8, choreography: 6.1 },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  did_not_start: true,
+                  final_marks: {
+                    judges_mark: { technical: 0, choreography: 0 },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+        results: {
+          overall: [
+            { pilot: { civlid: 1, name: 'Alice' }, score: 24.123 },
+            { pilot: { civlid: 2, name: 'Bob' }, score: 18.5 },
+          ],
+        },
+      },
+    };
+    const mapped = mapCompetitionToProgram(accComp, 1);
+    // Averages skip did_not_start: T avg = (8.4+7.8)/2 = 8.1 -> 81 -> 80
+    // C avg = (7.7+6.1)/2 = 6.9 -> 69 -> 70
+    expect(mapped.accuracy.runsUsed).toBe(2);
+    expect(mapped.accuracy.judgeTechAvg).toBeCloseTo(8.1, 3);
+    expect(mapped.accuracy.judgeChoreoAvg).toBeCloseTo(6.9, 3);
+    expect(mapped.accuracy.tq).toBe(80);
+    expect(mapped.accuracy.cq).toBe(70);
+    expect(mapped.accuracy.overallScore).toBe(24.123);
+  });
+
+  it('returns null accuracy when no judges marks are published', () => {
+    const noMarksComp: AwtCompetitionWithResults = {
+      ...competition,
+      results: {
+        runs_results: [
+          {
+            results: {
+              overall: [{ pilot: { civlid: 1, name: 'Alice' }, tricks: [] }],
+            },
+          },
+        ],
+      },
+    };
+    const mapped = mapCompetitionToProgram(noMarksComp, 1);
+    expect(mapped.accuracy.tq).toBeNull();
+    expect(mapped.accuracy.cq).toBeNull();
+    expect(mapped.accuracy.overallScore).toBeNull();
+    expect(mapped.accuracy.runsUsed).toBe(0);
+  });
+
   it('mapCompetitionToProgram leaves empty runs for missing pilot and did_not_start', () => {
     const dnsComp: AwtCompetitionWithResults = {
       ...competition,
