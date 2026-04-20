@@ -108,6 +108,9 @@ export default function FeedbackMenu({
               <span className="text-[11px] text-slate-500 dark:text-slate-400">No account needed</span>
             </div>
           </a>
+          <div className="px-3 py-1.5 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
+            ARB v{__APP_VERSION__}
+          </div>
         </div>
       )}
     </div>
