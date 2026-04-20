@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.18
 
 - Fixed choreography mark formula so the Cq quality correction and
   repetition penalty apply only to the subjective base (9). The
