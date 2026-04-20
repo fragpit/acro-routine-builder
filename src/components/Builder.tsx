@@ -19,7 +19,7 @@ import { runTechnicity } from '../scoring/technicity';
 import { runBonus } from '../scoring/bonus';
 import { runBonusUsage, BONUS_LIMITS } from '../scoring/bonus-usage';
 import { exclusionsByTrick } from '../scoring/eligibility';
-import { runScoreBreakdown, runScoreBreakdownAwt, type ScoreDistribution, type QualityCorrection } from '../scoring/final-score';
+import { runScoreBreakdown, type ScoreDistribution, type QualityCorrection } from '../scoring/final-score';
 import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
@@ -144,7 +144,6 @@ function BuilderDesktop() {
     const hasTricks = program.runs.some((r) => r.tricks.length > 0);
     if (!hasTricks) return null;
     let total = 0;
-    let totalMin = 0;
     for (let i = 0; i < program.runs.length; i++) {
       const run = program.runs[i];
       if (run.tricks.length === 0) continue;
@@ -152,15 +151,8 @@ function BuilderDesktop() {
       const cp = choreoPenaltyPerRun[i] ?? 0;
       const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, cp, distribution, quality);
       total += bd.total;
-      if (program.awtMode) {
-        const bdMin = runScoreBreakdownAwt(run, MANOEUVRES_BY_ID, sym, cp, distribution, quality, 0.5);
-        totalMin += bdMin.total;
-      }
     }
-    return {
-      total: Math.ceil(total * 1000) / 1000,
-      totalMin: Math.ceil(totalMin * 1000) / 1000,
-    };
+    return { total: Math.ceil(total * 1000) / 1000 };
   }, [program, distribution, quality, choreoPenaltyPerRun]);
 
   function onDragStart(e: DragStartEvent) {
@@ -250,9 +242,7 @@ function BuilderDesktop() {
                 <div className="flex items-center gap-1.5 text-sm" title="Program total score (sum of all runs)">
                   <span className="text-[11px] uppercase tracking-wide text-slate-500">Score</span>
                   <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
-                    {program.awtMode
-                      ? `${programTotal.totalMin.toFixed(3)}…${programTotal.total.toFixed(3)}`
-                      : programTotal.total.toFixed(3)}
+                    {programTotal.total.toFixed(3)}
                   </span>
                 </div>
               )}
@@ -312,7 +302,6 @@ function BuilderDesktop() {
                   technicity={runTechnicity(run, MANOEUVRES_BY_ID)}
                   bonus={runBonus(run, MANOEUVRES_BY_ID)}
                   bonusUsage={runBonusUsage(run, MANOEUVRES_BY_ID)}
-                  awtMode={program.awtMode}
                   choreoPenalty={choreoPenaltyPerRun[runIndex] ?? 0}
                   symmetry={runSymmetry(run.tricks, MANOEUVRES_BY_ID)}
                   distribution={distribution}
@@ -393,7 +382,6 @@ function RunColumn({
   technicity,
   bonus,
   bonusUsage,
-  awtMode,
   choreoPenalty,
   symmetry,
   distribution,
@@ -411,7 +399,6 @@ function RunColumn({
   technicity: number;
   bonus: number;
   bonusUsage: ReturnType<typeof runBonusUsage>;
-  awtMode: boolean;
   choreoPenalty: number;
   symmetry: ReturnType<typeof runSymmetry>;
   distribution: ScoreDistribution;
@@ -467,21 +454,6 @@ function RunColumn({
             <span className="font-mono">{technicity.toFixed(3)}</span>
           </div>
           <div
-            className="flex justify-between"
-            title={
-              awtMode
-                ? 'AWT range: bonus × T/10, where T is the technical mark (5-10). Left = T=5, right = T=10.'
-                : 'AWQ: sum of selected bonus percents (no technical-mark scaling).'
-            }
-          >
-            <span>Bonus</span>
-            <span className="font-mono">
-              {awtMode
-                ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
-                : `+${bonus.toFixed(1)}%`}
-            </span>
-          </div>
-          <div
             className="flex justify-between text-slate-500 dark:text-slate-400"
             title="Bonus category slots used per run (FAI 3.5: max 5 twisted / 3 reversed / 2 flipped). Extras are unscored."
           >
@@ -492,12 +464,21 @@ function RunColumn({
               <BonusSlot label="F" used={bonusUsage.flipped} limit={BONUS_LIMITS.flipped} />
             </span>
           </div>
+          <div
+            className="flex justify-between"
+            title="Bonus per run: X(Y)% - Y is the sum of selected bonus percents, X is Y adjusted by the Tq technical-quality correction."
+          >
+            <span>Bonus</span>
+            <span className="font-mono">
+              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)})%
+            </span>
+          </div>
           {choreoPenalty > 0 && (
             <div
               className="flex justify-between text-amber-600 dark:text-amber-400"
-              title="Choreography mark deduction from repetitions in this run (FAI 3.3.3)"
+              title="Malus deducted from the bonus percent for repetitions in this run (FAI 3.3.3)"
             >
-              <span>Choreo</span>
+              <span>Malus</span>
               <span className="font-mono">-{choreoPenalty}%</span>
             </div>
           )}
@@ -517,8 +498,6 @@ function RunColumn({
       {tricks.length > 0 && (
         <FinalScorePanel
           breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality)}
-          awtMode={awtMode}
-          awtMin={awtMode ? runScoreBreakdownAwt(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality, 0.5) : undefined}
           expandsDown
         />
       )}

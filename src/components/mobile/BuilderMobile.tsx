@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
-import { runScoreBreakdown, runScoreBreakdownAwt } from '../../scoring/final-score';
+import { runScoreBreakdown } from '../../scoring/final-score';
 import { runSymmetry } from '../../rules/validators/symmetry';
 import { useProgramStore } from '../../store/program-store';
 import { useScoreSettings } from '../../store/score-settings';
@@ -86,7 +86,6 @@ export default function BuilderMobile() {
     const hasTricks = program.runs.some((r) => r.tricks.length > 0);
     if (!hasTricks) return null;
     let total = 0;
-    let totalMin = 0;
     for (let i = 0; i < program.runs.length; i++) {
       const run = program.runs[i];
       if (run.tricks.length === 0) continue;
@@ -94,15 +93,8 @@ export default function BuilderMobile() {
       const cp = choreoPenaltyPerRun[i] ?? 0;
       const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, cp, distribution, quality);
       total += bd.total;
-      if (program.awtMode) {
-        const bdMin = runScoreBreakdownAwt(run, MANOEUVRES_BY_ID, sym, cp, distribution, quality, 0.5);
-        totalMin += bdMin.total;
-      }
     }
-    return {
-      total: Math.ceil(total * 1000) / 1000,
-      totalMin: Math.ceil(totalMin * 1000) / 1000,
-    };
+    return { total: Math.ceil(total * 1000) / 1000 };
   }, [program, distribution, quality, choreoPenaltyPerRun]);
 
   const safeActive = Math.min(activeRunIndex, program.runs.length - 1);
@@ -120,9 +112,7 @@ export default function BuilderMobile() {
               <>
                 <span>·</span>
                 <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
-                  {program.awtMode
-                    ? `${programTotal.totalMin.toFixed(3)}…${programTotal.total.toFixed(3)}`
-                    : programTotal.total.toFixed(3)}
+                  {programTotal.total.toFixed(3)}
                 </span>
               </>
             )}
@@ -197,7 +187,6 @@ export default function BuilderMobile() {
           <RunMobile
             run={program.runs[i]}
             runIndex={i}
-            awtMode={program.awtMode}
             isArmed={anyArmed}
             movingTrickId={armedMoveTrickId}
             onInsertAt={handleInsertAt}

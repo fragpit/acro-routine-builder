@@ -3,8 +3,6 @@ import type { RunScoreBreakdown } from '../scoring/final-score';
 
 interface Props {
   breakdown: RunScoreBreakdown;
-  awtMode: boolean;
-  awtMin?: RunScoreBreakdown;
   /**
    * Direction the breakdown appears relative to the header when expanded.
    * On desktop the panel is at the top of its container and the breakdown
@@ -17,16 +15,12 @@ interface Props {
 
 export default function FinalScorePanel({
   breakdown,
-  awtMode,
-  awtMin,
   expandsDown = false,
 }: Props) {
   const [expanded, setExpanded] = useState(false);
   const chevronFlipped = expandsDown ? !expanded : expanded;
 
-  const scoreLabel = awtMode && awtMin
-    ? `${awtMin.total.toFixed(3)}…${breakdown.total.toFixed(3)}`
-    : breakdown.total.toFixed(3);
+  const scoreLabel = breakdown.total.toFixed(3);
 
   return (
     <div className="border-t border-slate-200 dark:border-slate-700">
@@ -80,16 +74,8 @@ export default function FinalScorePanel({
           )}
           <FormulaRow
             label="Bonus"
-            formula={
-              awtMode && awtMin
-                ? `(Tech + Choreo) × ${(breakdown.bonusPercent * 0.5).toFixed(1)}…${breakdown.bonusPercent.toFixed(1)}%`
-                : `(Tech + Choreo) × ${breakdown.bonusPercent.toFixed(1)}%`
-            }
-            value={
-              awtMode && awtMin
-                ? `${awtMin.bonusFinal.toFixed(3)}…${breakdown.bonusFinal.toFixed(3)}`
-                : breakdown.bonusFinal.toFixed(3)
-            }
+            formula={`(Tech + Choreo) × (${breakdown.bonusPercent.toFixed(1)}% - ${breakdown.choreoPenalty}%)/100`}
+            value={breakdown.bonusFinal.toFixed(3)}
           />
           <div className="border-t border-slate-200 dark:border-slate-700 pt-1">
             <div className="flex justify-between font-semibold text-slate-700 dark:text-slate-200">
@@ -105,20 +91,10 @@ export default function FinalScorePanel({
               {' '}= {breakdown.tMark}
             </p>
             <p>
-              C = 9
-              {breakdown.choreoPenalty > 0 && (
-                <> × {Math.max(0, 100 - breakdown.choreoPenalty)}%(rep)</>
-              )}
-              {' '}× {breakdown.quality.choreo}%(Cq)
+              C = 9 × {breakdown.quality.choreo}%(Cq)
               {' '}+ {breakdown.symmetryBalanced ? '1' : '0'}(sym)
               {' '}= {breakdown.cMark}
             </p>
-            {awtMode && (
-              <p>
-                AWT: bonus scales with execution quality
-                (range T=5…10)
-              </p>
-            )}
           </div>
         </div>
       )}

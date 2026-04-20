@@ -3,7 +3,7 @@ import { BONUS_LIMITS, runBonusUsage } from '../../scoring/bonus-usage';
 import { runBonus } from '../../scoring/bonus';
 import { runTechnicity } from '../../scoring/technicity';
 import { exclusionsByTrick } from '../../scoring/eligibility';
-import { runScoreBreakdown, runScoreBreakdownAwt, type ScoreDistribution, type QualityCorrection } from '../../scoring/final-score';
+import { runScoreBreakdown, type ScoreDistribution, type QualityCorrection } from '../../scoring/final-score';
 import { unrewardedBonusesByTrick } from '../../rules/repeated-bonus';
 import { runSymmetry } from '../../rules/validators/symmetry';
 import type { Run } from '../../rules/types';
@@ -13,7 +13,6 @@ import FinalScorePanel from '../FinalScorePanel';
 interface Props {
   run: Run;
   runIndex: number;
-  awtMode: boolean;
   isArmed: boolean;
   movingTrickId: string | null;
   onInsertAt: (runIndex: number, index: number) => void;
@@ -30,7 +29,6 @@ interface Props {
 export default function RunMobile({
   run,
   runIndex,
-  awtMode,
   isArmed,
   movingTrickId,
   onInsertAt,
@@ -129,12 +127,7 @@ export default function RunMobile({
               <Stat label="TC" value={technicity.toFixed(3)} />
               <Stat
                 label="Bonus"
-                value={
-                  awtMode
-                    ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
-                    : `+${bonus.toFixed(1)}%`
-                }
-                className={awtMode ? 'col-span-2' : undefined}
+                value={`${(bonus * quality.technical / 100).toFixed(1)}(${bonus.toFixed(1)})%`}
               />
               <Stat
                 label="Sym"
@@ -145,7 +138,7 @@ export default function RunMobile({
               <SlotStat label="Reversed" used={bonusUsage.reversed} max={BONUS_LIMITS.reversed} />
               <SlotStat label="Flipped" used={bonusUsage.flipped} max={BONUS_LIMITS.flipped} />
               {choreoPenalty > 0 && (
-                <Stat label="Choreo" value={`-${choreoPenalty}%`} tone="warn" />
+                <Stat label="Malus" value={`-${choreoPenalty}%`} tone="warn" />
               )}
               </span>
             </button>
@@ -177,13 +170,11 @@ export default function RunMobile({
             >
               <polyline points="6 15 12 9 18 15" />
             </svg>
-            <span className={`justify-self-end font-mono ${awtMode ? 'text-xs' : ''}`}>
+            <span className="justify-self-end font-mono">
               <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
                 Bonus
               </span>
-              {awtMode
-                ? `+${(bonus * 0.5).toFixed(1)}…${bonus.toFixed(1)}%`
-                : `+${bonus.toFixed(1)}%`}
+              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)})%
             </span>
           </button>
         )
@@ -192,8 +183,6 @@ export default function RunMobile({
         <div className="bg-white dark:bg-slate-900">
           <FinalScorePanel
             breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality)}
-            awtMode={awtMode}
-            awtMin={awtMode ? runScoreBreakdownAwt(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality, 0.5) : undefined}
           />
         </div>
       )}

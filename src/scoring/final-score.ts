@@ -65,13 +65,17 @@ function ceilTo3(n: number): number {
  *
  * C (choreography mark) defaults to 9 + symmetry bonus (1 if balanced,
  * 0 otherwise). The 9 base accounts for the 8/10 objective criteria
- * minus unknowable diversity/chaining, plus 2/10 subjective.
- * Choreography penalty from repetitions and the Cq quality correction
- * apply only to the subjective base (9); the symmetry bonus is a
- * fixed +1 added after those corrections.
+ * minus unknowable diversity/chaining, plus 2/10 subjective. The Cq
+ * quality correction applies only to the subjective base (9); the
+ * symmetry bonus is a fixed +1 added after that correction.
  *
  * L (landing mark) defaults to 0 - landing is not predictable from
  * the routine structure.
+ *
+ * The repetition penalty (still carried as `choreoPenalty` for legacy
+ * reasons) is applied as a malus to the bonus percentage, not to C.
+ * When malus exceeds bonus, the bonus turns negative and reduces the
+ * total.
  */
 export function runScoreBreakdown(
   run: Run,
@@ -87,16 +91,16 @@ export function runScoreBreakdown(
   const tMark = 10 * (quality.technical / 100);
   const cSubjective = 9;
   const symBonus = symmetry.balanced ? 1 : 0;
-  const repetitionFactor = Math.max(0, 1 - choreoPenalty / 100);
-  const cMark =
-    cSubjective * repetitionFactor * (quality.choreo / 100) + symBonus;
+  const cMark = cSubjective * (quality.choreo / 100) + symBonus;
   const lMark = 0;
 
   const techFinal = tMark * tc * (distribution.technical / 100);
   const choreoFinal = cMark * (distribution.choreo / 100);
   const landingFinal = lMark * (distribution.landing / 100);
   const bonusFinal =
-    (techFinal + choreoFinal) * (bonusPercent / 100);
+    (techFinal + choreoFinal) *
+    ((bonusPercent - choreoPenalty) / 100) *
+    (quality.technical / 100);
   const total = ceilTo3(
     techFinal + choreoFinal + landingFinal + bonusFinal,
   );
@@ -117,39 +121,4 @@ export function runScoreBreakdown(
     bonusFinal: ceilTo3(bonusFinal),
     total,
   };
-}
-
-/**
- * For AWT mode, compute the score with bonus scaled to a given
- * fraction (T/10 scaling per FAI 3.4.1).
- * fraction=1.0 means T=10 (upper bound), fraction=0.5 means T=5.
- */
-export function runScoreBreakdownAwt(
-  run: Run,
-  manoeuvres: Record<string, Manoeuvre>,
-  symmetry: RunSymmetry,
-  choreoPenalty: number,
-  distribution: ScoreDistribution,
-  quality: QualityCorrection,
-  bonusFraction: number,
-): RunScoreBreakdown {
-  const base = runScoreBreakdown(
-    run,
-    manoeuvres,
-    symmetry,
-    choreoPenalty,
-    distribution,
-    quality,
-  );
-  const scaledBonusFinal = ceilTo3(
-    (base.techFinal + base.choreoFinal) *
-      ((base.bonusPercent * bonusFraction) / 100),
-  );
-  const total = ceilTo3(
-    base.techFinal +
-      base.choreoFinal +
-      base.landingFinal +
-      scaledBonusFinal,
-  );
-  return { ...base, bonusFinal: scaledBonusFinal, total };
 }
