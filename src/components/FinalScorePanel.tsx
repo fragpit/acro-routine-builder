@@ -74,7 +74,7 @@ export default function FinalScorePanel({
           )}
           <FormulaRow
             label="Bonus"
-            formula={`(Tech + Choreo) × ${breakdown.bonusPercent.toFixed(1)}% × ${breakdown.quality.technical}%(Tq)`}
+            formula={`(Tech + Choreo) × (${breakdown.bonusPercent.toFixed(1)}% - ${breakdown.choreoPenalty}%)/100`}
             value={breakdown.bonusFinal.toFixed(3)}
           />
           <div className="border-t border-slate-200 dark:border-slate-700 pt-1">
@@ -91,11 +91,7 @@ export default function FinalScorePanel({
               {' '}= {breakdown.tMark}
             </p>
             <p>
-              C = 9
-              {breakdown.choreoPenalty > 0 && (
-                <> × {Math.max(0, 100 - breakdown.choreoPenalty)}%(rep)</>
-              )}
-              {' '}× {breakdown.quality.choreo}%(Cq)
+              C = 9 × {breakdown.quality.choreo}%(Cq)
               {' '}+ {breakdown.symmetryBalanced ? '1' : '0'}(sym)
               {' '}= {breakdown.cMark}
             </p>

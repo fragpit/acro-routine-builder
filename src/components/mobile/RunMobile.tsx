@@ -127,7 +127,7 @@ export default function RunMobile({
               <Stat label="TC" value={technicity.toFixed(3)} />
               <Stat
                 label="Bonus"
-                value={`+${bonus.toFixed(1)}%`}
+                value={`${(bonus * quality.technical / 100).toFixed(1)}(${bonus.toFixed(1)})%`}
               />
               <Stat
                 label="Sym"
@@ -138,7 +138,7 @@ export default function RunMobile({
               <SlotStat label="Reversed" used={bonusUsage.reversed} max={BONUS_LIMITS.reversed} />
               <SlotStat label="Flipped" used={bonusUsage.flipped} max={BONUS_LIMITS.flipped} />
               {choreoPenalty > 0 && (
-                <Stat label="Choreo" value={`-${choreoPenalty}%`} tone="warn" />
+                <Stat label="Malus" value={`-${choreoPenalty}%`} tone="warn" />
               )}
               </span>
             </button>
@@ -174,7 +174,7 @@ export default function RunMobile({
               <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
                 Bonus
               </span>
-              +{bonus.toFixed(1)}%
+              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)})%
             </span>
           </button>
         )

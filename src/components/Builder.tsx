@@ -454,15 +454,6 @@ function RunColumn({
             <span className="font-mono">{technicity.toFixed(3)}</span>
           </div>
           <div
-            className="flex justify-between"
-            title="Sum of selected bonus percents, scaled by Tq in the final score."
-          >
-            <span>Bonus</span>
-            <span className="font-mono">
-              +{bonus.toFixed(1)}%
-            </span>
-          </div>
-          <div
             className="flex justify-between text-slate-500 dark:text-slate-400"
             title="Bonus category slots used per run (FAI 3.5: max 5 twisted / 3 reversed / 2 flipped). Extras are unscored."
           >
@@ -473,12 +464,21 @@ function RunColumn({
               <BonusSlot label="F" used={bonusUsage.flipped} limit={BONUS_LIMITS.flipped} />
             </span>
           </div>
+          <div
+            className="flex justify-between"
+            title="Bonus per run: X(Y)% - Y is the sum of selected bonus percents, X is Y adjusted by the Tq technical-quality correction."
+          >
+            <span>Bonus</span>
+            <span className="font-mono">
+              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)})%
+            </span>
+          </div>
           {choreoPenalty > 0 && (
             <div
               className="flex justify-between text-amber-600 dark:text-amber-400"
-              title="Choreography mark deduction from repetitions in this run (FAI 3.3.3)"
+              title="Malus deducted from the bonus percent for repetitions in this run (FAI 3.3.3)"
             >
-              <span>Choreo</span>
+              <span>Malus</span>
               <span className="font-mono">-{choreoPenalty}%</span>
             </div>
           )}

@@ -6,6 +6,12 @@
   AWT and AWQ modes. The score breakdown shows the extra multiplier.
   AWT no longer displays a `min…max` range for the bonus / total - Tq
   replaces the previous T=5…10 scaling.
+- Repetition penalty is now applied as a malus on the bonus percentage
+  instead of reducing the choreography (C) mark. When the malus
+  exceeds the bonus, the bonus turns negative and lowers the run
+  total. The per-run stats row is relabeled `Choreo` -> `Malus`, the
+  `Bonus` stat is shown as `X(Y)%` (Y raw, X after Tq), and the bonus
+  row has been moved below `Slots`.
 
 ## v0.6.18
 
