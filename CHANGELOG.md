@@ -4,7 +4,8 @@
 
 - Competition import preview shows the pilot's overall score and offers
   an "Apply accuracy" toggle that sets the builder's T/C corrections
-  from the pilot's actual judges' marks at that event.
+  from the pilot's actual judges' marks at that event (averaged across
+  runs, floored to the nearest 10).
 
 ## v0.6.19
 
