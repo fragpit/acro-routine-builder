@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.17
 
 - Tumbling / infinity / rhythmic related manoeuvres beyond the 2-per-run
   cap are now marked "ignored" on the run cell (line-through + reason)
