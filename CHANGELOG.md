@@ -4,11 +4,10 @@
 
 - Mobile recent tricks moved from the palette strip into the
   "+ Add trick" picker as a "Recent" section above the full list.
-- Mobile "+ Add trick" is now a single compact pill centred just
-  above the run's stats footer (instead of a full-width strip at
-  the top of the builder). Picking a trick arms it and the pill is
-  replaced by an insert-slot banner with Cancel; the same banner
-  covers add, move and copy.
+- Mobile "+ Add trick" is now a single compact pill centred above
+  the run instead of a full-width strip button. Picking a trick arms
+  it and an insert-slot banner replaces the pill with a Cancel
+  action; the same banner covers add, move and copy.
 
 ## v0.6.14
 

@@ -40,13 +40,6 @@ export default function BuilderMobile() {
   const [statsExpanded, setStatsExpanded] = useState(false);
 
   const anyArmed = !!armedManoeuvreId || !!armedMoveTrickId || !!armedCopyTrickId;
-  const armedLabel = armedManoeuvreId
-    ? 'Tap a slot to insert the trick.'
-    : armedMoveTrickId
-      ? 'Tap a slot to move the trick (any run).'
-      : armedCopyTrickId
-        ? 'Tap a slot to copy the trick (any run).'
-        : null;
 
   function armPalette(id: string | null) {
     setArmedMoveTrickId(null);
@@ -165,6 +158,37 @@ export default function BuilderMobile() {
         </div>
       </header>
 
+      {!anyArmed && (
+        <div className="shrink-0 flex items-center justify-center px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+          <button
+            type="button"
+            onClick={() => setPickerOpen(true)}
+            className="px-4 py-1.5 text-sm rounded-full border border-sky-500 bg-sky-500/10 text-sky-700 dark:text-sky-300 font-medium active:bg-sky-500/20"
+          >
+            + Add trick
+          </button>
+        </div>
+      )}
+
+      {anyArmed && (
+        <div className="shrink-0 flex items-center gap-2 px-3 py-2 bg-sky-50 dark:bg-sky-950/40 border-b border-sky-200 dark:border-sky-900 text-xs text-sky-800 dark:text-sky-200">
+          <span className="flex-1">
+            {armedManoeuvreId
+              ? 'Tap a slot to insert the trick.'
+              : armedMoveTrickId
+                ? 'Tap a slot to move the trick (any run).'
+                : 'Tap a slot to copy the trick (any run).'}
+          </span>
+          <button
+            type="button"
+            onClick={clearArm}
+            className="px-2 py-0.5 rounded border border-sky-400 dark:border-sky-700 text-sky-700 dark:text-sky-300 hover:bg-white dark:hover:bg-slate-900"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
       <RunSwiper
         count={program.runs.length}
         activeIndex={safeActive}
@@ -178,9 +202,6 @@ export default function BuilderMobile() {
             movingTrickId={armedMoveTrickId}
             onInsertAt={handleInsertAt}
             onOpenTrick={setSheetTrickId}
-            onOpenPicker={() => setPickerOpen(true)}
-            armedLabel={armedLabel}
-            onCancelArm={clearArm}
             onResetRun={resetRun}
             highlights={highlights}
             choreoPenalty={choreoPenaltyPerRun[i] ?? 0}

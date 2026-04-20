@@ -18,9 +18,6 @@ interface Props {
   movingTrickId: string | null;
   onInsertAt: (runIndex: number, index: number) => void;
   onOpenTrick: (trickId: string) => void;
-  onOpenPicker: () => void;
-  armedLabel: string | null;
-  onCancelArm: () => void;
   onResetRun: (runIndex: number) => void;
   highlights: Map<string, 'error' | 'warning'>;
   choreoPenalty: number;
@@ -38,9 +35,6 @@ export default function RunMobile({
   movingTrickId,
   onInsertAt,
   onOpenTrick,
-  onOpenPicker,
-  armedLabel,
-  onCancelArm,
   onResetRun,
   highlights,
   choreoPenalty,
@@ -107,29 +101,6 @@ export default function RunMobile({
           </>
         )}
       </div>
-
-      {armedLabel !== null ? (
-        <div className="shrink-0 flex items-center gap-2 px-3 py-2 bg-sky-50 dark:bg-sky-950/40 border-t border-sky-200 dark:border-sky-900 text-xs text-sky-800 dark:text-sky-200">
-          <span className="flex-1">{armedLabel}</span>
-          <button
-            type="button"
-            onClick={onCancelArm}
-            className="px-2 py-0.5 rounded border border-sky-400 dark:border-sky-700 text-sky-700 dark:text-sky-300 hover:bg-white dark:hover:bg-slate-900"
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <div className="shrink-0 flex items-center justify-center px-3 py-2 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-          <button
-            type="button"
-            onClick={onOpenPicker}
-            className="px-4 py-1.5 text-sm rounded-full border border-sky-500 bg-sky-500/10 text-sky-700 dark:text-sky-300 font-medium active:bg-sky-500/20"
-          >
-            + Add trick
-          </button>
-        </div>
-      )}
 
       {run.tricks.length > 0 && (
         statsExpanded ? (
