@@ -23,3 +23,9 @@ export const BONUS_LIMITS: Readonly<Record<BonusCategory, number>> = Object.free
  */
 export const HIGH_COEFF_LIMIT = 2;
 export const HIGH_COEFF_THRESHOLD = 1.95;
+
+/**
+ * Tumbling/infinity/rhythmic-related cap (FAI 3.3): max 2 such manoeuvres per
+ * run. Extras are unscored.
+ */
+export const TUMBLING_RELATED_LIMIT = 2;

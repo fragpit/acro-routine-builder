@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Tumbling / infinity / rhythmic related manoeuvres beyond the 2-per-run
+  cap are now marked "ignored" on the run cell (line-through + reason)
+  and excluded from technicity and bonus scoring, matching the existing
+  behaviour for the high-coefficient and bonus category limits.
+
 ## v0.6.16
 
 - Desktop header title no longer carries the version suffix. The app

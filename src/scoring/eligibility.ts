@@ -4,13 +4,15 @@ import {
   BONUS_LIMITS,
   HIGH_COEFF_LIMIT,
   HIGH_COEFF_THRESHOLD,
+  TUMBLING_RELATED_LIMIT,
 } from '../data/competition-types';
 
 /**
  * Returns the set of placed-trick ids that will not be scored in the given run
- * per FAI 3.1 (max 2 manoeuvres with coefficient >= 1.95) and 3.5 (bonus
- * category limits). Extras in program order are dropped - their coefficients
- * are excluded from technicity and their bonuses from the bonus total.
+ * per FAI 3.1 (max 2 manoeuvres with coefficient >= 1.95), 3.3 (max 2
+ * tumbling/infinity/rhythmic related manoeuvres) and 3.5 (bonus category
+ * limits). Extras in program order are dropped - their coefficients are
+ * excluded from technicity and their bonuses from the bonus total.
  */
 export function excludedFromScoring(
   run: Run,
@@ -29,11 +31,13 @@ export function exclusionsByTrick(
 ): Map<string, string[]> {
   const reasons = new Map<string, string[]>();
   let highCoeffCount = 0;
+  let tumblingRelatedCount = 0;
   const bonusCount: Record<BonusCategory, number> = { twisted: 0, reversed: 0, flipped: 0 };
   for (const t of run.tricks) {
     const m = manoeuvres[t.manoeuvreId];
     if (!m) continue;
     const isHigh = m.coefficient >= HIGH_COEFF_THRESHOLD;
+    const isTumblingRelated = m.groups.includes('tumbling_related');
     const cats = new Set<BonusCategory>();
     for (const b of t.selectedBonuses) {
       const cat = getBonusCategory(m, b);
@@ -42,6 +46,9 @@ export function exclusionsByTrick(
     const trickReasons: string[] = [];
     if (isHigh && highCoeffCount >= HIGH_COEFF_LIMIT) {
       trickReasons.push(`more than ${HIGH_COEFF_LIMIT} manoeuvres with coefficient \u2265 ${HIGH_COEFF_THRESHOLD}`);
+    }
+    if (isTumblingRelated && tumblingRelatedCount >= TUMBLING_RELATED_LIMIT) {
+      trickReasons.push(`more than ${TUMBLING_RELATED_LIMIT} tumbling/infinity/rhythmic related manoeuvres`);
     }
     for (const cat of cats) {
       if (bonusCount[cat] >= BONUS_LIMITS[cat]) {
@@ -53,6 +60,7 @@ export function exclusionsByTrick(
       continue;
     }
     if (isHigh) highCoeffCount++;
+    if (isTumblingRelated) tumblingRelatedCount++;
     for (const cat of cats) bonusCount[cat]++;
   }
   return reasons;
