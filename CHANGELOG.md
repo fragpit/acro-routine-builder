@@ -2,11 +2,12 @@
 
 ## Unreleased
 
+- Mobile trick cells now have a subtle `✕` remove button on the
+  right, matching the desktop cell affordance (slate, red on hover).
 - Mobile trick sheet replaces the red "Remove" button with a primary
-  "Apply" button (closes the sheet). Removal moved to a subtle `✕`
-  button in the sheet header, styled the same as the desktop trick
-  cell remove (slate, red on hover) so it stays unobtrusive but
-  familiar.
+  "Apply" button that closes the sheet; the sheet no longer carries
+  a destructive action since removal is reachable directly from the
+  cell.
 
 ## v0.6.13
 

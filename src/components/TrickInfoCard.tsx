@@ -5,15 +5,9 @@ interface Props {
   manoeuvre: Manoeuvre;
   placedTrick: PlacedTrick;
   onClose: () => void;
-  showCloseButton?: boolean;
 }
 
-export default function TrickInfoCard({
-  manoeuvre,
-  placedTrick,
-  onClose,
-  showCloseButton = true,
-}: Props) {
+export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props) {
   const toggleBonus = useProgramStore((s) => s.toggleBonus);
   return (
     <div className="p-4 text-sm">
@@ -23,16 +17,14 @@ export default function TrickInfoCard({
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{manoeuvre.name}</h2>
           <div className="text-xs text-slate-500 dark:text-slate-400">coeff: {manoeuvre.coefficient.toFixed(2)}</div>
         </div>
-        {showCloseButton && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 text-lg leading-none"
-            aria-label="close"
-          >
-            ✕
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 text-lg leading-none"
+          aria-label="close"
+        >
+          ✕
+        </button>
       </div>
 
       <ul className="list-disc pl-4 space-y-1 text-slate-700 dark:text-slate-300 mb-4">

@@ -12,7 +12,6 @@ interface Props {
 
 export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: Props) {
   const program = useProgramStore((s) => s.program);
-  const removeTrick = useProgramStore((s) => s.removeTrick);
 
   useEffect(() => {
     if (!trickId) return;
@@ -51,27 +50,11 @@ export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: P
         aria-modal="true"
         className="relative bg-white dark:bg-slate-900 rounded-t-2xl shadow-xl max-h-[85vh] flex flex-col animate-[slideUp_0.18s_ease-out] pb-[env(safe-area-inset-bottom)]"
       >
-        <div className="shrink-0 relative flex justify-center py-2">
+        <div className="shrink-0 flex justify-center py-2">
           <span className="block w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
-          <button
-            type="button"
-            aria-label="remove"
-            onClick={() => {
-              removeTrick(placed.id);
-              onClose();
-            }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-lg leading-none text-slate-500 hover:text-red-400"
-          >
-            ✕
-          </button>
         </div>
         <div className="flex-1 overflow-y-auto">
-          <TrickInfoCard
-            manoeuvre={manoeuvre}
-            placedTrick={placed}
-            onClose={onClose}
-            showCloseButton={false}
-          />
+          <TrickInfoCard manoeuvre={manoeuvre} placedTrick={placed} onClose={onClose} />
         </div>
         <div className="shrink-0 border-t border-slate-200 dark:border-slate-700 p-3 grid grid-cols-3 gap-2">
           <button
