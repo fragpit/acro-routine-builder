@@ -66,7 +66,9 @@ function ceilTo3(n: number): number {
  * C (choreography mark) defaults to 9 + symmetry bonus (1 if balanced,
  * 0 otherwise). The 9 base accounts for the 8/10 objective criteria
  * minus unknowable diversity/chaining, plus 2/10 subjective.
- * Choreography penalty from repetitions reduces C proportionally.
+ * Choreography penalty from repetitions and the Cq quality correction
+ * apply only to the subjective base (9); the symmetry bonus is a
+ * fixed +1 added after those corrections.
  *
  * L (landing mark) defaults to 0 - landing is not predictable from
  * the routine structure.
@@ -83,9 +85,11 @@ export function runScoreBreakdown(
   const bonusPercent = runBonus(run, manoeuvres);
 
   const tMark = 10 * (quality.technical / 100);
-  const cBase = 9 + (symmetry.balanced ? 1 : 0);
+  const cSubjective = 9;
+  const symBonus = symmetry.balanced ? 1 : 0;
   const repetitionFactor = Math.max(0, 1 - choreoPenalty / 100);
-  const cMark = cBase * repetitionFactor * (quality.choreo / 100);
+  const cMark =
+    cSubjective * repetitionFactor * (quality.choreo / 100) + symBonus;
   const lMark = 0;
 
   const techFinal = tMark * tc * (distribution.technical / 100);

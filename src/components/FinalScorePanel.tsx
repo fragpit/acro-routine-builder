@@ -105,11 +105,12 @@ export default function FinalScorePanel({
               {' '}= {breakdown.tMark}
             </p>
             <p>
-              C = (9 + {breakdown.symmetryBalanced ? '1' : '0'}(sym))
+              C = 9
               {breakdown.choreoPenalty > 0 && (
                 <> × {Math.max(0, 100 - breakdown.choreoPenalty)}%(rep)</>
               )}
               {' '}× {breakdown.quality.choreo}%(Cq)
+              {' '}+ {breakdown.symmetryBalanced ? '1' : '0'}(sym)
               {' '}= {breakdown.cMark}
             </p>
             {awtMode && (
