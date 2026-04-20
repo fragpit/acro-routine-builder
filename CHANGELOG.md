@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Desktop header title no longer carries the version suffix. The app
+  version is now shown as a small footer at the bottom of the Home
+  page (and only there - not in the Builder).
+
 ## v0.6.15
 
 - Mobile recent tricks moved from the palette strip into the
