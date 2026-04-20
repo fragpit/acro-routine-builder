@@ -96,7 +96,9 @@ export function runScoreBreakdown(
   const choreoFinal = cMark * (distribution.choreo / 100);
   const landingFinal = lMark * (distribution.landing / 100);
   const bonusFinal =
-    (techFinal + choreoFinal) * (bonusPercent / 100);
+    (techFinal + choreoFinal) *
+    (bonusPercent / 100) *
+    (quality.technical / 100);
   const total = ceilTo3(
     techFinal + choreoFinal + landingFinal + bonusFinal,
   );
@@ -143,7 +145,8 @@ export function runScoreBreakdownAwt(
   );
   const scaledBonusFinal = ceilTo3(
     (base.techFinal + base.choreoFinal) *
-      ((base.bonusPercent * bonusFraction) / 100),
+      ((base.bonusPercent * bonusFraction) / 100) *
+      (quality.technical / 100),
   );
   const total = ceilTo3(
     base.techFinal +

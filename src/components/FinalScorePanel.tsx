@@ -82,8 +82,8 @@ export default function FinalScorePanel({
             label="Bonus"
             formula={
               awtMode && awtMin
-                ? `(Tech + Choreo) × ${(breakdown.bonusPercent * 0.5).toFixed(1)}…${breakdown.bonusPercent.toFixed(1)}%`
-                : `(Tech + Choreo) × ${breakdown.bonusPercent.toFixed(1)}%`
+                ? `(Tech + Choreo) × ${(breakdown.bonusPercent * 0.5).toFixed(1)}…${breakdown.bonusPercent.toFixed(1)}% × ${breakdown.quality.technical}%(Tq)`
+                : `(Tech + Choreo) × ${breakdown.bonusPercent.toFixed(1)}% × ${breakdown.quality.technical}%(Tq)`
             }
             value={
               awtMode && awtMin
