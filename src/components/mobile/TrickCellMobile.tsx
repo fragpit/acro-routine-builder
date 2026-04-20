@@ -16,6 +16,7 @@ const SIDES: Side[] = ['L', 'R'];
 export default function TrickCellMobile({ trick, highlight, ignoredReasons, unrewardedBonuses, dimmed, onTap }: Props) {
   const manoeuvre = MANOEUVRES_BY_ID[trick.manoeuvreId];
   const setTrickSide = useProgramStore((s) => s.setTrickSide);
+  const removeTrick = useProgramStore((s) => s.removeTrick);
   if (!manoeuvre) return null;
 
   const ignored = (ignoredReasons?.length ?? 0) > 0;
@@ -76,9 +77,9 @@ export default function TrickCellMobile({ trick, highlight, ignoredReasons, unre
             </div>
           )}
         </div>
-        {!manoeuvre.noSide && (
-          <div className="flex items-center gap-1 shrink-0">
-            {SIDES.map((s) => (
+        <div className="flex items-center gap-1 shrink-0">
+          {!manoeuvre.noSide &&
+            SIDES.map((s) => (
               <button
                 key={s}
                 type="button"
@@ -96,8 +97,18 @@ export default function TrickCellMobile({ trick, highlight, ignoredReasons, unre
                 {s}
               </button>
             ))}
-          </div>
-        )}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              removeTrick(trick.id);
+            }}
+            className="w-6 h-8 ml-1 text-lg leading-none text-slate-500 hover:text-red-400"
+            aria-label="remove"
+          >
+            ✕
+          </button>
+        </div>
       </div>
     </div>
   );

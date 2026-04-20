@@ -12,7 +12,6 @@ interface Props {
 
 export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: Props) {
   const program = useProgramStore((s) => s.program);
-  const removeTrick = useProgramStore((s) => s.removeTrick);
 
   useEffect(() => {
     if (!trickId) return;
@@ -74,13 +73,10 @@ export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: P
           </button>
           <button
             type="button"
-            onClick={() => {
-              removeTrick(placed.id);
-              onClose();
-            }}
-            className="py-2 text-sm rounded bg-red-600 text-white hover:bg-red-500"
+            onClick={onClose}
+            className="py-2 text-sm rounded bg-sky-600 text-white hover:bg-sky-500"
           >
-            Remove
+            Apply
           </button>
         </div>
       </div>
