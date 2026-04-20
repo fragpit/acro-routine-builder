@@ -57,24 +57,24 @@ export default function FinalScorePanel({
         <div className="px-3 pb-2 text-xs text-slate-600 dark:text-slate-400 space-y-1.5">
           <FormulaRow
             label="Technical"
-            formula={`T(${breakdown.tMark}) × TC(${breakdown.tc.toFixed(3)}) × ${(breakdown.distribution.technical / 100).toFixed(2)}`}
+            formula={`T(${breakdown.tMark}) × TC(${breakdown.tc.toFixed(3)}) × ${breakdown.distribution.technical}%`}
             value={breakdown.techFinal.toFixed(3)}
           />
           <FormulaRow
             label="Choreo"
-            formula={`C(${breakdown.cMark.toFixed(1)}) × ${(breakdown.distribution.choreo / 100).toFixed(2)}`}
+            formula={`C(${breakdown.cMark.toFixed(1)}) × ${breakdown.distribution.choreo}%`}
             value={breakdown.choreoFinal.toFixed(3)}
           />
           {breakdown.distribution.landing > 0 && (
             <FormulaRow
               label="Landing"
-              formula={`L(${breakdown.lMark}) × ${(breakdown.distribution.landing / 100).toFixed(2)}`}
+              formula={`L(${breakdown.lMark}) × ${breakdown.distribution.landing}%`}
               value={breakdown.landingFinal.toFixed(3)}
             />
           )}
           <FormulaRow
             label="Bonus"
-            formula={`(Tech + Choreo) × ${(breakdown.bonusPercent / 100).toFixed(3)} × ${(breakdown.quality.technical / 100).toFixed(2)}(Tq)`}
+            formula={`(Tech + Choreo) × ${breakdown.bonusPercent.toFixed(1)}% × ${breakdown.quality.technical}%(Tq)`}
             value={breakdown.bonusFinal.toFixed(3)}
           />
           <div className="border-t border-slate-200 dark:border-slate-700 pt-1">
@@ -87,15 +87,15 @@ export default function FinalScorePanel({
           </div>
           <div className="pt-1 text-[10px] text-slate-500 dark:text-slate-500 space-y-0.5">
             <p>
-              T = 10 × {(breakdown.quality.technical / 100).toFixed(2)}(Tq)
+              T = 10 × {breakdown.quality.technical}%(Tq)
               {' '}= {breakdown.tMark}
             </p>
             <p>
               C = 9
               {breakdown.choreoPenalty > 0 && (
-                <> × {(Math.max(0, 100 - breakdown.choreoPenalty) / 100).toFixed(2)}(rep)</>
+                <> × {Math.max(0, 100 - breakdown.choreoPenalty)}%(rep)</>
               )}
-              {' '}× {(breakdown.quality.choreo / 100).toFixed(2)}(Cq)
+              {' '}× {breakdown.quality.choreo}%(Cq)
               {' '}+ {breakdown.symmetryBalanced ? '1' : '0'}(sym)
               {' '}= {breakdown.cMark}
             </p>
