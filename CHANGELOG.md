@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.20
 
 - Competition import preview shows the pilot's overall score and offers
   an "Apply accuracy" toggle that sets the builder's T/C corrections
