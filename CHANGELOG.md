@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Feedback menu no longer shows account-related subtitles under the
+  GitHub Issues and Email options.
+
 ## v0.6.21
 
 - The Quality correction reset link now sits next to the section

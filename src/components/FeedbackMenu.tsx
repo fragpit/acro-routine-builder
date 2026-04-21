@@ -91,10 +91,7 @@ export default function FeedbackMenu({
             className="flex items-center gap-2 px-3 py-2 mt-1 touch-manipulation text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
           >
             <IconGithub className="w-4 h-4 shrink-0" />
-            <div className="flex flex-col">
-              <span>GitHub Issues</span>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400">Needs a GitHub account</span>
-            </div>
+            <span>GitHub Issues</span>
           </a>
           <a
             href={buildMailto()}
@@ -103,10 +100,7 @@ export default function FeedbackMenu({
             className="flex items-center gap-2 px-3 py-2 mb-1 touch-manipulation text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-sky-600 dark:hover:text-sky-400"
           >
             <IconMail className="w-4 h-4 shrink-0" />
-            <div className="flex flex-col">
-              <span>Email</span>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400">No account needed</span>
-            </div>
+            <span>Email</span>
           </a>
           <div className="px-3 py-1.5 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
             ARB v{__APP_VERSION__}
