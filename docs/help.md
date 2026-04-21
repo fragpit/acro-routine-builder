@@ -246,6 +246,15 @@ you also get undo/redo in the menu header.
 This storage is per-browser, per-device. Clearing site data wipes
 it. To move a program between devices, use **Export JSON** below.
 
+> **Browser storage is not a reliable backup.** `localStorage` can
+> be wiped at any time - by clearing browsing data, by the browser
+> evicting it under storage pressure, by switching browsers or
+> devices, or by using private / incognito mode. If you need a
+> 100% guarantee that a program will survive, **export it to JSON**
+> and keep the file somewhere safe (cloud drive, git, email). Treat
+> the in-browser Save / Load as a convenience cache, not as the
+> source of truth.
+
 ### Export JSON
 
 `Export JSON` downloads a portable `.arb.json` file. It contains
