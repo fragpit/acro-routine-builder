@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.23
 
 - Mobile menu: navigation buttons (Home, Rules, Tricks, Feedback,
   Theme) moved to the top of the drawer. Version label stays at the
