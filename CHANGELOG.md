@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.22
 
 - Feedback menu no longer shows account-related subtitles under the
   GitHub Issues and Email options.
