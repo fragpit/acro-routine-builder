@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.24
 
 - Add a user guide at `/docs/help` describing every feature of the
   builder - routine composition, AWT import wizard, scoring and
