@@ -71,6 +71,17 @@ export function IconMail({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
+/** Circle with question mark, used for the user guide / help link. */
+export function IconHelp({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  );
+}
+
 /** GitHub logo, used for the GitHub Issues feedback option. */
 export function IconGithub({ className = 'w-4 h-4' }: { className?: string }) {
   return (

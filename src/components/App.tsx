@@ -4,6 +4,7 @@ import Builder from './Builder';
 import ThemeToggle from './ThemeToggle';
 import TricksDocs from './TricksDocs';
 import RulesDocs from './RulesDocs';
+import HelpDocs from './HelpDocs';
 import FeedbackMenu from './FeedbackMenu';
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
         </Link>
         <nav className="ml-auto flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">
           <Link to="/builder" className="hover:text-sky-600 dark:hover:text-sky-400">Builder</Link>
+          <Link to="/docs/help" className="hover:text-sky-600 dark:hover:text-sky-400">Help</Link>
           <Link to="/docs/rules" className="hover:text-sky-600 dark:hover:text-sky-400">Rules</Link>
           <Link to="/docs/tricks" className="hover:text-sky-600 dark:hover:text-sky-400">Tricks</Link>
           <FeedbackMenu
@@ -34,6 +36,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/builder" element={<Builder />} />
+          <Route path="/docs/help" element={<HelpDocs />} />
           <Route path="/docs/rules" element={<RulesDocs />} />
           <Route path="/docs/tricks" element={<TricksDocs />} />
         </Routes>

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Add a user guide at `/docs/help` describing every feature of the
+  builder - routine composition, AWT import wizard, scoring and
+  the Tq / Cq quality correction coefficients. Reachable from a new
+  Help link in the desktop header and a Help button in the mobile
+  drawer nav row.
+
 ## v0.6.23
 
 - Mobile menu: navigation buttons (Home, Rules, Tricks, Feedback,

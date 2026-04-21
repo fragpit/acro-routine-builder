@@ -18,6 +18,7 @@ export default function Home() {
         <div className="mt-10 text-base text-slate-600 dark:text-slate-400">
           <h3 className="font-semibold text-slate-800 dark:text-slate-300 mb-2">Documentation</h3>
           <ul className="space-y-1">
+            <li><Link to="/docs/help" className="hover:text-sky-600 dark:hover:text-sky-400">User guide (how to use the builder)</Link></li>
             <li><Link to="/docs/rules" className="hover:text-sky-600 dark:hover:text-sky-400">Competition rules (FAI Sporting Code)</Link></li>
             <li><Link to="/docs/tricks" className="hover:text-sky-600 dark:hover:text-sky-400">Trick reference with restrictions</Link></li>
           </ul>
