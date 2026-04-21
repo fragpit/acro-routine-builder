@@ -4,7 +4,11 @@ import { MAX_RUNS } from '../data/competition-types';
 import { useProgramStore } from '../store/program-store';
 import { useScoreSettings } from '../store/score-settings';
 import MobileFileControls from './mobile/MobileFileControls';
-import { isDistributionDefault } from '../scoring/final-score';
+import {
+  isDistributionDefault,
+  isQualityDefault,
+  DEFAULT_QUALITY,
+} from '../scoring/final-score';
 import DistributionEditor from './DistributionEditor';
 import QualityCorrectionEditor from './QualityCorrectionEditor';
 import NumberStepper from './NumberStepper';
@@ -151,7 +155,18 @@ export default function DesktopMenu({ open, onClose }: Props) {
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-[11px] uppercase text-slate-500">Quality correction</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-[11px] uppercase text-slate-500">Quality correction</h3>
+              {!isQualityDefault(quality) && (
+                <button
+                  type="button"
+                  onClick={() => setQuality({ ...DEFAULT_QUALITY })}
+                  className="text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-400"
+                >
+                  reset
+                </button>
+              )}
+            </div>
             <QualityCorrectionEditor quality={quality} onChange={setQuality} />
           </section>
         </div>

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The Quality correction reset link now sits next to the section
+  heading, matching the Score distribution layout.
+
 ## v0.6.20
 
 - Competition import preview shows the pilot's overall score and offers

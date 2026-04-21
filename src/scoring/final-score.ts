@@ -33,6 +33,13 @@ export function isDistributionDefault(d: ScoreDistribution) {
   );
 }
 
+export function isQualityDefault(q: QualityCorrection) {
+  return (
+    q.technical === DEFAULT_QUALITY.technical &&
+    q.choreo === DEFAULT_QUALITY.choreo
+  );
+}
+
 export interface RunScoreBreakdown {
   tMark: number;
   cMark: number;

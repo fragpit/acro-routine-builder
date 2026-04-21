@@ -1,5 +1,4 @@
 import type { QualityCorrection } from '../scoring/final-score';
-import { DEFAULT_QUALITY } from '../scoring/final-score';
 
 interface Props {
   quality: QualityCorrection;
@@ -24,10 +23,6 @@ export default function QualityCorrectionEditor({
   quality,
   onChange,
 }: Props) {
-  const isDefault =
-    quality.technical === DEFAULT_QUALITY.technical &&
-    quality.choreo === DEFAULT_QUALITY.choreo;
-
   function step(
     key: keyof QualityCorrection,
     delta: number,
@@ -79,17 +74,6 @@ export default function QualityCorrectionEditor({
           </div>
         );
       })}
-      {!isDefault && (
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={() => onChange({ ...DEFAULT_QUALITY })}
-            className="text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-400"
-          >
-            reset
-          </button>
-        </div>
-      )}
     </div>
   );
 }
