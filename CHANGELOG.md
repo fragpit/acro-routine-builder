@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Mobile menu: navigation buttons (Home, Rules, Tricks, Feedback,
+  Theme) moved to the top of the drawer. Version label stays at the
+  bottom.
+
 ## v0.6.22
 
 - Feedback menu no longer shows account-related subtitles under the
