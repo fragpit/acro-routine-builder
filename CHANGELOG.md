@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.21
 
 - The Quality correction reset link now sits next to the section
   heading, matching the Score distribution layout.
