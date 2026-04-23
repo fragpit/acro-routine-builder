@@ -44,7 +44,6 @@ export default function TrickPicker({ open, onClose, onPick, recent = [] }: Prop
         <div className="shrink-0 px-3 pb-2 flex items-center gap-2">
           <input
             type="search"
-            autoFocus
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Search tricks..."

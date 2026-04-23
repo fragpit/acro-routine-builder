@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Mobile trick picker no longer auto-focuses the search input when
+  opened, so iOS does not pop the keyboard (and page zoom) on every
+  tap of `[+ Add trick]`.
+
 ## v0.6.24
 
 - Add a user guide at `/docs/help` describing every feature of the
