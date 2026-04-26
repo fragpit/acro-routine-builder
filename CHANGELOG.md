@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Remove the AWT import wizard. The acroworldtour.com public API is
+  currently down, so the "Import AWT" button and dialog were pulled
+  from the mobile file controls. The AWT scoring mode and validators
+  remain unchanged.
+
 ## v0.6.25
 
 - Mobile trick picker no longer auto-focuses the search input when
