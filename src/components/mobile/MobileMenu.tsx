@@ -6,8 +6,7 @@ import { useProgramStore } from '../../store/program-store';
 import { useScoreSettings } from '../../store/score-settings';
 import MobileFileControls from './MobileFileControls';
 import {
-  isDistributionDefault,
-  isQualityDefault,
+  DEFAULT_DISTRIBUTION,
   DEFAULT_QUALITY,
 } from '../../scoring/final-score';
 import DistributionEditor from '../DistributionEditor';
@@ -196,15 +195,13 @@ export default function MobileMenu({ open, onClose }: Props) {
               <h3 className="text-[11px] uppercase text-slate-500">
                 Score distribution
               </h3>
-              {!isDistributionDefault(distribution) && (
-                <button
-                  type="button"
-                  onClick={() => setDistribution({ technical: 50, choreo: 50, landing: 0 })}
-                  className="text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-400"
-                >
-                  reset
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => setDistribution({ ...DEFAULT_DISTRIBUTION })}
+                className="text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-400"
+              >
+                reset
+              </button>
             </div>
             <DistributionEditor
               distribution={distribution}
@@ -217,15 +214,13 @@ export default function MobileMenu({ open, onClose }: Props) {
               <h3 className="text-[11px] uppercase text-slate-500">
                 Quality correction
               </h3>
-              {!isQualityDefault(quality) && (
-                <button
-                  type="button"
-                  onClick={() => setQuality({ ...DEFAULT_QUALITY })}
-                  className="text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-400"
-                >
-                  reset
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => setQuality({ ...DEFAULT_QUALITY })}
+                className="text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-400"
+              >
+                reset
+              </button>
             </div>
             <QualityCorrectionEditor
               quality={quality}

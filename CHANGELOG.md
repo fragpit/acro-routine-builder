@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Score distribution default is now 40/40/20 (Technical/Choreo/Landing).
+  The reset link next to the Score distribution and Quality correction
+  headings is always visible, so the values can be returned to default
+  in one tap regardless of the current state.
+
 ## v0.6.27
 
 - Pull down from the top to check for app updates. A spinning refresh

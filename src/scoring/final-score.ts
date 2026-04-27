@@ -10,9 +10,9 @@ export interface ScoreDistribution {
 }
 
 export const DEFAULT_DISTRIBUTION: ScoreDistribution = {
-  technical: 50,
-  choreo: 50,
-  landing: 0,
+  technical: 40,
+  choreo: 40,
+  landing: 20,
 };
 
 export interface QualityCorrection {
@@ -24,21 +24,6 @@ export const DEFAULT_QUALITY: QualityCorrection = {
   technical: 60,
   choreo: 60,
 };
-
-export function isDistributionDefault(d: ScoreDistribution) {
-  return (
-    d.technical === DEFAULT_DISTRIBUTION.technical &&
-    d.choreo === DEFAULT_DISTRIBUTION.choreo &&
-    d.landing === DEFAULT_DISTRIBUTION.landing
-  );
-}
-
-export function isQualityDefault(q: QualityCorrection) {
-  return (
-    q.technical === DEFAULT_QUALITY.technical &&
-    q.choreo === DEFAULT_QUALITY.choreo
-  );
-}
 
 export interface RunScoreBreakdown {
   tMark: number;
