@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Total program score now shows the most recent change next to it in
+  green (gain) or red (loss). Suppressed on import / load / new / reset
+  where the change would be misleading.
+
 ## v0.6.38
 
 - Switch routing from HashRouter to BrowserRouter. URLs are now

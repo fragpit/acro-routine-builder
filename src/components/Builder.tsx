@@ -33,6 +33,8 @@ import DesktopMenu from './DesktopMenu';
 import BuilderMobile from './mobile/BuilderMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useChoreoPenaltyPerRun, useViolationHighlights } from '../hooks/useScoringDerived';
+import { useScoreDelta } from '../hooks/useScoreDelta';
+import ScoreDelta from './ScoreDelta';
 import { loadRecentTricks, pushRecentTrick } from '../store/recent-tricks';
 import { IconUndo, IconRedo, IconMenu } from './icons';
 
@@ -155,6 +157,8 @@ function BuilderDesktop() {
     return { total: Math.ceil(total * 1000) / 1000 };
   }, [program, distribution, quality, choreoPenaltyPerRun]);
 
+  const scoreDelta = useScoreDelta(programTotal?.total ?? null);
+
   function onDragStart(e: DragStartEvent) {
     const data = e.active.data.current as { type: 'palette' | 'cell'; manoeuvreId?: string; trickId?: string } | undefined;
     if (!data) return;
@@ -244,6 +248,7 @@ function BuilderDesktop() {
                   <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
                     {programTotal.total.toFixed(3)}
                   </span>
+                  <ScoreDelta delta={scoreDelta} />
                 </div>
               )}
               <div className="flex items-center gap-2">

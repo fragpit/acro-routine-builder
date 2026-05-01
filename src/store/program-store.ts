@@ -24,6 +24,13 @@ interface ProgramState {
   savedPrograms: Record<string, Program>;
   past: Program[];
   future: Program[];
+  /**
+   * Monotonic counter incremented when the program is replaced wholesale
+   * (import, reset, load, new). UI watching the total score uses it to
+   * suppress the change indicator on bulk transitions where a delta would be
+   * misleading.
+   */
+  bulkResetVersion: number;
   setAwtMode: (on: boolean) => void;
   setRunCount: (n: number) => void;
   setRepeatAfterRuns: (n: number) => void;
@@ -95,6 +102,7 @@ export const useProgramStore = create<ProgramState>()(
   savedPrograms: {},
   past: [],
   future: [],
+  bulkResetVersion: 0,
 
   saveProgramAs: (name) =>
     set((state) => {
@@ -117,6 +125,7 @@ export const useProgramStore = create<ProgramState>()(
         ...commit(state, sanitizeProgram(program)),
         currentName: name,
         selectedTrickId: null,
+        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
@@ -143,6 +152,7 @@ export const useProgramStore = create<ProgramState>()(
         ...commit(state, program),
         currentName: null,
         selectedTrickId: null,
+        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
@@ -154,6 +164,7 @@ export const useProgramStore = create<ProgramState>()(
         ...commit(state, sanitizeProgram(cloned)),
         currentName: name,
         selectedTrickId: null,
+        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
@@ -296,7 +307,11 @@ export const useProgramStore = create<ProgramState>()(
   resetProgram: () =>
     set((state) => {
       const runs = state.program.runs.map((r) => ({ ...r, tricks: [] }));
-      return { ...commit(state, { ...state.program, runs }), selectedTrickId: null };
+      return {
+        ...commit(state, { ...state.program, runs }),
+        selectedTrickId: null,
+        bulkResetVersion: state.bulkResetVersion + 1,
+      };
     }),
 
   undo: () =>
