@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.30
 
 - Mobile trick cells now have an explicit drag handle on the right -
   grab it to reorder a trick within its run. The inline ✕ delete
