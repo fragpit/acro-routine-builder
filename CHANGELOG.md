@@ -3,9 +3,11 @@
 ## Unreleased
 
 - Total program score now shows the most recent change next to it in
-  green (gain) or red (loss). Suppressed on import / load / new / reset
-  and on undo / redo - those are history navigation, not a fresh user
-  edit, so showing the inverse delta would be confusing.
+  green (gain) or red (loss). Suppressed on import / load / new /
+  reset, on undo / redo, and on round-trips (when the new total
+  matches the value from before the previous edit, e.g. toggling a
+  bonus on and then off) - in all those cases showing the inverse
+  delta would just retell the previous step.
 
 ## v0.6.38
 
