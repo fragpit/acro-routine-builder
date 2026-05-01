@@ -123,3 +123,13 @@ export function IconCheck({ className = 'w-4 h-4' }: { className?: string }) {
     </svg>
   );
 }
+
+/** Two short horizontal lines, used as a drag handle on mobile cells. */
+export function IconGrip({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <line x1="6" y1="9" x2="18" y2="9" />
+      <line x1="6" y1="15" x2="18" y2="15" />
+    </svg>
+  );
+}

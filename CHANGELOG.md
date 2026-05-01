@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Mobile trick cells now have an explicit drag handle on the right -
+  grab it to reorder a trick within its run. The inline ✕ delete
+  button is gone; remove a trick from the trick sheet (red Remove
+  button at the bottom).
+
 ## v0.6.29
 
 - Mobile builder now supports drag-to-reorder tricks within a run:

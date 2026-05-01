@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import type { PlacedTrick, Side } from '../../rules/types';
 import { useProgramStore } from '../../store/program-store';
+import { IconGrip } from '../icons';
 
 interface Props {
   trick: PlacedTrick;
@@ -20,50 +20,27 @@ const SIDES: Side[] = ['L', 'R'];
 export default function TrickCellMobile({ trick, highlight, ignoredReasons, unrewardedBonuses, dimmed, sortDisabled, onTap }: Props) {
   const manoeuvre = MANOEUVRES_BY_ID[trick.manoeuvreId];
   const setTrickSide = useProgramStore((s) => s.setTrickSide);
-  const removeTrick = useProgramStore((s) => s.removeTrick);
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id: trick.id,
     disabled: sortDisabled || dimmed,
   });
-  const suppressClickRef = useRef(false);
-  useEffect(() => {
-    if (isDragging) {
-      suppressClickRef.current = true;
-      return;
-    }
-    if (suppressClickRef.current) {
-      const t = window.setTimeout(() => {
-        suppressClickRef.current = false;
-      }, 250);
-      return () => window.clearTimeout(t);
-    }
-  }, [isDragging]);
-
   if (!manoeuvre) return null;
 
   const ignored = (ignoredReasons?.length ?? 0) > 0;
+  const handleDisabled = sortDisabled || dimmed;
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    touchAction: 'manipulation' as const,
   };
-
-  function handleClick() {
-    if (suppressClickRef.current) {
-      suppressClickRef.current = false;
-      return;
-    }
-    onTap();
-  }
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onClick={onTap}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -136,15 +113,17 @@ export default function TrickCellMobile({ trick, highlight, ignoredReasons, unre
               </button>
             ))}
           <button
+            ref={setActivatorNodeRef}
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              removeTrick(trick.id);
-            }}
-            className="w-6 h-8 ml-1 text-lg leading-none text-slate-500 hover:text-red-400"
-            aria-label="remove"
+            disabled={handleDisabled}
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            style={{ touchAction: 'none' }}
+            className="w-8 h-8 ml-1 rounded border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 flex items-center justify-center cursor-grab active:cursor-grabbing disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label="Drag to reorder"
           >
-            ✕
+            <IconGrip className="w-4 h-4" />
           </button>
         </div>
       </div>

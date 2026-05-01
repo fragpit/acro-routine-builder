@@ -12,6 +12,7 @@ interface Props {
 
 export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: Props) {
   const program = useProgramStore((s) => s.program);
+  const removeTrick = useProgramStore((s) => s.removeTrick);
 
   useEffect(() => {
     if (!trickId) return;
@@ -56,27 +57,39 @@ export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: P
         <div className="flex-1 overflow-y-auto">
           <TrickInfoCard manoeuvre={manoeuvre} placedTrick={placed} onClose={onClose} />
         </div>
-        <div className="shrink-0 border-t border-slate-200 dark:border-slate-700 p-3 grid grid-cols-3 gap-2">
+        <div className="shrink-0 border-t border-slate-200 dark:border-slate-700 p-3 space-y-2">
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => onMoveArm(placed.id)}
+              className="py-2 text-sm rounded border border-sky-500 text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-950/40"
+            >
+              Move
+            </button>
+            <button
+              type="button"
+              onClick={() => onCopyArm(placed.id)}
+              className="py-2 text-sm rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500"
+            >
+              Copy
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="py-2 text-sm rounded bg-sky-600 text-white hover:bg-sky-500"
+            >
+              Apply
+            </button>
+          </div>
           <button
             type="button"
-            onClick={() => onMoveArm(placed.id)}
-            className="py-2 text-sm rounded border border-sky-500 text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-950/40"
+            onClick={() => {
+              removeTrick(placed.id);
+              onClose();
+            }}
+            className="w-full py-2 text-sm rounded border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
           >
-            Move
-          </button>
-          <button
-            type="button"
-            onClick={() => onCopyArm(placed.id)}
-            className="py-2 text-sm rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500"
-          >
-            Copy
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="py-2 text-sm rounded bg-sky-600 text-white hover:bg-sky-500"
-          >
-            Apply
+            Remove
           </button>
         </div>
       </div>
