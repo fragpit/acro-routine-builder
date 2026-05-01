@@ -60,8 +60,8 @@ export default function RunMobile({
   const symmetry = runSymmetry(run.tricks, MANOEUVRES_BY_ID);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 220, tolerance: 6 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 4 } }),
   );
 
   function insertAt(index: number) {
