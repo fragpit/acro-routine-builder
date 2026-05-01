@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.29
 
 - Mobile builder now supports drag-to-reorder tricks within a run:
   long-press a trick and drag it to a new position.
