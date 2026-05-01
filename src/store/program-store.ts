@@ -324,6 +324,7 @@ export const useProgramStore = create<ProgramState>()(
         past: state.past.slice(0, -1),
         future: [...state.future, state.program],
         selectedTrickId: null,
+        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
@@ -337,6 +338,7 @@ export const useProgramStore = create<ProgramState>()(
         past: [...state.past, state.program],
         future: state.future.slice(0, -1),
         selectedTrickId: null,
+        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
     }),
