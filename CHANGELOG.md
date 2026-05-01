@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Mobile trick sheet: redesigned the action row. The full-width red
+  Remove button is gone; removal is now a compact square trash icon at
+  the start of the row. Move and Copy share the same neutral style.
+  The primary button is now labelled **Done** (was Apply) - the sheet
+  has no buffered state, so "apply" was misleading.
+
 ## v0.6.31
 
 - Mobile drag handle is now borderless and uses the same `⋮⋮` glyph as

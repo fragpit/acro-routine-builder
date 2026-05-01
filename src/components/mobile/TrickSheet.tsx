@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { useProgramStore } from '../../store/program-store';
 import TrickInfoCard from '../TrickInfoCard';
+import { IconTrash } from '../icons';
 
 interface Props {
   trickId: string | null;
@@ -57,40 +58,41 @@ export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: P
         <div className="flex-1 overflow-y-auto">
           <TrickInfoCard manoeuvre={manoeuvre} placedTrick={placed} onClose={onClose} />
         </div>
-        <div className="shrink-0 border-t border-slate-200 dark:border-slate-700 p-3 space-y-2">
-          <div className="grid grid-cols-3 gap-2">
+        <div className="shrink-0 border-t border-slate-200 dark:border-slate-700 p-3">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              aria-label="Remove trick"
+              onClick={() => {
+                removeTrick(placed.id);
+                onClose();
+              }}
+              className="shrink-0 h-9 w-9 flex items-center justify-center rounded border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
+            >
+              <IconTrash className="w-4 h-4" />
+            </button>
             <button
               type="button"
               onClick={() => onMoveArm(placed.id)}
-              className="py-2 text-sm rounded border border-sky-500 text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-950/40"
+              className="flex-1 py-2 text-sm rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500"
             >
               Move
             </button>
             <button
               type="button"
               onClick={() => onCopyArm(placed.id)}
-              className="py-2 text-sm rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500"
+              className="flex-1 py-2 text-sm rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500"
             >
               Copy
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="py-2 text-sm rounded bg-sky-600 text-white hover:bg-sky-500"
+              className="flex-1 py-2 text-sm rounded bg-sky-600 text-white hover:bg-sky-500"
             >
-              Apply
+              Done
             </button>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              removeTrick(placed.id);
-              onClose();
-            }}
-            className="w-full py-2 text-sm rounded border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
-          >
-            Remove
-          </button>
         </div>
       </div>
     </div>
