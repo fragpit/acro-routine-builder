@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Mobile trick sheet: replace the full-width red Remove button with a
+  compact square trash icon next to Apply, so the action row no longer
+  screams.
+
 ## v0.6.31
 
 - Mobile drag handle is now borderless and uses the same `⋮⋮` glyph as
