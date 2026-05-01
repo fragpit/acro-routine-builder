@@ -62,6 +62,17 @@ export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: P
           <div className="flex gap-2">
             <button
               type="button"
+              aria-label="Remove trick"
+              onClick={() => {
+                removeTrick(placed.id);
+                onClose();
+              }}
+              className="shrink-0 h-9 w-9 flex items-center justify-center rounded border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
+            >
+              <IconTrash className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
               onClick={() => onMoveArm(placed.id)}
               className="flex-1 py-2 text-sm rounded border border-sky-500 text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-950/40"
             >
@@ -80,17 +91,6 @@ export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: P
               className="flex-1 py-2 text-sm rounded bg-sky-600 text-white hover:bg-sky-500"
             >
               Apply
-            </button>
-            <button
-              type="button"
-              aria-label="Remove trick"
-              onClick={() => {
-                removeTrick(placed.id);
-                onClose();
-              }}
-              className="aspect-square flex items-center justify-center rounded border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
-            >
-              <IconTrash className="w-4 h-4" />
             </button>
           </div>
         </div>
