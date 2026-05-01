@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Mobile builder now supports drag-to-reorder tricks within a run:
+  long-press a trick and drag it to a new position.
+
 ## v0.6.28
 
 - Score distribution default is now 40/40/20 (Technical/Choreo/Landing).

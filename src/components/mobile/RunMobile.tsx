@@ -1,3 +1,12 @@
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { BONUS_LIMITS, runBonusUsage } from '../../scoring/bonus-usage';
 import { runBonus } from '../../scoring/bonus';
@@ -6,6 +15,7 @@ import { exclusionsByTrick } from '../../scoring/eligibility';
 import { runScoreBreakdown, type ScoreDistribution, type QualityCorrection } from '../../scoring/final-score';
 import { unrewardedBonusesByTrick } from '../../rules/repeated-bonus';
 import { runSymmetry } from '../../rules/validators/symmetry';
+import { useProgramStore } from '../../store/program-store';
 import type { Run } from '../../rules/types';
 import TrickCellMobile from './TrickCellMobile';
 import FinalScorePanel from '../FinalScorePanel';
@@ -41,6 +51,7 @@ export default function RunMobile({
   statsExpanded,
   onToggleStats,
 }: Props) {
+  const moveTrick = useProgramStore((s) => s.moveTrick);
   const technicity = runTechnicity(run, MANOEUVRES_BY_ID);
   const bonus = runBonus(run, MANOEUVRES_BY_ID);
   const bonusUsage = runBonusUsage(run, MANOEUVRES_BY_ID);
@@ -48,9 +59,24 @@ export default function RunMobile({
   const unrewarded = unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID);
   const symmetry = runSymmetry(run.tricks, MANOEUVRES_BY_ID);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 220, tolerance: 6 } }),
+  );
+
   function insertAt(index: number) {
     if (!isArmed) return;
     onInsertAt(runIndex, index);
+  }
+
+  function onDragEnd(e: DragEndEvent) {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    const oldIndex = run.tricks.findIndex((t) => t.id === active.id);
+    const newIndex = run.tricks.findIndex((t) => t.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    const toIndex = oldIndex < newIndex ? newIndex + 1 : newIndex;
+    moveTrick(String(active.id), runIndex, toIndex);
   }
 
   return (
@@ -71,20 +97,28 @@ export default function RunMobile({
           </button>
         ) : (
           <>
-            <InsertSlot armed={isArmed} onTap={() => insertAt(0)} />
-            {run.tricks.map((t, i) => (
-              <div key={t.id} className="space-y-2">
-                <TrickCellMobile
-                  trick={t}
-                  highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
-                  ignoredReasons={ignored.get(t.id)}
-                  unrewardedBonuses={unrewarded.get(t.id)}
-                  dimmed={movingTrickId === t.id}
-                  onTap={() => onOpenTrick(t.id)}
-                />
-                <InsertSlot armed={isArmed} onTap={() => insertAt(i + 1)} />
-              </div>
-            ))}
+            <DndContext sensors={sensors} onDragEnd={onDragEnd} autoScroll={false}>
+              <SortableContext
+                items={run.tricks.map((t) => t.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <InsertSlot armed={isArmed} onTap={() => insertAt(0)} />
+                {run.tricks.map((t, i) => (
+                  <div key={t.id} className="space-y-2">
+                    <TrickCellMobile
+                      trick={t}
+                      highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
+                      ignoredReasons={ignored.get(t.id)}
+                      unrewardedBonuses={unrewarded.get(t.id)}
+                      dimmed={movingTrickId === t.id}
+                      sortDisabled={isArmed}
+                      onTap={() => onOpenTrick(t.id)}
+                    />
+                    <InsertSlot armed={isArmed} onTap={() => insertAt(i + 1)} />
+                  </div>
+                ))}
+              </SortableContext>
+            </DndContext>
             <div className="pt-1 flex justify-center">
               <button
                 type="button"
