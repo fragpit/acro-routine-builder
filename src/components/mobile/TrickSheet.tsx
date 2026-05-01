@@ -90,7 +90,7 @@ export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: P
               onClick={onClose}
               className="flex-1 py-2 text-sm rounded bg-sky-600 text-white hover:bg-sky-500"
             >
-              Apply
+              Done
             </button>
           </div>
         </div>
