@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import type { PlacedTrick, Side } from '../../rules/types';
 import { useProgramStore } from '../../store/program-store';
@@ -8,24 +11,59 @@ interface Props {
   ignoredReasons?: string[];
   unrewardedBonuses?: Set<string>;
   dimmed?: boolean;
+  sortDisabled?: boolean;
   onTap: () => void;
 }
 
 const SIDES: Side[] = ['L', 'R'];
 
-export default function TrickCellMobile({ trick, highlight, ignoredReasons, unrewardedBonuses, dimmed, onTap }: Props) {
+export default function TrickCellMobile({ trick, highlight, ignoredReasons, unrewardedBonuses, dimmed, sortDisabled, onTap }: Props) {
   const manoeuvre = MANOEUVRES_BY_ID[trick.manoeuvreId];
   const setTrickSide = useProgramStore((s) => s.setTrickSide);
   const removeTrick = useProgramStore((s) => s.removeTrick);
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: trick.id,
+    disabled: sortDisabled || dimmed,
+  });
+  const suppressClickRef = useRef(false);
+  useEffect(() => {
+    if (isDragging) {
+      suppressClickRef.current = true;
+      return;
+    }
+    if (suppressClickRef.current) {
+      const t = window.setTimeout(() => {
+        suppressClickRef.current = false;
+      }, 250);
+      return () => window.clearTimeout(t);
+    }
+  }, [isDragging]);
+
   if (!manoeuvre) return null;
 
   const ignored = (ignoredReasons?.length ?? 0) > 0;
 
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    touchAction: 'manipulation' as const,
+  };
+
+  function handleClick() {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
+    onTap();
+  }
+
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={onTap}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={handleClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -38,7 +76,7 @@ export default function TrickCellMobile({ trick, highlight, ignoredReasons, unre
           : highlight === 'warning'
             ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30'
             : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800'
-      } ${ignored ? 'opacity-60' : ''} ${dimmed ? 'opacity-40 ring-2 ring-sky-500' : ''} active:bg-slate-100 dark:active:bg-slate-700`}
+      } ${ignored ? 'opacity-60' : ''} ${dimmed ? 'opacity-40 ring-2 ring-sky-500' : ''} ${isDragging ? 'opacity-60 ring-2 ring-sky-500 shadow-lg z-10 relative' : ''} active:bg-slate-100 dark:active:bg-slate-700`}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex-1 min-w-0">
