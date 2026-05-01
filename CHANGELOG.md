@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.31
 
 - Mobile drag handle is now borderless and uses the same `⋮⋮` glyph as
   the desktop trick cell, matching the desktop look.
