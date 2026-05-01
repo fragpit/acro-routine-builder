@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.32
 
 - Mobile trick sheet: redesigned the action row. The full-width red
   Remove button is gone; removal is now a compact square trash icon at
