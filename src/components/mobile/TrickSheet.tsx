@@ -74,7 +74,7 @@ export default function TrickSheet({ trickId, onClose, onMoveArm, onCopyArm }: P
             <button
               type="button"
               onClick={() => onMoveArm(placed.id)}
-              className="flex-1 py-2 text-sm rounded border border-sky-500 text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-950/40"
+              className="flex-1 py-2 text-sm rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500"
             >
               Move
             </button>

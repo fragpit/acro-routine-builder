@@ -2,9 +2,10 @@
 
 ## Unreleased
 
-- Mobile trick sheet: replace the full-width red Remove button with a
-  compact square trash icon next to Apply, so the action row no longer
-  screams.
+- Mobile trick sheet: redesigned the action row. The full-width red
+  Remove button is gone; removal is now a compact square trash icon at
+  the start of the row. Move and Copy share the same neutral style, so
+  Apply is the only highlighted button.
 
 ## v0.6.31
 
