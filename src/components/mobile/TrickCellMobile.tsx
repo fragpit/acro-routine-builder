@@ -3,7 +3,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import type { PlacedTrick, Side } from '../../rules/types';
 import { useProgramStore } from '../../store/program-store';
-import { IconGrip } from '../icons';
 
 interface Props {
   trick: PlacedTrick;
@@ -120,10 +119,10 @@ export default function TrickCellMobile({ trick, highlight, ignoredReasons, unre
             {...listeners}
             onClick={(e) => e.stopPropagation()}
             style={{ touchAction: 'none' }}
-            className="w-8 h-8 ml-1 rounded border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 flex items-center justify-center cursor-grab active:cursor-grabbing disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-8 h-8 ml-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center justify-center cursor-grab active:cursor-grabbing disabled:opacity-40 disabled:cursor-not-allowed"
             aria-label="Drag to reorder"
           >
-            <IconGrip className="w-4 h-4" />
+            ⋮⋮
           </button>
         </div>
       </div>
