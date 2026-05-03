@@ -30,24 +30,29 @@ export function useScoreDelta(total: number | null): number | null {
 
   if (snapshot.total !== total || snapshot.bulk !== bulkResetVersion) {
     let nextDelta: number | null = snapshot.delta;
+    let nextPrevTotal: number | null;
     if (snapshot.bulk !== bulkResetVersion) {
       nextDelta = null;
+      nextPrevTotal = null;
     } else if (total === null || snapshot.total === null) {
       nextDelta = null;
+      nextPrevTotal = snapshot.total;
     } else if (
       snapshot.prevTotal !== null &&
       Math.abs(total - snapshot.prevTotal) < EPSILON
     ) {
       nextDelta = null;
+      nextPrevTotal = snapshot.total;
     } else {
       const diff = total - snapshot.total;
       if (Math.abs(diff) >= EPSILON) {
         nextDelta = Math.round(diff * 1000) / 1000;
       }
+      nextPrevTotal = snapshot.total;
     }
     setSnapshot({
       total,
-      prevTotal: snapshot.total,
+      prevTotal: nextPrevTotal,
       bulk: bulkResetVersion,
       delta: nextDelta,
     });
