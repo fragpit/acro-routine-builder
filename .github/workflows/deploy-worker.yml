@@ -2,7 +2,7 @@ name: Deploy share-link Worker
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/share-via-url]
     paths:
       - 'worker/**'
       - '.github/workflows/deploy-worker.yml'
