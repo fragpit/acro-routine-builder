@@ -286,7 +286,7 @@ sharing a plan by email.
 
 ### Import JSON
 
-`Import` opens a file picker for `.arb.json` files (the old
+`Import JSON` opens a file picker for `.arb.json` files (the old
 `.apc.json` extension still works). If the current program has
 tricks you will be asked whether to overwrite.
 
@@ -305,6 +305,16 @@ When the recipient opens the link, the builder asks before
 overwriting an existing program with content. The query parameter
 is stripped from the address bar after import, so reloading the
 page does not re-import again.
+
+### Import link
+
+If you have the share link in your clipboard but want to load it
+into the PWA you already have open (handy on iOS, where tapping a
+link in a chat always opens the browser instead of the installed
+app), use `Import link`. It tries to read the link from your
+clipboard, falls back to a paste field, and accepts either a full
+URL (`…/builder?s=Ab12Cd34`) or just the 8-character id. The same
+overwrite confirmation as for shared links applies.
 
 ## Mobile vs desktop
 

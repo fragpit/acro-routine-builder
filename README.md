@@ -26,7 +26,9 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - AWT mode toggle (enables AWT-specific restrictions)
 - Program import/export: JSON roundtrip + human-readable markdown report
 - Share a routine via a short URL backed by a Cloudflare Worker
-  (links expire after 7 days)
+  (links expire after 7 days). `Import link` accepts the URL or
+  bare id from clipboard / manual paste - useful inside the
+  installed PWA on iOS, where chat-app links always open in Safari.
 - Light/dark theme, persisted in localStorage
 - Online documentation: FAI Sporting Code and generated trick reference
 - **Mobile UI**: on viewports below 1024px the builder switches to a

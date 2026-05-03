@@ -2,11 +2,16 @@ import { useRef, useState } from 'react';
 import { useProgramStore } from '../../store/program-store';
 import { exportProgramJson, importProgramJson } from '../../io/program-json';
 import { exportProgramMarkdown } from '../../io/program-markdown';
-import { createShortLink, isShortenerEnabled } from '../../io/program-share';
+import {
+  createShortLink,
+  extractShareId,
+  fetchSharedProgram,
+  isShortenerEnabled,
+} from '../../io/program-share';
 import { download, safeFileName } from '../../io/download';
-import { IconShare } from '../icons';
+import { IconLink, IconShare } from '../icons';
 
-type PanelMode = 'save' | 'load' | null;
+type PanelMode = 'save' | 'load' | 'import-link' | null;
 
 interface MobileFileControlsProps {
   onImported?: () => void;
@@ -27,6 +32,8 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
   const [panel, setPanel] = useState<PanelMode>(null);
   const [saveName, setSaveName] = useState('');
   const [creatingShareLink, setCreatingShareLink] = useState(false);
+  const [importText, setImportText] = useState('');
+  const [importBusy, setImportBusy] = useState(false);
   const sharingEnabled = isShortenerEnabled();
 
   const savedNames = Object.keys(savedPrograms).sort((a, b) => a.localeCompare(b));
@@ -52,6 +59,50 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
       alert(`Could not create share link: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setCreatingShareLink(false);
+    }
+  }
+
+  async function openImportLink() {
+    if (panel === 'import-link') {
+      setPanel(null);
+      return;
+    }
+    let prefill = '';
+    try {
+      const text = await navigator.clipboard.readText();
+      if (extractShareId(text)) prefill = text.trim();
+    } catch {
+      // clipboard unavailable or denied; fall back to manual paste
+    }
+    setImportText(prefill);
+    setPanel('import-link');
+  }
+
+  async function confirmImportLink() {
+    if (importBusy) return;
+    const id = extractShareId(importText);
+    if (!id) {
+      alert('Paste a share link or id first.');
+      return;
+    }
+    setImportBusy(true);
+    try {
+      const { program: imported, name } = await fetchSharedProgram(id);
+      if (program.runs.some((r) => r.tricks.length > 0)) {
+        const label = name ? `"${name}"` : 'this shared program';
+        if (!confirm(`Replace the current program with ${label}?`)) {
+          setImportBusy(false);
+          return;
+        }
+      }
+      importProgram(imported, name);
+      setPanel(null);
+      setImportText('');
+      onImported?.();
+    } catch (err) {
+      alert(`Could not load shared program: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setImportBusy(false);
     }
   }
 
@@ -101,11 +152,10 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
           onClick={() => {
             if (confirm('Start a new empty program? Current work will be replaced.')) newProgram();
           }}
-          tone="muted"
         />
         <ActionButton
           icon={<IconUpload />}
-          label="Import"
+          label="Import JSON"
           onClick={() => fileInputRef.current?.click()}
         />
         <ActionButton
@@ -123,6 +173,14 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
           label={creatingShareLink ? 'Creating link...' : 'Share link'}
           onClick={onShareLink}
           disabled={!sharingEnabled || creatingShareLink}
+          title={sharingEnabled ? undefined : 'Sharing requires the deployed worker'}
+        />
+        <ActionButton
+          icon={<IconLink />}
+          label="Import link"
+          onClick={openImportLink}
+          active={panel === 'import-link'}
+          disabled={!sharingEnabled}
           title={sharingEnabled ? undefined : 'Sharing requires the deployed worker'}
         />
       </div>
@@ -192,6 +250,41 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
         </div>
       )}
 
+      {panel === 'import-link' && (
+        <div className="rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-2 space-y-2">
+          <div className="text-[10px] uppercase text-slate-500">Paste share link or id</div>
+          <input
+            type="text"
+            autoFocus
+            value={importText}
+            onChange={(e) => setImportText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') void confirmImportLink();
+              if (e.key === 'Escape') setPanel(null);
+            }}
+            placeholder="https://...?s=abc or just abc"
+            className="w-full px-2 py-1.5 text-base rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 focus:border-sky-500 outline-none"
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setPanel(null)}
+              className="px-3 py-1 text-xs rounded text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => void confirmImportLink()}
+              disabled={importBusy || !extractShareId(importText)}
+              className="px-3 py-1 text-xs rounded bg-sky-600 text-white hover:bg-sky-500 disabled:opacity-40"
+            >
+              {importBusy ? 'Loading...' : 'Import'}
+            </button>
+          </div>
+        </div>
+      )}
+
       {panel === 'load' && savedNames.length > 0 && (
         <div className="rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-1 max-h-60 overflow-y-auto">
           {savedNames.map((n) => (
@@ -237,7 +330,6 @@ function ActionButton({
   onClick,
   active = false,
   disabled = false,
-  tone = 'default',
   title,
 }: {
   icon: React.ReactNode;
@@ -245,16 +337,13 @@ function ActionButton({
   onClick: () => void;
   active?: boolean;
   disabled?: boolean;
-  tone?: 'default' | 'muted';
   title?: string;
 }) {
   const base =
     'w-full flex items-center gap-2 px-3 py-2 text-sm rounded border transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
   const palette = active
     ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
-    : tone === 'muted'
-      ? 'border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-500'
-      : 'border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400';
+    : 'border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400';
   return (
     <button
       type="button"

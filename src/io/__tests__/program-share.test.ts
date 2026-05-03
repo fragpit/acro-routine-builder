@@ -3,6 +3,7 @@ import {
   compressProgram,
   createShortLink,
   decompressProgram,
+  extractShareId,
   fetchSharedProgram,
   getShareId,
   isShortenerEnabled,
@@ -66,6 +67,39 @@ describe('getShareId', () => {
     expect(getShareId('?s=ab/cd')).toBeNull();
     expect(getShareId('?s=ab cd')).toBeNull();
     expect(getShareId('?s=' + 'a'.repeat(64))).toBeNull();
+  });
+});
+
+describe('extractShareId', () => {
+  it('pulls the id out of a full URL', () => {
+    expect(extractShareId('https://example.com/builder?s=Ab12Cd34')).toBe('Ab12Cd34');
+    expect(
+      extractShareId('https://fragpit.github.io/acro-routine-builder/builder?s=Stg1zxjX'),
+    ).toBe('Stg1zxjX');
+  });
+
+  it('accepts a query fragment without a host', () => {
+    expect(extractShareId('?s=Ab12Cd34')).toBe('Ab12Cd34');
+    expect(extractShareId('foo?s=Ab12Cd34&x=1')).toBe('Ab12Cd34');
+  });
+
+  it('accepts a bare id', () => {
+    expect(extractShareId('Ab12Cd34')).toBe('Ab12Cd34');
+    expect(extractShareId('  Ab12Cd34  ')).toBe('Ab12Cd34');
+  });
+
+  it('returns null for unrelated URLs and garbage', () => {
+    expect(extractShareId('')).toBeNull();
+    expect(extractShareId('   ')).toBeNull();
+    expect(extractShareId('https://example.com/builder')).toBeNull();
+    expect(extractShareId('https://example.com/builder?other=1')).toBeNull();
+    expect(extractShareId('not a url and not an id')).toBeNull();
+  });
+
+  it('rejects ids with disallowed characters or too long', () => {
+    expect(extractShareId('https://example.com/builder?s=ab/cd')).toBeNull();
+    expect(extractShareId('?s=' + 'a'.repeat(64))).toBeNull();
+    expect(extractShareId('a'.repeat(64))).toBeNull();
   });
 });
 

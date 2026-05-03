@@ -63,6 +63,28 @@ export function getShareId(search: string): string | null {
 }
 
 /**
+ * Pull a share id out of arbitrary user-pasted text. Accepts a full share URL,
+ * a query-string fragment (`?s=<id>`), or a bare id. Returns null when no
+ * valid id can be recovered. Used by the manual "Import link" flow so users
+ * can paste either the URL they got in a chat or just the id.
+ */
+export function extractShareId(text: string): string | null {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+  for (const base of [undefined, 'http://placeholder.invalid'] as const) {
+    try {
+      const url = base ? new URL(trimmed, base) : new URL(trimmed);
+      const fromQuery = getShareId(url.search);
+      if (fromQuery) return fromQuery;
+    } catch {
+      // not a URL in this mode; try the next strategy
+    }
+  }
+  if (ID_PATTERN.test(trimmed)) return trimmed;
+  return null;
+}
+
+/**
  * POST the compressed program to the worker, then return an absolute URL of
  * the form `${origin}${BASE_URL}/builder?s=${id}`. Throws Error with a
  * user-facing message on rate limit, payload-too-large, or transport error.
