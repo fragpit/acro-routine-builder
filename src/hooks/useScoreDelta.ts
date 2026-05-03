@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useProgramStore } from '../store/program-store';
 
 const EPSILON = 0.0005;
 const IDLE_RESET_MS = 3000;
@@ -14,46 +13,33 @@ interface ScoreDeltaResult {
  * Track the change in a numeric score against a baseline. Two modes:
  *
  * - **Auto** (default). Baseline settles after `IDLE_RESET_MS` of no
- *   total changes, and on wholesale program transitions
- *   (`bulkResetVersion`). Returns `null` while current matches the
- *   baseline so the indicator hides.
+ *   total changes. Returns `null` while current matches the baseline so
+ *   the indicator hides.
  *
  * - **Pinned**. The user clicked the score; baseline froze at that
  *   moment. The idle timer is ignored. The delta is returned even when
  *   it is `0` so the indicator stays visible (showing `+0.000` right
  *   after pinning), making the pinned state self-evident.
  *
- * Bulk transitions (import / load / new / reset) auto-unpin: the
- * pinned baseline belongs to the previous program. Undo / redo do not
- * affect pin or baseline; they shift the delta naturally.
+ * Imports / loads / resets / undo / redo are not treated specially: in
+ * auto mode the idle timer naturally settles the baseline a few seconds
+ * after the change; in pinned mode the comparison against the pinned
+ * point is preserved as the user expects.
  */
 export function useScoreDelta(total: number | null): ScoreDeltaResult {
-  const bulkResetVersion = useProgramStore((s) => s.bulkResetVersion);
-
   const [state, setState] = useState<{
     baseline: number | null;
     lastTotal: number | null;
-    lastBulk: number;
     pinned: boolean;
   }>(() => ({
     baseline: total,
     lastTotal: total,
-    lastBulk: bulkResetVersion,
     pinned: false,
   }));
 
-  const bulkChanged = state.lastBulk !== bulkResetVersion;
-  const nullCrossed =
-    (state.baseline === null && total !== null) ||
-    (state.baseline !== null && total === null);
-
-  if (bulkChanged || nullCrossed) {
-    setState({
-      baseline: total,
-      lastTotal: total,
-      lastBulk: bulkResetVersion,
-      pinned: false,
-    });
+  const needsBaselineInit = state.baseline === null && total !== null;
+  if (needsBaselineInit) {
+    setState((s) => ({ ...s, baseline: total, lastTotal: total }));
   } else if (state.lastTotal !== total) {
     setState((s) => ({ ...s, lastTotal: total }));
   }

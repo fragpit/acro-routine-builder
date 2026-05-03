@@ -24,14 +24,6 @@ interface ProgramState {
   savedPrograms: Record<string, Program>;
   past: Program[];
   future: Program[];
-  /**
-   * Monotonic counter incremented when the program is replaced wholesale
-   * (import, load, new, reset). UI watching the total score uses it as a
-   * signal to reset its baseline - the comparison context from the
-   * previous program is no longer meaningful. Undo / redo do not bump
-   * this; they are within-session navigation.
-   */
-  bulkResetVersion: number;
   setAwtMode: (on: boolean) => void;
   setRunCount: (n: number) => void;
   setRepeatAfterRuns: (n: number) => void;
@@ -103,7 +95,6 @@ export const useProgramStore = create<ProgramState>()(
   savedPrograms: {},
   past: [],
   future: [],
-  bulkResetVersion: 0,
 
   saveProgramAs: (name) =>
     set((state) => {
@@ -126,7 +117,6 @@ export const useProgramStore = create<ProgramState>()(
         ...commit(state, sanitizeProgram(program)),
         currentName: name,
         selectedTrickId: null,
-        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
@@ -153,7 +143,6 @@ export const useProgramStore = create<ProgramState>()(
         ...commit(state, program),
         currentName: null,
         selectedTrickId: null,
-        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
@@ -165,7 +154,6 @@ export const useProgramStore = create<ProgramState>()(
         ...commit(state, sanitizeProgram(cloned)),
         currentName: name,
         selectedTrickId: null,
-        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
@@ -311,7 +299,6 @@ export const useProgramStore = create<ProgramState>()(
       return {
         ...commit(state, { ...state.program, runs }),
         selectedTrickId: null,
-        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
