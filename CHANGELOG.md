@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.40
 
 - Fix desktop drag-and-drop drop animation: the dragged trick no
   longer flies back to the palette after a successful drop into a
