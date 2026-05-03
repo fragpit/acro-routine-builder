@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.34
 
 - Trick rules aligned with the AWT 2025 catalog: added forbidden
   connections (Mactwist to SAT / X-Chopper to SAT cannot be followed by
