@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.0
 
 - Share a routine via a short URL. The new `Share link` button in
   the file menu uploads the compressed program to a Cloudflare
