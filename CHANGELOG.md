@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.39
 
 - Total program score shows the cumulative change next to it in green
   (gain) or red (loss). The baseline settles automatically after a few
