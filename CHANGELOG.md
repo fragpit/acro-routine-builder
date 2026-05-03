@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Quality correction (T / C) now adjusts in 5% steps (was 10%).
+
 ## v0.6.32
 
 - Mobile trick sheet: redesigned the action row. The full-width red

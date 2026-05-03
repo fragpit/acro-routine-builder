@@ -5,7 +5,7 @@ interface Props {
   onChange: (q: QualityCorrection) => void;
 }
 
-const STEP = 10;
+const STEP = 5;
 
 const KEYS: { key: keyof QualityCorrection; label: string }[] = [
   { key: 'technical', label: 'T correction' },
