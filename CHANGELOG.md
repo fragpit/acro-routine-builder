@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.36
 
 - Add Cloudflare Web Analytics (privacy-friendly, no cookies); enabled
   only in production builds.
