@@ -2,10 +2,12 @@
 
 ## Unreleased
 
-- Total program score briefly shows the change from the most recent
-  edit next to it in green (gain) or red (loss); the indicator
-  auto-hides after a couple of seconds. Suppressed on import / load /
-  new / reset / undo / redo where the change is not a fresh edit.
+- Total program score shows the cumulative change next to it in green
+  (gain) or red (loss). The baseline settles automatically after a few
+  seconds of inactivity, and resets immediately on import / load / new
+  / reset (where comparing against the previous program's score would
+  be meaningless). Undo / redo just shift the indicator relative to
+  the current baseline.
 
 ## v0.6.38
 

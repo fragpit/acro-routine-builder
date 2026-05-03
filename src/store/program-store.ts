@@ -26,9 +26,10 @@ interface ProgramState {
   future: Program[];
   /**
    * Monotonic counter incremented when the program is replaced wholesale
-   * (import, reset, load, new). UI watching the total score uses it to
-   * suppress the change indicator on bulk transitions where a delta would be
-   * misleading.
+   * (import, load, new, reset). UI watching the total score uses it as a
+   * signal to reset its baseline - the comparison context from the
+   * previous program is no longer meaningful. Undo / redo do not bump
+   * this; they are within-session navigation.
    */
   bulkResetVersion: number;
   setAwtMode: (on: boolean) => void;
@@ -324,7 +325,6 @@ export const useProgramStore = create<ProgramState>()(
         past: state.past.slice(0, -1),
         future: [...state.future, state.program],
         selectedTrickId: null,
-        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
 
@@ -338,7 +338,6 @@ export const useProgramStore = create<ProgramState>()(
         past: [...state.past, state.program],
         future: state.future.slice(0, -1),
         selectedTrickId: null,
-        bulkResetVersion: state.bulkResetVersion + 1,
       };
     }),
     }),
