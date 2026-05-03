@@ -2,12 +2,10 @@
 
 ## Unreleased
 
-- Total program score now shows the most recent change next to it in
-  green (gain) or red (loss). Suppressed on import / load / new /
-  reset, on undo / redo, and on round-trips (when the new total
-  matches the value from before the previous edit, e.g. toggling a
-  bonus on and then off) - in all those cases showing the inverse
-  delta would just retell the previous step.
+- Total program score briefly shows the change from the most recent
+  edit next to it in green (gain) or red (loss); the indicator
+  auto-hides after a couple of seconds. Suppressed on import / load /
+  new / reset / undo / redo where the change is not a fresh edit.
 
 ## v0.6.38
 

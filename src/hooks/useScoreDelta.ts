@@ -1,62 +1,63 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProgramStore } from '../store/program-store';
 
 const EPSILON = 0.0005;
+const HIDE_AFTER_MS = 2500;
 
 /**
  * Track the change in a numeric score across renders. Returns the most
  * recent delta between the current value and the previous value, or `null`
- * when there is nothing meaningful to show:
- *  - first observation
- *  - no change
- *  - a bulk program transition (import / reset / undo / redo)
- *  - a round-trip: the new total matches the value from before the previous
- *    action (e.g. user toggled a bonus on and then back off; or any other
- *    edit that lands on the prior total). In that case showing the inverse
- *    delta would just retell the story the user just saw.
+ * when there is nothing to show. The delta auto-clears after a short
+ * window so the indicator behaves like a transient flash next to the
+ * total - it confirms the most recent edit and then disappears.
  *
- * The delta persists across renders until the next change so the user sees
- * the effect of their last action even after React re-renders for unrelated
- * reasons.
+ * Nothing is shown for bulk program transitions (import / load / new /
+ * reset / undo / redo); those bump `bulkResetVersion` on the program
+ * store so we can distinguish "fresh edit" from "history navigation".
  */
 export function useScoreDelta(total: number | null): number | null {
   const bulkResetVersion = useProgramStore((s) => s.bulkResetVersion);
   const [snapshot, setSnapshot] = useState<{
-    total: number | null;
-    prevTotal: number | null;
-    bulk: number;
+    lastTotal: number | null;
+    lastBulk: number;
     delta: number | null;
-  }>({ total, prevTotal: null, bulk: bulkResetVersion, delta: null });
+    nonce: number;
+  }>(() => ({
+    lastTotal: total,
+    lastBulk: bulkResetVersion,
+    delta: null,
+    nonce: 0,
+  }));
 
-  if (snapshot.total !== total || snapshot.bulk !== bulkResetVersion) {
-    let nextDelta: number | null = snapshot.delta;
-    let nextPrevTotal: number | null;
-    if (snapshot.bulk !== bulkResetVersion) {
-      nextDelta = null;
-      nextPrevTotal = null;
-    } else if (total === null || snapshot.total === null) {
-      nextDelta = null;
-      nextPrevTotal = snapshot.total;
-    } else if (
-      snapshot.prevTotal !== null &&
-      Math.abs(total - snapshot.prevTotal) < EPSILON
-    ) {
-      nextDelta = null;
-      nextPrevTotal = snapshot.total;
-    } else {
-      const diff = total - snapshot.total;
+  if (snapshot.lastTotal !== total || snapshot.lastBulk !== bulkResetVersion) {
+    let nextDelta: number | null = null;
+    let nextNonce = snapshot.nonce;
+    const isBulk = snapshot.lastBulk !== bulkResetVersion;
+    if (!isBulk && total !== null && snapshot.lastTotal !== null) {
+      const diff = total - snapshot.lastTotal;
       if (Math.abs(diff) >= EPSILON) {
         nextDelta = Math.round(diff * 1000) / 1000;
+        nextNonce = snapshot.nonce + 1;
       }
-      nextPrevTotal = snapshot.total;
     }
     setSnapshot({
-      total,
-      prevTotal: nextPrevTotal,
-      bulk: bulkResetVersion,
+      lastTotal: total,
+      lastBulk: bulkResetVersion,
       delta: nextDelta,
+      nonce: nextNonce,
     });
   }
+
+  useEffect(() => {
+    if (snapshot.delta === null) return;
+    const nonceWhenScheduled = snapshot.nonce;
+    const timer = window.setTimeout(() => {
+      setSnapshot((s) =>
+        s.nonce === nonceWhenScheduled ? { ...s, delta: null } : s,
+      );
+    }, HIDE_AFTER_MS);
+    return () => window.clearTimeout(timer);
+  }, [snapshot.nonce, snapshot.delta]);
 
   return snapshot.delta;
 }
