@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Soften the "more than 2 tumbling/infinity/rhythmic related
+  manoeuvres" rule from error to warning (yellow).
+
 ## v0.6.34
 
 - Trick rules aligned with the AWT 2025 catalog: added forbidden
