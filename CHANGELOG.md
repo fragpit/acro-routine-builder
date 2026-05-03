@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.35
 
 - Soften the "more than 2 tumbling/infinity/rhythmic related
   manoeuvres" rule from error to warning (yellow).
