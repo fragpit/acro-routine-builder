@@ -46,7 +46,7 @@ Validation runs synchronously on every state change - the dataset is small enoug
 
 ### 3. UI (`src/components/`, `src/store/`, `src/hooks/`)
 
-- Flat component layout except for `src/components/mobile/`, which is the adaptive mobile layer. Routing is HashRouter so Pages works without redirects. Main routes: `/` (Home), `/builder` (Builder), `/docs/rules`, `/docs/tricks`.
+- Flat component layout except for `src/components/mobile/`, which is the adaptive mobile layer. Routing is BrowserRouter with `basename` pulled from `import.meta.env.BASE_URL`; the Pages 404 fallback (`dist/404.html`, copied from `index.html` by a Vite `closeBundle` hook) lets refreshes on deep links resolve back into the SPA. Main routes: `/` (Home), `/builder` (Builder), `/docs/rules`, `/docs/tricks`, `/docs/help`.
 - `store/program-store.ts` is a Zustand store with localStorage persistence. It is the only place that mutates the `Program`. Components read selectors; validators receive a snapshot. `store/storage-keys.ts` is the single source of truth for localStorage keys (contract with every user's browser - do not change values without a migration).
 - `hooks/useScoringDerived.ts` exports `useViolationHighlights` (map of cell key -> severity) and `useChoreoPenaltyPerRun` (sum of `choreoPenaltyByRun` across violations) - shared by desktop and mobile builders so both stay in sync on derived state.
 - `@dnd-kit` drives drag-and-drop between palette and run cells on desktop. Touch sensors are included, but the mobile layer uses a tap-to-arm / tap-to-insert pattern instead of real DnD (easier to hit on a phone).
@@ -81,15 +81,14 @@ A single boolean `awtMode` on the Program. Structural differences are minimal (M
 
 ## Deploy
 
-`.github/workflows/deploy.yml` publishes to GitHub Pages on semver tags (`v*.*.*`) - push a tag to cut a release, do not rely on main pushes. `vite.config.ts` sets `base` to the repo name. `ci.yml` runs typecheck / lint / tests on PRs.
+`.github/workflows/deploy.yml` publishes to GitHub Pages on semver tags (`v*.*.*`) - push a tag to cut a release, do not rely on main pushes. `vite.config.ts` sets `base` conditionally on Vite's `command`: `/acro-routine-builder/` for `build`, `/` for `serve` (so `npm run dev` runs at `localhost:5173/`, not under the repo subpath). `ci.yml` runs typecheck / lint / tests on PRs.
 
 ## Analytics
 
 Cloudflare Web Analytics is wired in via [src/hooks/useCloudflareAnalytics.ts](src/hooks/useCloudflareAnalytics.ts), mounted once in `App.tsx`. Two non-obvious bits worth knowing before touching this:
 
 - **Token threading.** [vite.config.ts](vite.config.ts) defines `__CF_ANALYTICS_TOKEN__` from `process.env.CF_ANALYTICS_TOKEN` (falls back to `null`). `deploy.yml` exposes the `CF_ANALYTICS_TOKEN` repo secret only to the `npm run build` step. CI / dev / fork builds get `null`, the hook early-returns, and the beacon code is dead-code-eliminated by Vite - so no network request and no bundle weight outside production.
-- **HashRouter shim.** Cloudflare's beacon SPA mode listens to `pushState` / `replaceState`; HashRouter only mutates `location.hash`, and CF strips the fragment from URL reporting - so out-of-the-box every route would collapse to the base path in CF's URL view. The hook does a single `replaceState(getBasePath() + location.pathname + location.search)` on every `useLocation()` change, replacing the hash-based URL with a virtual one (`/acro-routine-builder/builder` instead of `/acro-routine-builder/#/builder`). `replaceState` instead of `pushState` keeps the back-button stack clean. `getBasePath()` is captured once on the first call from `window.location.pathname` so subsequent navigations don't double-prefix.
-- **404 fallback.** Refreshes / shared links on a virtual path (e.g. `/acro-routine-builder/builder`) hit GitHub Pages with no matching file. [public/404.html](public/404.html) - which Pages serves as the fallback - parses the path, transforms it back into a hash (`#/builder`) and redirects to the SPA root. The base path there is hardcoded; forks need to update it.
+- **No SPA shim needed.** BrowserRouter navigates via `pushState` / `replaceState` natively, which is exactly what CF's beacon `spa: true` mode listens to - so each route appears as a distinct URL in CF's dashboard with no extra code. The hook is just `useEffect(() => injectBeacon(token), [])`.
 
 ## Coding conventions
 

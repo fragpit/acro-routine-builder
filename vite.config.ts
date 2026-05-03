@@ -1,8 +1,12 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { execSync } from 'node:child_process';
+import { copyFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+const PROD_BASE = '/acro-routine-builder/';
 
 function resolveAppVersion(): string {
   const ref = process.env.GITHUB_REF_NAME;
@@ -21,7 +25,17 @@ function resolveAppVersion(): string {
   }
 }
 
-export default defineConfig({
+function copyIndexAsFallback(): PluginOption {
+  return {
+    name: 'copy-index-as-404',
+    closeBundle() {
+      const dir = resolve(process.cwd(), 'dist');
+      copyFileSync(resolve(dir, 'index.html'), resolve(dir, '404.html'));
+    },
+  };
+}
+
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
@@ -33,6 +47,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
         cleanupOutdatedCaches: true,
+        navigateFallback: 'index.html',
       },
       includeAssets: [
         'favicon.svg',
@@ -43,12 +58,13 @@ export default defineConfig({
         'site.webmanifest',
       ],
     }),
+    copyIndexAsFallback(),
   ],
-  base: './',
+  base: command === 'build' ? PROD_BASE : '/',
   define: {
     __APP_VERSION__: JSON.stringify(resolveAppVersion()),
     __CF_ANALYTICS_TOKEN__: JSON.stringify(
       process.env.CF_ANALYTICS_TOKEN ?? null,
     ),
   },
-});
+}));
