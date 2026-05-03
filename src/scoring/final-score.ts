@@ -21,8 +21,8 @@ export interface QualityCorrection {
 }
 
 export const DEFAULT_QUALITY: QualityCorrection = {
-  technical: 60,
-  choreo: 60,
+  technical: 50,
+  choreo: 50,
 };
 
 export interface RunScoreBreakdown {

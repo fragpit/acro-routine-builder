@@ -4,15 +4,14 @@
 
 - Total program score shows the cumulative change next to it in green
   (gain) or red (loss). The baseline settles automatically after a few
-  seconds of inactivity, and resets immediately on import / load / new
-  / reset (where comparing against the previous program's score would
-  be meaningless). Undo / redo just shift the indicator relative to
-  the current baseline.
+  seconds of inactivity; until then the indicator tracks the running
+  difference from where you started.
 - Click the score (tap on mobile) to pin the current total as a
   comparison baseline. The indicator stays visible (starting at
   `+0.000`) and never auto-clears, so you can measure the impact of a
   series of edits against an explicit reference point. Click again to
   unpin and return to the auto-baseline behaviour.
+- Quality correction (T / C) defaults to 50% (was 60%).
 
 ## v0.6.38
 
