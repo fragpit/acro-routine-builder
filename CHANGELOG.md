@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.5
 
 - Mobile: collapsed run-stats bar no longer truncates the Bonus
   formula off-screen. The chevron now sits next to the value on the
