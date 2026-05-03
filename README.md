@@ -26,7 +26,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - AWT mode toggle (enables AWT-specific restrictions)
 - Program import/export: JSON roundtrip + human-readable markdown report
 - Share a routine via a short URL backed by a Cloudflare Worker
-  (links expire after 30 days)
+  (links expire after 7 days)
 - Light/dark theme, persisted in localStorage
 - Online documentation: FAI Sporting Code and generated trick reference
 - **Mobile UI**: on viewports below 1024px the builder switches to a
@@ -82,7 +82,7 @@ repo secret is set and threaded through the deploy workflow.
 When you click `Share link`, the compressed program (no email, no
 account, no metadata beyond what is in the routine itself) is
 uploaded to a Cloudflare Worker and stored under a random 8-char id
-for **30 days**, then automatically deleted. The `worker/` directory
+for **7 days**, then automatically deleted. The `worker/` directory
 contains the source. Forks without a deployed worker get a disabled
 share button.
 
