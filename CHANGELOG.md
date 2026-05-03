@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Mobile: collapsed run-stats bar no longer truncates the Bonus
+  formula off-screen. The chevron now sits next to the value on the
+  right (matching the Score header), and the expanded view shows the
+  bonus as a single coefficient-applied percentage instead of the
+  long inline formula.
+
 ## v0.7.4
 
 - New `Import link` button in the file menu pulls a share URL or
