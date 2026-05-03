@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.6
 
 - Desktop drag-and-drop now mirrors the mobile sortable feel: as
   the cursor moves through a run column, the single closest gap
