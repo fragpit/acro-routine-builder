@@ -2,11 +2,9 @@
 
 Acro Routine Builder (ARB) is a static web app that helps you
 compose a competitive acro program under the FAI Sporting Code 2025
-(Section 7F). It validates tricks, computes per-run scores and lets
-you import existing programs from acroworldtour.com. This page is
-the hands-on manual. For the raw rulebook see the
-<!-- markdownlint-disable-next-line MD051 -->
-[Rules reference](#/docs/rules) and [Tricks reference](#/docs/tricks).
+(Section 7F). It validates tricks and computes per-run scores. This
+page is the hands-on manual. For the raw rulebook see the
+[Rules reference](/docs/rules) and [Tricks reference](/docs/tricks).
 
 ## What you can do
 
@@ -22,7 +20,6 @@ the hands-on manual. For the raw rulebook see the
   Choreography, Landing marks combined with Bonus and corrections).
 - Save programs to your browser, export to JSON or a human-readable
   Markdown report, and re-import either.
-- Import a pilot's full program directly from acroworldtour.com.
 
 Everything runs in your browser. There is no backend, no account
 and no upload - programs stay in `localStorage` until you export
@@ -234,15 +231,9 @@ program structure. Defaults are both **50%**. They apply like this:
   execution.
 
 Use the `+ / -` buttons in `Quality correction` to step in 5%
-increments. Two common setups:
-
-- **Planning a new routine**: leave defaults (50 / 50) to get a
-  conservative estimate that assumes average judge marks.
-- **Analysing an actual competition**: when you import from
-  acroworldtour.com the preview offers an **Apply accuracy** toggle
-  that sets `Tq` and `Cq` to the pilot's actual averaged judge
-  marks at that event, so the builder's score mirrors the real
-  scoreboard.
+increments. Leave the defaults (50 / 50) for a conservative estimate
+that assumes average judge marks; raise them if you have specific
+marks from a real performance you want to model.
 
 The `reset` link next to the heading restores both to 50%.
 
@@ -299,34 +290,6 @@ sharing a plan by email.
 `.apc.json` extension still works). If the current program has
 tricks you will be asked whether to overwrite.
 
-### Import from AcroWorldTour
-
-`Import AWT` fetches programs directly from
-[acroworldtour.com](https://acroworldtour.com). The wizard has
-three steps:
-
-1. **Competition** - search by name, code, location or season. Only
-   solo competitions are listed, sorted by end date (most recent
-   first). The refresh icon (`↻`) in the header clears the cache
-   if the list is stale.
-2. **Pilot** - pick from the pilots that flew that competition. The
-   `X runs` badge tells you how many runs the pilot produced.
-3. **Preview** - see the mapped runs and the pilot's overall score
-   before committing. Tricks the AWT API uses that ARB does not
-   recognise are listed as warnings and skipped; the rest import
-   cleanly.
-
-At the preview step you can toggle **Apply accuracy**: if the AWT
-API exposes the pilot's judge marks, the toggle sets the builder's
-Tq and Cq to the averaged values from that event so the builder's
-Final Score matches the actual scoreboard. When judge marks are
-missing the toggle is disabled.
-
-Hitting `Import` replaces the current program (with confirmation if
-it is non-empty) and names it `<pilot> - <competition>`. The Reset
-gap is also set - to the pilot's run count in general, or to 2 when
-there are 5 runs (superfinal).
-
 ## Mobile vs desktop
 
 The layout auto-switches based on viewport width
@@ -342,7 +305,7 @@ particular:
   for remove.
 
 The address bar is shared: URLs like
-`#/docs/tricks?trick=sat-to-misty` or `#/docs/rules?s=3-3-1` deep
+`/docs/tricks?trick=sat-to-misty` or `/docs/rules?s=3-3-1` deep
 link into a specific section, on either layout.
 
 ## Feedback and links
