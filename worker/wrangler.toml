@@ -1,0 +1,10 @@
+name = "acro-routine-builder-share"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+
+[[kv_namespaces]]
+binding = "SHARES"
+id = "REPLACE_ME_AFTER_KV_NAMESPACE_CREATE"
+
+[vars]
+ALLOWED_ORIGINS = "https://fragpit.github.io,http://localhost:5173"

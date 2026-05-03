@@ -292,17 +292,19 @@ tricks you will be asked whether to overwrite.
 
 ### Share link
 
-`Share link` copies a self-contained URL to your clipboard. The
-program is encoded into the URL itself - paste it into a chat,
-email or notes app, and whoever opens it loads the routine
-directly into their builder. Nothing is uploaded: the payload
-travels in the URL fragment (the part after `#`), which browsers
-keep on the client side.
+`Share link` copies a short URL to your clipboard. Paste it into
+a chat, email or notes app, and whoever opens it loads the routine
+directly into their builder.
 
-When the recipient opens the link, the builder will ask before
-overwriting an existing program with content. The share URL is
-stripped from the address bar after import, so reloading the page
-does not re-import again.
+The link looks like `…/builder?s=Ab12Cd34`. Behind the scenes the
+program is uploaded to a small Cloudflare Worker and stored under
+that 8-character id for **30 days**, then automatically deleted.
+After 30 days the link returns "expired or not found".
+
+When the recipient opens the link, the builder asks before
+overwriting an existing program with content. The query parameter
+is stripped from the address bar after import, so reloading the
+page does not re-import again.
 
 ## Mobile vs desktop
 

@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-- Share a routine via a single URL. The new `Share link` button in
-  the file menu copies a self-contained link to the clipboard;
-  opening it loads the routine directly into the builder, with a
-  confirmation prompt when the current program has tricks. Nothing
-  is uploaded - the payload travels in the URL fragment.
+- Share a routine via a short URL. The new `Share link` button in
+  the file menu uploads the compressed program to a Cloudflare
+  Worker and copies a `…/builder?s=<id>` link to the clipboard.
+  Opening such a link loads the routine into the builder, with a
+  confirmation prompt when the current program has tricks. Links
+  expire automatically after 30 days. Forks built without a worker
+  URL see the button disabled.
 
 ## v0.6.40
 

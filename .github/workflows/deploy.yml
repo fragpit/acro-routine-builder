@@ -31,6 +31,7 @@ jobs:
         run: npm run build
         env:
           CF_ANALYTICS_TOKEN: ${{ secrets.CF_ANALYTICS_TOKEN }}
+          SHARE_SHORTENER_URL: ${{ vars.SHARE_SHORTENER_URL }}
 
       - uses: actions/configure-pages@v5
 

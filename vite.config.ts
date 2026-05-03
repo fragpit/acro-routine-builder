@@ -66,5 +66,8 @@ export default defineConfig(({ command }) => ({
     __CF_ANALYTICS_TOKEN__: JSON.stringify(
       process.env.CF_ANALYTICS_TOKEN ?? null,
     ),
+    __SHARE_SHORTENER_URL__: JSON.stringify(
+      process.env.SHARE_SHORTENER_URL ?? null,
+    ),
   },
 }));
