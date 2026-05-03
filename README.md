@@ -35,7 +35,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 ## Stack
 
 React 18 + TypeScript, Vite, Tailwind CSS v4, Zustand, `@dnd-kit`,
-`react-router-dom` (HashRouter), `react-markdown`. Tests with Vitest.
+`react-router-dom` (BrowserRouter), `react-markdown`. Tests with Vitest.
 
 ## Development
 
@@ -62,8 +62,10 @@ git push origin v0.1.0
 ```
 
 The tag name is injected into the bundle as the app version and shown in
-the header. `vite.config.ts` sets `base` to the repo name, HashRouter
-handles client-side routing on Pages.
+the header. `vite.config.ts` sets `base` to the repo subpath in
+production builds; BrowserRouter handles client-side routing, and a
+`404.html` (a build-time copy of `index.html`) lets Pages resolve
+deep-link refreshes back into the SPA.
 
 ## Privacy
 
