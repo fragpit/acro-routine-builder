@@ -40,20 +40,21 @@ export default function TrickCell({ trick, highlight, selected, ignoredReasons, 
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <div className="truncate flex items-center gap-2">
-            <span className={ignored ? 'line-through' : ''}>{manoeuvre.name}</span>
-            {ignored && (
-              <span
-                className="text-[10px] uppercase tracking-wide text-slate-500 shrink-0"
-                title={`Ignored: ${ignoredReasons!.join('; ')}`}
-              >
-                ignored ({ignoredReasons!.join('; ')})
-              </span>
-            )}
+          <div className="flex items-center gap-2">
+            <span className={`truncate ${ignored ? 'line-through' : ''}`}>
+              {manoeuvre.name}
+            </span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 shrink-0">
+              {manoeuvre.coefficient.toFixed(2)}
+            </span>
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{manoeuvre.coefficient.toFixed(2)}</div>
+          {ignored && (
+            <div className="text-[10px] uppercase tracking-wide text-slate-500 mt-0.5">
+              ignored: {ignoredReasons!.join('; ')}
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           {!manoeuvre.noSide &&
             sides.map((s) => (
               <button
