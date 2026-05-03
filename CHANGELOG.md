@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.37
 
 - Cloudflare Web Analytics now records route-level pageviews
   (`/builder`, `/docs/rules`, etc.) instead of collapsing them all
