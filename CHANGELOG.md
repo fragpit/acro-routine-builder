@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.4
 
 - New `Import link` button in the file menu pulls a share URL or
   bare id from your clipboard (or a manual paste field) and loads
