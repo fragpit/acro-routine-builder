@@ -2,7 +2,9 @@ import { useRef, useState } from 'react';
 import { useProgramStore } from '../../store/program-store';
 import { exportProgramJson, importProgramJson } from '../../io/program-json';
 import { exportProgramMarkdown } from '../../io/program-markdown';
+import { createShortLink, isShortenerEnabled } from '../../io/program-share';
 import { download, safeFileName } from '../../io/download';
+import { IconShare } from '../icons';
 
 type PanelMode = 'save' | 'load' | null;
 
@@ -24,6 +26,8 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [panel, setPanel] = useState<PanelMode>(null);
   const [saveName, setSaveName] = useState('');
+  const [creatingShareLink, setCreatingShareLink] = useState(false);
+  const sharingEnabled = isShortenerEnabled();
 
   const savedNames = Object.keys(savedPrograms).sort((a, b) => a.localeCompare(b));
 
@@ -35,6 +39,20 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
   function onExportMarkdown() {
     const base = currentName ?? 'program';
     download(safeFileName(base, 'md'), exportProgramMarkdown(program, currentName, violations), 'text/markdown');
+  }
+
+  async function onShareLink() {
+    if (creatingShareLink) return;
+    setCreatingShareLink(true);
+    try {
+      const url = await createShortLink(program, currentName);
+      await navigator.clipboard.writeText(url);
+      alert('Short link copied to clipboard (expires in 30 days).');
+    } catch (err) {
+      alert(`Could not create share link: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setCreatingShareLink(false);
+    }
   }
 
   async function onImportFile(file: File) {
@@ -99,6 +117,13 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
           icon={<IconDocText />}
           label="Export MD"
           onClick={onExportMarkdown}
+        />
+        <ActionButton
+          icon={<IconShare />}
+          label={creatingShareLink ? 'Creating link...' : 'Share link'}
+          onClick={onShareLink}
+          disabled={!sharingEnabled || creatingShareLink}
+          title={sharingEnabled ? undefined : 'Sharing requires the deployed worker'}
         />
       </div>
 
@@ -213,6 +238,7 @@ function ActionButton({
   active = false,
   disabled = false,
   tone = 'default',
+  title,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -220,6 +246,7 @@ function ActionButton({
   active?: boolean;
   disabled?: boolean;
   tone?: 'default' | 'muted';
+  title?: string;
 }) {
   const base =
     'w-full flex items-center gap-2 px-3 py-2 text-sm rounded border transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
@@ -229,7 +256,13 @@ function ActionButton({
       ? 'border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-500'
       : 'border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400';
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className={`${base} ${palette}`}>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className={`${base} ${palette}`}
+    >
       <span className="shrink-0 w-4 h-4 flex items-center justify-center">{icon}</span>
       <span className="truncate">{label}</span>
     </button>

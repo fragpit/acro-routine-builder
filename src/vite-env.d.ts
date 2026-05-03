@@ -8,3 +8,4 @@ declare module '*.md?raw' {
 
 declare const __APP_VERSION__: string;
 declare const __CF_ANALYTICS_TOKEN__: string | null;
+declare const __SHARE_SHORTENER_URL__: string | null;

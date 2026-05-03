@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Share a routine via a short URL. The new `Share link` button in
+  the file menu uploads the compressed program to a Cloudflare
+  Worker and copies a `…/builder?s=<id>` link to the clipboard.
+  Opening such a link loads the routine into the builder, with a
+  confirmation prompt when the current program has tricks. Links
+  expire automatically after 30 days. Forks built without a worker
+  URL see the button disabled.
+
 ## v0.6.40
 
 - Fix desktop drag-and-drop drop animation: the dragged trick no
