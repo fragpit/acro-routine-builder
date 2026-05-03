@@ -18,9 +18,6 @@
   `(Tech + Choreo) × (Tq-adjusted% - malus%)/100`, instead of the
   raw bonus with a separate `× Tq` factor at the end. The computed
   value is unchanged.
-- Help page: drop the stale references to the AWT import wizard
-  (removed in v0.6.26) and update the in-app deep-link examples to
-  the BrowserRouter URL form (`/docs/...`, no `#`).
 
 ## v0.6.38
 
