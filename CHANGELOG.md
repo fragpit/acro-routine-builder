@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.1
 
 - Reduce share link TTL from 30 days to 7 days. New `Share link`
   buttons create week-long links; the in-app toast and docs are
