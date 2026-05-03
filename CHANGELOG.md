@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Cloudflare Web Analytics now records route-level pageviews
+  (`/builder`, `/docs/rules`, etc.) instead of collapsing them all
+  to the site root.
+
 ## v0.6.36
 
 - Add Cloudflare Web Analytics (privacy-friendly, no cookies); enabled

@@ -3,6 +3,14 @@ import { useLocation } from 'react-router-dom';
 
 const SCRIPT_SRC = 'https://static.cloudflareinsights.com/beacon.min.js';
 
+let cachedBasePath: string | null = null;
+
+function getBasePath(): string {
+  if (cachedBasePath !== null) return cachedBasePath;
+  cachedBasePath = window.location.pathname.replace(/\/+$/, '');
+  return cachedBasePath;
+}
+
 function injectBeacon(token: string): void {
   if (document.querySelector(`script[src="${SCRIPT_SRC}"]`)) return;
   const script = document.createElement('script');
@@ -21,10 +29,13 @@ function injectBeacon(token: string): void {
  *
  * Injects the beacon script when a build-time token is present, and
  * mirrors HashRouter navigation onto the History API so the beacon's
- * SPA mode logs route-level pageviews (it only listens to pushState /
- * replaceState - hash changes are invisible to it). The pushState is
- * immediately reverted via replaceState so the address bar and
- * HashRouter state remain unchanged.
+ * SPA mode logs route-level pageviews. The hash itself is invisible
+ * to CF (cookieless analytics strip the fragment), so the shim
+ * writes the virtual route into pathname via replaceState - keeping
+ * the back-button stack clean (no extra entries) and producing
+ * distinct URLs per route in CF's URL view. Refreshes on virtual
+ * paths land on `public/404.html`, which transforms the path back
+ * into a hash and redirects to the SPA.
  *
  * No-op when __CF_ANALYTICS_TOKEN__ is null (dev and PR builds).
  */
@@ -38,13 +49,10 @@ export function useCloudflareAnalytics(): void {
 
   useEffect(() => {
     if (!__CF_ANALYTICS_TOKEN__) return;
-    const virtualPath = location.pathname + location.search;
-    if (window.location.pathname === virtualPath) return;
-    const realUrl =
-      window.location.pathname +
-      window.location.search +
-      window.location.hash;
-    window.history.pushState(null, '', virtualPath);
-    window.history.replaceState(null, '', realUrl);
+    const target =
+      getBasePath() + location.pathname + location.search;
+    const current = window.location.pathname + window.location.search;
+    if (current === target) return;
+    window.history.replaceState(null, '', target);
   }, [location.pathname, location.search]);
 }
