@@ -15,7 +15,7 @@ export function validateTumblingInfRhythmic(
     if (cells.length > 2) {
       violations.push({
         ruleId: 'tumbling-inf-rhythmic',
-        severity: 'error',
+        severity: 'warning',
         description: `Run ${runIndex + 1}: more than 2 tumbling/infinity/rhythmic related manoeuvres (${cells.length})`,
         affectedCells: cells.map(({ i }) => ({ runIndex, trickIndex: i })),
       });
