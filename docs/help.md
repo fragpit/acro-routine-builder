@@ -290,6 +290,20 @@ sharing a plan by email.
 `.apc.json` extension still works). If the current program has
 tricks you will be asked whether to overwrite.
 
+### Share link
+
+`Share link` copies a self-contained URL to your clipboard. The
+program is encoded into the URL itself - paste it into a chat,
+email or notes app, and whoever opens it loads the routine
+directly into their builder. Nothing is uploaded: the payload
+travels in the URL fragment (the part after `#`), which browsers
+keep on the client side.
+
+When the recipient opens the link, the builder will ask before
+overwriting an existing program with content. The share URL is
+stripped from the address bar after import, so reloading the page
+does not re-import again.
+
 ## Mobile vs desktop
 
 The layout auto-switches based on viewport width

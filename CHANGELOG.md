@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Share a routine via a single URL. The new `Share link` button in
+  the file menu copies a self-contained link to the clipboard;
+  opening it loads the routine directly into the builder, with a
+  confirmation prompt when the current program has tricks. Nothing
+  is uploaded - the payload travels in the URL fragment.
+
 ## v0.6.40
 
 - Fix desktop drag-and-drop drop animation: the dragged trick no

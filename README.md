@@ -25,6 +25,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
   the total to pin a comparison baseline
 - AWT mode toggle (enables AWT-specific restrictions)
 - Program import/export: JSON roundtrip + human-readable markdown report
+- Share a routine via a single self-contained URL - the program
+  travels in the URL fragment, no server involved
 - Light/dark theme, persisted in localStorage
 - Online documentation: FAI Sporting Code and generated trick reference
 - **Mobile UI**: on viewports below 1024px the builder switches to a

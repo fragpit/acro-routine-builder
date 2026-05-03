@@ -8,11 +8,13 @@ import HelpDocs from './HelpDocs';
 import FeedbackMenu from './FeedbackMenu';
 import AppUpdateIndicator from './AppUpdateIndicator';
 import { useCloudflareAnalytics } from '../hooks/useCloudflareAnalytics';
+import { useShareLink } from '../hooks/useShareLink';
 
 export default function App() {
   const location = useLocation();
   const hideHeaderOnMobile = location.pathname === '/builder';
   useCloudflareAnalytics();
+  useShareLink();
   return (
     <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-[100lvh] lg:h-full">
       <div aria-hidden className="paraglider-bg" />

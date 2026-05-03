@@ -2,7 +2,9 @@ import { useRef, useState } from 'react';
 import { useProgramStore } from '../../store/program-store';
 import { exportProgramJson, importProgramJson } from '../../io/program-json';
 import { exportProgramMarkdown } from '../../io/program-markdown';
+import { encodeShareLink } from '../../io/program-share';
 import { download, safeFileName } from '../../io/download';
+import { IconShare } from '../icons';
 
 type PanelMode = 'save' | 'load' | null;
 
@@ -35,6 +37,16 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
   function onExportMarkdown() {
     const base = currentName ?? 'program';
     download(safeFileName(base, 'md'), exportProgramMarkdown(program, currentName, violations), 'text/markdown');
+  }
+
+  async function onShareLink() {
+    try {
+      const url = encodeShareLink(program, currentName);
+      await navigator.clipboard.writeText(url);
+      alert('Share link copied to clipboard.');
+    } catch (err) {
+      alert(`Could not copy link: ${err instanceof Error ? err.message : String(err)}`);
+    }
   }
 
   async function onImportFile(file: File) {
@@ -99,6 +111,11 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
           icon={<IconDocText />}
           label="Export MD"
           onClick={onExportMarkdown}
+        />
+        <ActionButton
+          icon={<IconShare />}
+          label="Share link"
+          onClick={onShareLink}
         />
       </div>
 
