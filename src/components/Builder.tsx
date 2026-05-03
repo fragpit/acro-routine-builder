@@ -345,7 +345,7 @@ function BuilderDesktop() {
         )}
       </div>
 
-      <DragOverlay>
+      <DragOverlay dropAnimation={null}>
         {activeDrag?.type === 'palette' && MANOEUVRES_BY_ID[activeDrag.id] && (
           <PaletteCardPresentation manoeuvre={MANOEUVRES_BY_ID[activeDrag.id]} />
         )}
