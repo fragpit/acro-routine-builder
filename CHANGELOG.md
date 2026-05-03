@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Fix desktop drag-and-drop drop animation: the dragged trick no
+  longer flies back to the palette after a successful drop into a
+  run.
+
 ## v0.6.39
 
 - Total program score shows the cumulative change next to it in green
