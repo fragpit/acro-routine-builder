@@ -13,7 +13,7 @@ Import via the Builder: **Load from file** → pick a file below.
 | [1.1-must-be-first.arb.json](1.1-must-be-first.arb.json) | Flat Stall to Infinity not in the first position |
 | [1.2-cannot-be-last-two.arb.json](1.2-cannot-be-last-two.arb.json) | Tumbling / Esfera in the last two positions |
 | [1.2-flipped-last-two.arb.json](1.2-flipped-last-two.arb.json) | Flipped manoeuvre in the last two positions |
-| [2-forbidden-connections.arb.json](2-forbidden-connections.arb.json) | SAT -> SAT-based combo, Helicopter -> Helicopter-combo |
+| [2-forbidden-connections.arb.json](2-forbidden-connections.arb.json) | SAT-combos, Helicopter-combos, Tumbling-combos forbidden direct connections |
 | [3.1-high-coefficient-limit.arb.json](3.1-high-coefficient-limit.arb.json) | More than 2 manoeuvres with coefficient >= 1.95 |
 | [3.2-one-per-run-stall-inf.arb.json](3.2-one-per-run-stall-inf.arb.json) | Two stall-to-infinite family manoeuvres in a run |
 | [3.3-tumbling-inf-rhythmic-limit.arb.json](3.3-tumbling-inf-rhythmic-limit.arb.json) | More than 2 tumbling / infinity / rhythmic manoeuvres |

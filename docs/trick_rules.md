@@ -45,6 +45,8 @@ different entry, so they are allowed after a plain SAT.
 | --------------------------------- | --------------------------------- |
 | SAT                               | SAT-based combo manoeuvres        |
 | Misty to SAT                      | SAT                               |
+| Mactwist to SAT                   | SAT                               |
+| X-Chopper to SAT                  | SAT                               |
 | Helicopter                        | any helicopter connection         |
 | Misty to Helicopter               | Helicopter                        |
 | Twister                           | Helicopter                        |
@@ -55,9 +57,10 @@ different entry, so they are allowed after a plain SAT.
 | Corkscrew                         | Helicopter                        |
 | Joker                             | Helicopter                        |
 | Mac Twist to Tumbling             | Infinite Tumbling, Anti-Rhythmic  |
+| Misty to Tumbling                 | Infinite Tumbling, Anti-Rhythmic  |
 | Rhythmic SAT                      | Tumbling, Infinite, Anti-Rhythmic |
 | Infinity Tumbling                 | Tumbling, Anti-Rhythmic SAT       |
-| X-Chopper to Tumbling             | Infinite, Anti-Rhythmic           |
+| X-Chopper to Tumbling             | Tumbling, Anti-Rhythmic SAT       |
 | Super Stall to Infinity           | Tumbling, Anti-Rhythmic SAT       |
 | Flat Stall to Infinity            | Tumbling, Anti-Rhythmic SAT       |
 | MacFly, MistyFly, HeliFly, SatFly | Tumbling, Anti-Rhythmic SAT       |

@@ -162,7 +162,10 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: true,
     noSide: true,
     availableBonuses: [twisted(2.5), twistedExit(4.5), devilTwist(7), flip(4.5), doubleFlip(5.5)],
-    mutualExclusions: [['twisted', 'devil_twist'], ['flip', 'double_flip']],
+    mutualExclusions: [
+      ['twisted', 'devil_twist', 'flip', 'double_flip'],
+      ['twisted_exit', 'flip', 'double_flip'],
+    ],
     groups: [],
   },
   {
@@ -182,7 +185,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(2.5), twistedExit(3.5), fullTwisted(6)],
-    mutualExclusions: [['twisted', 'full_twisted']],
+    mutualExclusions: [['twisted', 'full_twisted'], ['twisted_exit', 'full_twisted']],
     groups: [],
   },
   {
@@ -214,9 +217,9 @@ export const MANOEUVRES: Manoeuvre[] = [
       'Twisted: twisted on the X-Chopper entry, untwisted by the rotation',
       'Full Twisted: staying twisted during the whole rotation and connection',
       'Devil Twist: twisted on the entry, untwisted by the rotation and twisted again during the end of the rotation',
-      'Free connection',
+      'Forbidden connection to SAT',
     ],
-    forbiddenConnectionTo: [],
+    forbiddenConnectionTo: ['sat'],
     cannotBeLastTwo: false,
     mustBeFirst: false,
     repetitionAllowed: false,
@@ -266,7 +269,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(3), fullTwisted(9), twistedExit(3)],
-    mutualExclusions: [['twisted', 'full_twisted']],
+    mutualExclusions: [['twisted', 'twisted_exit', 'full_twisted']],
     groups: [],
   },
   {
@@ -435,9 +438,9 @@ export const MANOEUVRES: Manoeuvre[] = [
     description: [
       'A Mactwist directly connected into a SAT maneuver with a fast and clean transition',
       'Full Twisted Mactwist to SAT: staying twisted during the whole rotation and connection',
-      'Free connection',
+      'Forbidden connection to SAT',
     ],
-    forbiddenConnectionTo: [],
+    forbiddenConnectionTo: ['sat'],
     cannotBeLastTwo: false,
     mustBeFirst: false,
     repetitionAllowed: false,
@@ -462,7 +465,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(4), reverse(3.5), devilTwist(7)],
-    mutualExclusions: [],
+    mutualExclusions: [['twisted', 'devil_twist']],
     groups: [],
   },
   {
@@ -503,7 +506,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(4), reverse(4.5), devilTwist(8)],
-    mutualExclusions: [],
+    mutualExclusions: [['twisted', 'devil_twist']],
     groups: [],
   },
   {
@@ -522,7 +525,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(4), reverse(4.5), devilTwist(8)],
-    mutualExclusions: [],
+    mutualExclusions: [['twisted', 'devil_twist']],
     groups: [],
   },
   {
@@ -541,7 +544,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(4.5), reverse(4.5), devilTwist(7)],
-    mutualExclusions: [],
+    mutualExclusions: [['twisted', 'devil_twist']],
     groups: [],
   },
   {
@@ -560,7 +563,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(4.5), reverse(4.5), devilTwist(7)],
-    mutualExclusions: [],
+    mutualExclusions: [['twisted', 'devil_twist']],
     groups: [],
   },
   {
@@ -598,7 +601,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(4), twistedExit(4.5), devilTwist(2)],
-    mutualExclusions: [],
+    mutualExclusions: [['twisted', 'devil_twist']],
     groups: ['tumbling_related'],
   },
   {
@@ -630,15 +633,18 @@ export const MANOEUVRES: Manoeuvre[] = [
       'Minimum 3 rotations of tumbling',
       'This manoeuvre cannot be one of the last two manoeuvres',
       'Cannot be performed in the same run as a stall to infinite type of manoeuvre',
-      'Forbidden connection to Infinite or Anti-Rhythmic',
+      'Forbidden connection to Tumbling or Anti-Rhythmic SAT',
     ],
-    forbiddenConnectionTo: ['infinity_tumbling', 'anti_rhythmic_sat'],
+    forbiddenConnectionTo: ['tumbling', 'anti_rhythmic_sat'],
     cannotBeLastTwo: true,
     mustBeFirst: false,
     repetitionAllowed: false,
     noSide: false,
     availableBonuses: [twisted(3.5), fullTwisted(7.5), hardcoreEntry(7.5), cabSlide(2), devilTwist(2), twistedExit(3)],
-    mutualExclusions: [['twisted', 'full_twisted', 'devil_twist_stall'], ['full_twisted', 'devil_twist_stall', 'cab_slide']],
+    mutualExclusions: [
+      ['twisted', 'full_twisted', 'hardcore_entry'],
+      ['full_twisted', 'hardcore_entry', 'cab_slide'],
+    ],
     groups: ['tumbling_related'],
   },
   {
@@ -700,7 +706,10 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: true,
     availableBonuses: [twisted(3.5), twistedExit(3), fullTwisted(8), hardcoreEntry(8), cabSlide(2), devilTwist(2)],
-    mutualExclusions: [['twisted', 'full_twisted', 'cab_slide', 'hardcore_entry']],
+    mutualExclusions: [
+      ['twisted', 'full_twisted', 'hardcore_entry'],
+      ['full_twisted', 'hardcore_entry', 'cab_slide'],
+    ],
     groups: ['stall_to_infinite', 'tumbling_related'],
   },
   {
@@ -721,7 +730,10 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: true,
     availableBonuses: [twisted(2.5), twistedExit(3), fullTwisted(8), hardcoreEntry(8), cabSlide(2), devilTwist(2)],
-    mutualExclusions: [['twisted', 'full_twisted', 'cab_slide', 'hardcore_entry']],
+    mutualExclusions: [
+      ['twisted', 'full_twisted', 'hardcore_entry'],
+      ['full_twisted', 'hardcore_entry', 'cab_slide'],
+    ],
     groups: ['stall_to_infinite', 'tumbling_related'],
   },
   {
@@ -742,7 +754,10 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: true,
     availableBonuses: [twisted(3), twistedExit(3), fullTwisted(8), hardcoreEntry(8), cabSlide(2), devilTwist(2)],
-    mutualExclusions: [['twisted', 'full_twisted', 'cab_slide', 'hardcore_entry']],
+    mutualExclusions: [
+      ['twisted', 'full_twisted', 'hardcore_entry'],
+      ['full_twisted', 'hardcore_entry', 'cab_slide'],
+    ],
     groups: ['stall_to_infinite', 'tumbling_related'],
   },
   {
@@ -763,7 +778,10 @@ export const MANOEUVRES: Manoeuvre[] = [
     repetitionAllowed: false,
     noSide: true,
     availableBonuses: [twisted(3.5), twistedExit(3), fullTwisted(8), hardcoreEntry(8), cabSlide(2), devilTwist(2)],
-    mutualExclusions: [['twisted', 'full_twisted', 'cab_slide', 'hardcore_entry']],
+    mutualExclusions: [
+      ['twisted', 'full_twisted', 'hardcore_entry'],
+      ['full_twisted', 'hardcore_entry', 'cab_slide'],
+    ],
     groups: ['stall_to_infinite', 'tumbling_related'],
   },
   {
@@ -775,8 +793,9 @@ export const MANOEUVRES: Manoeuvre[] = [
       'Misty Flip (360 degrees spin rotation) followed by a high Tumbling using the dive from the Misty Flip',
       'This manoeuvre cannot be one of the last two manoeuvres',
       'Cannot be performed in the same run as a stall to infinite type of manoeuvre',
+      'Forbidden connection to Infinity Tumbling or Anti-Rhythmic SAT',
     ],
-    forbiddenConnectionTo: [],
+    forbiddenConnectionTo: ['infinity_tumbling', 'anti_rhythmic_sat'],
     cannotBeLastTwo: true,
     mustBeFirst: false,
     repetitionAllowed: false,
