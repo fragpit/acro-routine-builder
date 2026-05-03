@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.38
 
 - Switch routing from HashRouter to BrowserRouter. URLs are now
   cleaner (`/builder` instead of `/#/builder`), and Cloudflare Web
