@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Trick rules aligned with the AWT 2025 catalog: added forbidden
+  connections (Mactwist to SAT / X-Chopper to SAT cannot be followed by
+  SAT; Misty to Tumbling cannot be followed by Infinity Tumbling or
+  Anti-Rhythmic SAT) and fixed X-Chopper to Tumbling's forbidden target
+  from Infinity Tumbling to Tumbling.
+- Corrected bonus mutual-exclusion sets per AWT data on Stall, Misty
+  Flip, Helicopter, Mac Twist to Helicopter, Cowboy, SuperCowboy,
+  Corkscrew, Joker, Rhythmic SAT, MacFly / MistyFly / HeliFly / SatFly,
+  and X-Chopper to Tumbling.
+
 ## v0.6.33
 
 - Quality correction (T / C) now adjusts in 5% steps (was 10%).

@@ -1,8 +1,8 @@
 {
   "format": "acro-routine-builder",
   "version": 1,
-  "name": "2. Forbidden connections: SAT -> SAT-based combo, Helicopter -> Helicopter combo",
-  "exportedAt": "2026-04-14T12:00:00.000Z",
+  "name": "2. Forbidden connections: SAT-combos, Helicopter-combos, Tumbling-combos",
+  "exportedAt": "2026-05-03T12:00:00.000Z",
   "program": {
     "awtMode": false,
     "runs": [
@@ -23,9 +23,36 @@
           { "id": "r2t3", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
           { "id": "r2t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
         ]
+      },
+      {
+        "id": "r3",
+        "tricks": [
+          { "id": "r3t1", "manoeuvreId": "mactwist_to_sat", "side": "R", "selectedBonuses": [] },
+          { "id": "r3t2", "manoeuvreId": "sat", "side": "L", "selectedBonuses": [] },
+          { "id": "r3t3", "manoeuvreId": "x_chopper_to_sat", "side": "R", "selectedBonuses": [] },
+          { "id": "r3t4", "manoeuvreId": "sat", "side": "L", "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r4",
+        "tricks": [
+          { "id": "r4t1", "manoeuvreId": "x_chopper_to_tumbling", "side": "R", "selectedBonuses": [] },
+          { "id": "r4t2", "manoeuvreId": "tumbling", "side": "L", "selectedBonuses": [] },
+          { "id": "r4t3", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r4t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
+      },
+      {
+        "id": "r5",
+        "tricks": [
+          { "id": "r5t1", "manoeuvreId": "misty_to_tumbling", "side": "R", "selectedBonuses": [] },
+          { "id": "r5t2", "manoeuvreId": "infinity_tumbling", "side": "L", "selectedBonuses": [] },
+          { "id": "r5t3", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
+          { "id": "r5t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+        ]
       }
     ],
-    "repeatAfterRuns": 2,
+    "repeatAfterRuns": 5,
     "defaultBonuses": []
   }
 }
