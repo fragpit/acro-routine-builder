@@ -161,7 +161,7 @@ export default function RunMobile({
               <Stat label="TC" value={technicity.toFixed(3)} />
               <Stat
                 label="Bonus"
-                value={`${(bonus * quality.technical / 100).toFixed(1)}(${bonus.toFixed(1)})%`}
+                value={`${(bonus * quality.technical / 100).toFixed(1)}(${bonus.toFixed(1)}×Tq(${quality.technical}%))%`}
               />
               <Stat
                 label="Sym"
@@ -208,7 +208,7 @@ export default function RunMobile({
               <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
                 Bonus
               </span>
-              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)})%
+              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
             </span>
           </button>
         )

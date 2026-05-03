@@ -91,9 +91,10 @@ Each run column shows, under the tricks:
   tricks in the run (with at most two above 1.95).
 - **Slots T / R / F** - bonus slots used vs the limit per run
   (5 twisted, 3 reversed, 2 flipped). Extras are not scored.
-- **Bonus** - sum of the selected bonus percents. The number outside
-  parentheses is adjusted by the technical-quality correction (Tq);
-  the one in parentheses is the raw FAI sum.
+- **Bonus** - shown as `X(Y×Tq(N%))%`. `Y` is the raw sum of the
+  selected bonus percents, `N` is the current Tq correction, and `X`
+  is `Y × N/100` - the bonus actually applied after the
+  technical-quality correction.
 - **Malus** - deduction from the bonus percent for repetition
   violations (FAI 3.3.3).
 - **Choreo(sym)** - `+1` if the trick sides are balanced across the

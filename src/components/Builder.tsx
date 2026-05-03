@@ -481,11 +481,11 @@ function RunColumn({
           </div>
           <div
             className="flex justify-between"
-            title="Bonus per run: X(Y)% - Y is the sum of selected bonus percents, X is Y adjusted by the Tq technical-quality correction."
+            title="Bonus per run: X(Y×Tq(N%))% - Y is the raw sum of selected bonus percents, X is Y multiplied by the Tq technical-quality correction."
           >
             <span>Bonus</span>
             <span className="font-mono">
-              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)})%
+              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
             </span>
           </div>
           {choreoPenalty > 0 && (

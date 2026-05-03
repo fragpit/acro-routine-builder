@@ -12,10 +12,12 @@
   series of edits against an explicit reference point. Click again to
   unpin and return to the auto-baseline behaviour.
 - Quality correction (T / C) defaults to 50% (was 60%).
-- Score breakdown: the Bonus formula now shows the `× Tq` factor that
-  the actual computation has been applying since v0.6.19. The
-  computed value was always correct; the displayed formula was
-  missing the multiplier.
+- Score breakdown clarified. Per-run Bonus stat now spells out the
+  Tq factor as `X(Y×Tq(N%))%`. The Bonus row in the expanded
+  breakdown shows the Tq-adjusted percent directly:
+  `(Tech + Choreo) × (Tq-adjusted% - malus%)/100`, instead of the
+  raw bonus with a separate `× Tq` factor at the end. The computed
+  value is unchanged.
 
 ## v0.6.38
 
