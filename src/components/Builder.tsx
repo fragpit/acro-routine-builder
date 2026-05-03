@@ -157,7 +157,8 @@ function BuilderDesktop() {
     return { total: Math.ceil(total * 1000) / 1000 };
   }, [program, distribution, quality, choreoPenaltyPerRun]);
 
-  const scoreDelta = useScoreDelta(programTotal?.total ?? null);
+  const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
+    useScoreDelta(programTotal?.total ?? null);
 
   function onDragStart(e: DragStartEvent) {
     const data = e.active.data.current as { type: 'palette' | 'cell'; manoeuvreId?: string; trickId?: string } | undefined;
@@ -243,13 +244,22 @@ function BuilderDesktop() {
             </span>
             <div className="flex items-center gap-3 shrink-0">
               {programTotal && (
-                <div className="flex items-center gap-1.5 text-sm" title="Program total score (sum of all runs)">
+                <button
+                  type="button"
+                  onClick={toggleScorePin}
+                  className="flex items-center gap-1.5 text-sm cursor-pointer rounded px-1 -mx-1 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  title={
+                    scorePinned
+                      ? 'Pinned baseline. Click to unpin.'
+                      : 'Click to pin a comparison baseline.'
+                  }
+                >
                   <span className="text-[11px] uppercase tracking-wide text-slate-500">Score</span>
                   <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
                     {programTotal.total.toFixed(3)}
                   </span>
                   <ScoreDelta delta={scoreDelta} />
-                </div>
+                </button>
               )}
               <div className="flex items-center gap-2">
                 <button

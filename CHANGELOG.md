@@ -8,6 +8,11 @@
   / reset (where comparing against the previous program's score would
   be meaningless). Undo / redo just shift the indicator relative to
   the current baseline.
+- Click the score (tap on mobile) to pin the current total as a
+  comparison baseline. The indicator stays visible (starting at
+  `+0.000`) and never auto-clears, so you can measure the impact of a
+  series of edits against an explicit reference point. Click again to
+  unpin and return to the auto-baseline behaviour.
 
 ## v0.6.38
 

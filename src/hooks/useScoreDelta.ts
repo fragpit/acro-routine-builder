@@ -1,37 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useProgramStore } from '../store/program-store';
 
 const EPSILON = 0.0005;
 const IDLE_RESET_MS = 3000;
 
+interface ScoreDeltaResult {
+  delta: number | null;
+  isPinned: boolean;
+  togglePin: () => void;
+}
+
 /**
- * Track the cumulative change in a numeric score against a baseline that
- * settles after a brief period of inactivity. Returns the difference
- * `current - baseline`, or `null` when there is nothing to show:
- *  - the score is `null` (no tricks)
- *  - current matches the baseline (idle, or just after a reset)
+ * Track the change in a numeric score against a baseline. Two modes:
  *
- * The baseline updates in two cases:
- *  - `IDLE_RESET_MS` of no score changes (the user paused; the current
- *    state becomes the new "stable" point against which future edits
- *    will be measured).
- *  - A bulk wholesale program transition (`bulkResetVersion` bumped by
- *    import / load / new / reset). The previous baseline belonged to a
- *    different program and would produce a meaningless delta. Undo /
- *    redo do NOT bump this counter - they are within-session navigation
- *    and should let the delta shift naturally relative to the baseline.
+ * - **Auto** (default). Baseline settles after `IDLE_RESET_MS` of no
+ *   total changes, and on wholesale program transitions
+ *   (`bulkResetVersion`). Returns `null` while current matches the
+ *   baseline so the indicator hides.
+ *
+ * - **Pinned**. The user clicked the score; baseline froze at that
+ *   moment. The idle timer is ignored. The delta is returned even when
+ *   it is `0` so the indicator stays visible (showing `+0.000` right
+ *   after pinning), making the pinned state self-evident.
+ *
+ * Bulk transitions (import / load / new / reset) auto-unpin: the
+ * pinned baseline belongs to the previous program. Undo / redo do not
+ * affect pin or baseline; they shift the delta naturally.
  */
-export function useScoreDelta(total: number | null): number | null {
+export function useScoreDelta(total: number | null): ScoreDeltaResult {
   const bulkResetVersion = useProgramStore((s) => s.bulkResetVersion);
 
   const [state, setState] = useState<{
     baseline: number | null;
     lastTotal: number | null;
     lastBulk: number;
+    pinned: boolean;
   }>(() => ({
     baseline: total,
     lastTotal: total,
     lastBulk: bulkResetVersion,
+    pinned: false,
   }));
 
   const bulkChanged = state.lastBulk !== bulkResetVersion;
@@ -44,21 +52,37 @@ export function useScoreDelta(total: number | null): number | null {
       baseline: total,
       lastTotal: total,
       lastBulk: bulkResetVersion,
+      pinned: false,
     });
   } else if (state.lastTotal !== total) {
     setState((s) => ({ ...s, lastTotal: total }));
   }
 
   useEffect(() => {
-    if (total === null) return;
+    if (total === null || state.pinned) return;
     const timer = window.setTimeout(() => {
-      setState((s) => (s.lastTotal === total ? { ...s, baseline: total } : s));
+      setState((s) =>
+        s.lastTotal === total && !s.pinned ? { ...s, baseline: total } : s,
+      );
     }, IDLE_RESET_MS);
     return () => window.clearTimeout(timer);
+  }, [total, state.pinned]);
+
+  const togglePin = useCallback(() => {
+    setState((s) => ({
+      ...s,
+      pinned: !s.pinned,
+      baseline: total,
+    }));
   }, [total]);
 
-  if (total === null || state.baseline === null) return null;
-  const diff = total - state.baseline;
-  if (Math.abs(diff) < EPSILON) return null;
-  return Math.round(diff * 1000) / 1000;
+  let delta: number | null = null;
+  if (total !== null && state.baseline !== null) {
+    const diff = total - state.baseline;
+    if (state.pinned || Math.abs(diff) >= EPSILON) {
+      delta = Math.round(diff * 1000) / 1000;
+    }
+  }
+
+  return { delta, isPinned: state.pinned, togglePin };
 }

@@ -99,7 +99,8 @@ export default function BuilderMobile() {
     return { total: Math.ceil(total * 1000) / 1000 };
   }, [program, distribution, quality, choreoPenaltyPerRun]);
 
-  const scoreDelta = useScoreDelta(programTotal?.total ?? null);
+  const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
+    useScoreDelta(programTotal?.total ?? null);
 
   const safeActive = Math.min(activeRunIndex, program.runs.length - 1);
 
@@ -115,10 +116,21 @@ export default function BuilderMobile() {
             {programTotal && (
               <>
                 <span>·</span>
-                <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
-                  {programTotal.total.toFixed(3)}
-                </span>
-                <ScoreDelta delta={scoreDelta} />
+                <button
+                  type="button"
+                  onClick={toggleScorePin}
+                  className="inline-flex items-center gap-1.5 rounded px-1 -mx-1 active:bg-slate-100 dark:active:bg-slate-800"
+                  title={
+                    scorePinned
+                      ? 'Pinned baseline. Tap to unpin.'
+                      : 'Tap to pin a comparison baseline.'
+                  }
+                >
+                  <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
+                    {programTotal.total.toFixed(3)}
+                  </span>
+                  <ScoreDelta delta={scoreDelta} />
+                </button>
               </>
             )}
           </div>
