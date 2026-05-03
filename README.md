@@ -65,6 +65,14 @@ The tag name is injected into the bundle as the app version and shown in
 the header. `vite.config.ts` sets `base` to the repo name, HashRouter
 handles client-side routing on Pages.
 
+## Privacy
+
+The deployed site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/):
+anonymous pageview, country and device-class counters, no cookies, no
+personal data, no GDPR consent banner. Forks and local dev builds do
+not load the beacon - it activates only when a `CF_ANALYTICS_TOKEN`
+repo secret is set and threaded through the deploy workflow.
+
 ## Project layout
 
 See [docs/claude_plan.md](docs/claude_plan.md) for the full plan and

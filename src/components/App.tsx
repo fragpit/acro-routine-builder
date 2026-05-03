@@ -7,10 +7,12 @@ import RulesDocs from './RulesDocs';
 import HelpDocs from './HelpDocs';
 import FeedbackMenu from './FeedbackMenu';
 import AppUpdateIndicator from './AppUpdateIndicator';
+import { useCloudflareAnalytics } from '../hooks/useCloudflareAnalytics';
 
 export default function App() {
   const location = useLocation();
   const hideHeaderOnMobile = location.pathname === '/builder';
+  useCloudflareAnalytics();
   return (
     <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-[100lvh] lg:h-full">
       <div aria-hidden className="paraglider-bg" />

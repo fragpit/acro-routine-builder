@@ -83,6 +83,13 @@ A single boolean `awtMode` on the Program. Structural differences are minimal (M
 
 `.github/workflows/deploy.yml` publishes to GitHub Pages on semver tags (`v*.*.*`) - push a tag to cut a release, do not rely on main pushes. `vite.config.ts` sets `base` to the repo name. `ci.yml` runs typecheck / lint / tests on PRs.
 
+## Analytics
+
+Cloudflare Web Analytics is wired in via [src/hooks/useCloudflareAnalytics.ts](src/hooks/useCloudflareAnalytics.ts), mounted once in `App.tsx`. Two non-obvious bits worth knowing before touching this:
+
+- **Token threading.** [vite.config.ts](vite.config.ts) defines `__CF_ANALYTICS_TOKEN__` from `process.env.CF_ANALYTICS_TOKEN` (falls back to `null`). `deploy.yml` exposes the `CF_ANALYTICS_TOKEN` repo secret only to the `npm run build` step. CI / dev / fork builds get `null`, the hook early-returns, and the beacon code is dead-code-eliminated by Vite - so no network request and no bundle weight outside production.
+- **HashRouter shim.** Cloudflare's beacon SPA mode listens to `pushState` / `replaceState`; HashRouter only mutates `location.hash`, which is invisible to it. The hook does `pushState(virtualPath)` on every `useLocation()` change (so CF logs `/builder`, `/docs/rules`, etc.), then immediately `replaceState` back to the real URL so neither the address bar nor HashRouter's state are disturbed. Side effect: a small number of duplicate `/` events may appear in CF; if that becomes noisy the alternative is migrating to `BrowserRouter` + a 404.html SPA redirect on Pages.
+
 ## Coding conventions
 
 - Keep validators independent. Each validator should work without knowing about the others.

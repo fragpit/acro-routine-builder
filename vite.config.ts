@@ -47,5 +47,8 @@ export default defineConfig({
   base: './',
   define: {
     __APP_VERSION__: JSON.stringify(resolveAppVersion()),
+    __CF_ANALYTICS_TOKEN__: JSON.stringify(
+      process.env.CF_ANALYTICS_TOKEN ?? null,
+    ),
   },
 });
