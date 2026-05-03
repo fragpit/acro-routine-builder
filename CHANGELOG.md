@@ -12,6 +12,10 @@
   series of edits against an explicit reference point. Click again to
   unpin and return to the auto-baseline behaviour.
 - Quality correction (T / C) defaults to 50% (was 60%).
+- Score breakdown: the Bonus formula now shows the `× Tq` factor that
+  the actual computation has been applying since v0.6.19. The
+  computed value was always correct; the displayed formula was
+  missing the multiplier.
 
 ## v0.6.38
 
