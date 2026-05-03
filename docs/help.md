@@ -186,6 +186,29 @@ Where:
 - **malus** - repetition penalty (FAI 3.3.3), applied to the bonus
   percentage.
 
+### Program total and the change indicator
+
+The header shows the **program total** (sum of all per-run Final
+Scores). Next to it is a small change indicator in green or red
+showing the difference from a comparison baseline:
+
+- **Auto mode** (default). The baseline trails behind your edits:
+  when you stop editing for a few seconds it catches up to the
+  current total, and the indicator disappears. While you are
+  actively editing, the indicator shows the running total of all
+  changes since the baseline.
+- **Pinned mode**. Click (tap on mobile) the score to pin the
+  current total as a baseline. The indicator immediately appears as
+  `(+0.000)` and stays put - it never auto-clears, no matter how
+  many edits you make. Click the score again to unpin and return to
+  the auto mode. Useful for measuring the impact of a planned
+  series of edits against a fixed reference point.
+
+Imports, loads and resets are not treated specially: in auto mode
+the indicator briefly shows the jump and then settles to zero a few
+seconds later; in pinned mode the comparison against the pinned
+point is preserved.
+
 ### Score distribution
 
 The menu has three sliders (Technical / Choreo / Landing) totalling
@@ -197,10 +220,10 @@ be set manually and compensates.
 
 **Tq (Technical quality correction)** and **Cq (Choreography
 quality correction)** model judge marks you cannot predict from the
-program structure. Defaults are both **60%**. They apply like this:
+program structure. Defaults are both **50%**. They apply like this:
 
 - `T mark = 10 × Tq/100` - the execution component of the technical
-  mark. At `Tq = 60%` the builder shows `T = 6.0`.
+  mark. At `Tq = 50%` the builder shows `T = 5.0`.
 - `C mark base = 9 × Cq/100` - the subjective part of the
   choreography mark. Symmetry adds `+1` after this correction and
   is not scaled.
@@ -209,18 +232,18 @@ program structure. Defaults are both **60%**. They apply like this:
   trick is technically valid. This matches how judges deduct on
   execution.
 
-Use the `+ / -` buttons in `Quality correction` to step in 10%
+Use the `+ / -` buttons in `Quality correction` to step in 5%
 increments. Two common setups:
 
-- **Planning a new routine**: leave defaults (60 / 60) to get a
-  realistic estimate that assumes average judge marks.
+- **Planning a new routine**: leave defaults (50 / 50) to get a
+  conservative estimate that assumes average judge marks.
 - **Analysing an actual competition**: when you import from
   acroworldtour.com the preview offers an **Apply accuracy** toggle
   that sets `Tq` and `Cq` to the pilot's actual averaged judge
   marks at that event, so the builder's score mirrors the real
   scoreboard.
 
-The `reset` link next to the heading restores both to 60%.
+The `reset` link next to the heading restores both to 50%.
 
 ### AWT vs AWQ
 

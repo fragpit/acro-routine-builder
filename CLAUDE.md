@@ -103,9 +103,18 @@ Cloudflare Web Analytics is wired in via [src/hooks/useCloudflareAnalytics.ts](s
 
 1. Create a new branch from `main`.
 2. Make the changes.
-3. Commit and push the branch.
-4. Open a PR via GitHub MCP (never `gh` CLI - see user memory).
-5. Add changes to CHANGELOG.md. Keep entries short - one bullet, a
+3. If user-visible behavior changed (UI affordance, default value,
+   formula, scoring rule, keyboard shortcut, file format, etc.),
+   update [docs/help.md](docs/help.md) and [README.md](README.md)
+   wherever they describe that behavior. Help.md is the hands-on
+   manual rendered in-app at `/docs/help` and must reflect actual
+   UI strings, defaults and step sizes; README.md is the project
+   overview and gets at most a one-line bullet under Features.
+   Skip this step for purely internal refactors that the user
+   cannot perceive.
+4. Commit and push the branch.
+5. Open a PR via GitHub MCP (never `gh` CLI - see user memory).
+6. Add changes to CHANGELOG.md. Keep entries short - one bullet, a
    single line if possible, describing the user-visible effect. Put
    root-cause analysis and implementation detail in the PR body, not
    in CHANGELOG.
