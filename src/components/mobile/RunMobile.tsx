@@ -161,7 +161,7 @@ export default function RunMobile({
               <Stat label="TC" value={technicity.toFixed(3)} />
               <Stat
                 label="Bonus"
-                value={`${(bonus * quality.technical / 100).toFixed(1)}(${bonus.toFixed(1)}×Tq(${quality.technical}%))%`}
+                value={`${(bonus * quality.technical / 100).toFixed(1)}%`}
               />
               <Stat
                 label="Sym"
@@ -183,32 +183,34 @@ export default function RunMobile({
             onClick={onToggleStats}
             aria-label="Expand stats"
             aria-expanded={false}
-            className="grid grid-cols-3 items-center px-3 py-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-200"
+            className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-200"
           >
-            <span className="justify-self-start font-mono">
+            <span className="font-mono shrink-0">
               <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
                 TC
               </span>
               {technicity.toFixed(3)}
             </span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="justify-self-center w-4 h-4 text-slate-400 dark:text-slate-500"
-              aria-hidden
-            >
-              <polyline points="6 15 12 9 18 15" />
-            </svg>
-            <span className="justify-self-end font-mono">
-              <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
-                Bonus
+            <span className="flex items-center gap-1.5 min-w-0">
+              <span className="font-mono truncate">
+                <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
+                  Bonus
+                </span>
+                {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
               </span>
-              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-3 h-3 text-slate-400 dark:text-slate-500 shrink-0"
+                aria-hidden
+              >
+                <polyline points="6 15 12 9 18 15" />
+              </svg>
             </span>
           </button>
         )
