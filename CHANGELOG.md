@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Desktop drag-and-drop now mirrors the mobile sortable feel: as
+  the cursor moves through a run column, the single closest gap
+  between cells opens up to mark the insertion point. No more
+  aiming at a thin line - hovering anywhere over a cell lets the
+  nearest gap above or below it expand.
+- Desktop trick cell layout now matches the mobile one: the
+  coefficient sits next to the trick name on the same line, and
+  when the trick is ignored the full reason wraps onto a row
+  beneath the name instead of being truncated as a chip.
+
 ## v0.7.5
 
 - Mobile: collapsed run-stats bar no longer truncates the Bonus
