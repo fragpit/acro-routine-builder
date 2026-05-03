@@ -5,7 +5,7 @@
  */
 
 export interface Env {
-  SHARES: KVNamespace;
+  ARB_SHARES: KVNamespace;
   ALLOWED_ORIGINS: string;
 }
 
@@ -64,7 +64,7 @@ async function handleCreate(req: Request, env: Env, origin: string): Promise<Res
   }
 
   const id = generateId();
-  await env.SHARES.put(`s:${id}`, body, { expirationTtl: TTL_SECONDS });
+  await env.ARB_SHARES.put(`s:${id}`, body, { expirationTtl: TTL_SECONDS });
   return json({ id }, 200, origin);
 }
 
@@ -72,7 +72,7 @@ async function handleRead(id: string, env: Env, origin: string | null): Promise<
   if (!ID_PATTERN.test(id)) {
     return text('Invalid id', 400, origin);
   }
-  const payload = await env.SHARES.get(`s:${id}`);
+  const payload = await env.ARB_SHARES.get(`s:${id}`);
   if (payload === null) {
     return text('Share link expired or not found', 404, origin);
   }
@@ -86,10 +86,10 @@ async function handleRead(id: string, env: Env, origin: string | null): Promise<
  */
 async function isRateLimited(env: Env, ip: string): Promise<boolean> {
   const key = `rl:${ip}`;
-  const raw = await env.SHARES.get(key);
+  const raw = await env.ARB_SHARES.get(key);
   const count = raw ? Number(raw) : 0;
   if (count >= RATE_LIMIT_MAX) return true;
-  await env.SHARES.put(key, String(count + 1), { expirationTtl: RATE_LIMIT_WINDOW });
+  await env.ARB_SHARES.put(key, String(count + 1), { expirationTtl: RATE_LIMIT_WINDOW });
   return false;
 }
 

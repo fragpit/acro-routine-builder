@@ -24,8 +24,11 @@ GET  /r/:id       returns the stored payload as text/plain
 
 1. `npm install` here.
 2. `npx wrangler login` (browser auth to your Cloudflare account).
-3. `npx wrangler kv namespace create SHARES` -> copy the `id` into
-   [wrangler.toml](wrangler.toml).
+3. Create a KV namespace in the Cloudflare dashboard
+   (`Storage & databases` -> `KV` -> `Create a namespace`) named
+   `ARB_SHARES`. Copy the namespace `id` into
+   [wrangler.toml](wrangler.toml). Or use the CLI:
+   `npx wrangler kv namespace create ARB_SHARES`.
 4. `npm run deploy` once manually so the worker is registered and
    you can read its public URL (something like
    `https://acro-routine-builder-share.<account>.workers.dev`).

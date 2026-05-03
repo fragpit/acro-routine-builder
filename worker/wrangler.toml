@@ -3,8 +3,8 @@ main = "src/index.ts"
 compatibility_date = "2025-04-01"
 
 [[kv_namespaces]]
-binding = "SHARES"
-id = "REPLACE_ME_AFTER_KV_NAMESPACE_CREATE"
+binding = "ARB_SHARES"
+id = "44a63e52be28446dbd2dbbeea040b9a4"
 
 [vars]
 ALLOWED_ORIGINS = "https://fragpit.github.io,http://localhost:5173"
