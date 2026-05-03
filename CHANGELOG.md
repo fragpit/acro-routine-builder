@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.33
 
 - Quality correction (T / C) now adjusts in 5% steps (was 10%).
 
