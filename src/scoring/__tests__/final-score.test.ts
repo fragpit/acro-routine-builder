@@ -20,8 +20,8 @@ describe('runScoreBreakdown', () => {
       DEFAULT_DISTRIBUTION,
       DEFAULT_QUALITY,
     );
-    // 9 * 0.6(Cq) + 1(sym) = 6.4, independent of choreoPenalty
-    expect(bd.cMark).toBeCloseTo(6.4, 5);
+    // 9 * 0.5(Cq) + 1(sym) = 5.5, independent of choreoPenalty
+    expect(bd.cMark).toBeCloseTo(5.5, 5);
   });
 
   it('keeps symmetry bonus when unbalanced = 0', () => {
@@ -33,8 +33,8 @@ describe('runScoreBreakdown', () => {
       DEFAULT_DISTRIBUTION,
       DEFAULT_QUALITY,
     );
-    // 9 * 0.6 + 0 = 5.4
-    expect(bd.cMark).toBeCloseTo(5.4, 5);
+    // 9 * 0.5 + 0 = 4.5
+    expect(bd.cMark).toBeCloseTo(4.5, 5);
   });
 
   it('applies repetition penalty to the bonus as a malus', () => {

@@ -33,6 +33,8 @@ import DesktopMenu from './DesktopMenu';
 import BuilderMobile from './mobile/BuilderMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useChoreoPenaltyPerRun, useViolationHighlights } from '../hooks/useScoringDerived';
+import { useScoreDelta } from '../hooks/useScoreDelta';
+import ScoreDelta from './ScoreDelta';
 import { loadRecentTricks, pushRecentTrick } from '../store/recent-tricks';
 import { IconUndo, IconRedo, IconMenu } from './icons';
 
@@ -155,6 +157,9 @@ function BuilderDesktop() {
     return { total: Math.ceil(total * 1000) / 1000 };
   }, [program, distribution, quality, choreoPenaltyPerRun]);
 
+  const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
+    useScoreDelta(programTotal?.total ?? null);
+
   function onDragStart(e: DragStartEvent) {
     const data = e.active.data.current as { type: 'palette' | 'cell'; manoeuvreId?: string; trickId?: string } | undefined;
     if (!data) return;
@@ -239,12 +244,22 @@ function BuilderDesktop() {
             </span>
             <div className="flex items-center gap-3 shrink-0">
               {programTotal && (
-                <div className="flex items-center gap-1.5 text-sm" title="Program total score (sum of all runs)">
+                <button
+                  type="button"
+                  onClick={toggleScorePin}
+                  className="flex items-center gap-1.5 text-sm cursor-pointer rounded px-1 -mx-1 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  title={
+                    scorePinned
+                      ? 'Pinned baseline. Click to unpin.'
+                      : 'Click to pin a comparison baseline.'
+                  }
+                >
                   <span className="text-[11px] uppercase tracking-wide text-slate-500">Score</span>
                   <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
                     {programTotal.total.toFixed(3)}
                   </span>
-                </div>
+                  <ScoreDelta delta={scoreDelta} />
+                </button>
               )}
               <div className="flex items-center gap-2">
                 <button
@@ -466,11 +481,11 @@ function RunColumn({
           </div>
           <div
             className="flex justify-between"
-            title="Bonus per run: X(Y)% - Y is the sum of selected bonus percents, X is Y adjusted by the Tq technical-quality correction."
+            title="Bonus per run: X(Y×Tq(N%))% - Y is the raw sum of selected bonus percents, X is Y multiplied by the Tq technical-quality correction."
           >
             <span>Bonus</span>
             <span className="font-mono">
-              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)})%
+              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
             </span>
           </div>
           {choreoPenalty > 0 && (

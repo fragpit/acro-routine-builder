@@ -296,7 +296,10 @@ export const useProgramStore = create<ProgramState>()(
   resetProgram: () =>
     set((state) => {
       const runs = state.program.runs.map((r) => ({ ...r, tricks: [] }));
-      return { ...commit(state, { ...state.program, runs }), selectedTrickId: null };
+      return {
+        ...commit(state, { ...state.program, runs }),
+        selectedTrickId: null,
+      };
     }),
 
   undo: () =>

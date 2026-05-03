@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+- Total program score shows the cumulative change next to it in green
+  (gain) or red (loss). The baseline settles automatically after a few
+  seconds of inactivity; until then the indicator tracks the running
+  difference from where you started.
+- Click the score (tap on mobile) to pin the current total as a
+  comparison baseline. The indicator stays visible (starting at
+  `+0.000`) and never auto-clears, so you can measure the impact of a
+  series of edits against an explicit reference point. Click again to
+  unpin and return to the auto-baseline behaviour.
+- Quality correction (T / C) defaults to 50% (was 60%).
+- Score breakdown clarified. Per-run Bonus stat now spells out the
+  Tq factor as `X(Y×Tq(N%))%`. The Bonus row in the expanded
+  breakdown shows the Tq-adjusted percent directly:
+  `(Tech + Choreo) × (Tq-adjusted% - malus%)/100`, instead of the
+  raw bonus with a separate `× Tq` factor at the end. The computed
+  value is unchanged.
+
 ## v0.6.38
 
 - Switch routing from HashRouter to BrowserRouter. URLs are now

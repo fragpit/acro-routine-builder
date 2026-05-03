@@ -21,6 +21,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Live validation of all structural FAI rules (see
   [docs/trick_rules.md](docs/trick_rules.md))
 - Technicity and bonus estimation per run (AWT/AWQ formulas)
+- Program total with a cumulative change indicator next to it; click
+  the total to pin a comparison baseline
 - AWT mode toggle (enables AWT-specific restrictions)
 - Program import/export: JSON roundtrip + human-readable markdown report
 - Light/dark theme, persisted in localStorage

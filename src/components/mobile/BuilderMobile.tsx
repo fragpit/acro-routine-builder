@@ -5,6 +5,8 @@ import { runSymmetry } from '../../rules/validators/symmetry';
 import { useProgramStore } from '../../store/program-store';
 import { useScoreSettings } from '../../store/score-settings';
 import { useChoreoPenaltyPerRun, useViolationHighlights } from '../../hooks/useScoringDerived';
+import { useScoreDelta } from '../../hooks/useScoreDelta';
+import ScoreDelta from '../ScoreDelta';
 import { loadRecentTricks, pushRecentTrick } from '../../store/recent-tricks';
 import { IconUndo, IconRedo } from '../icons';
 import RunSwiper from './RunSwiper';
@@ -97,6 +99,9 @@ export default function BuilderMobile() {
     return { total: Math.ceil(total * 1000) / 1000 };
   }, [program, distribution, quality, choreoPenaltyPerRun]);
 
+  const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
+    useScoreDelta(programTotal?.total ?? null);
+
   const safeActive = Math.min(activeRunIndex, program.runs.length - 1);
 
   return (
@@ -111,9 +116,21 @@ export default function BuilderMobile() {
             {programTotal && (
               <>
                 <span>·</span>
-                <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
-                  {programTotal.total.toFixed(3)}
-                </span>
+                <button
+                  type="button"
+                  onClick={toggleScorePin}
+                  className="inline-flex items-center gap-1.5 rounded px-1 -mx-1 active:bg-slate-100 dark:active:bg-slate-800"
+                  title={
+                    scorePinned
+                      ? 'Pinned baseline. Tap to unpin.'
+                      : 'Tap to pin a comparison baseline.'
+                  }
+                >
+                  <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
+                    {programTotal.total.toFixed(3)}
+                  </span>
+                  <ScoreDelta delta={scoreDelta} />
+                </button>
               </>
             )}
           </div>

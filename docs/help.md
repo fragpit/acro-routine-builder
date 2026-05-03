@@ -2,11 +2,9 @@
 
 Acro Routine Builder (ARB) is a static web app that helps you
 compose a competitive acro program under the FAI Sporting Code 2025
-(Section 7F). It validates tricks, computes per-run scores and lets
-you import existing programs from acroworldtour.com. This page is
-the hands-on manual. For the raw rulebook see the
-<!-- markdownlint-disable-next-line MD051 -->
-[Rules reference](#/docs/rules) and [Tricks reference](#/docs/tricks).
+(Section 7F). It validates tricks and computes per-run scores. This
+page is the hands-on manual. For the raw rulebook see the
+[Rules reference](/docs/rules) and [Tricks reference](/docs/tricks).
 
 ## What you can do
 
@@ -22,7 +20,6 @@ the hands-on manual. For the raw rulebook see the
   Choreography, Landing marks combined with Bonus and corrections).
 - Save programs to your browser, export to JSON or a human-readable
   Markdown report, and re-import either.
-- Import a pilot's full program directly from acroworldtour.com.
 
 Everything runs in your browser. There is no backend, no account
 and no upload - programs stay in `localStorage` until you export
@@ -91,9 +88,10 @@ Each run column shows, under the tricks:
   tricks in the run (with at most two above 1.95).
 - **Slots T / R / F** - bonus slots used vs the limit per run
   (5 twisted, 3 reversed, 2 flipped). Extras are not scored.
-- **Bonus** - sum of the selected bonus percents. The number outside
-  parentheses is adjusted by the technical-quality correction (Tq);
-  the one in parentheses is the raw FAI sum.
+- **Bonus** - shown as `X(Y×Tq(N%))%`. `Y` is the raw sum of the
+  selected bonus percents, `N` is the current Tq correction, and `X`
+  is `Y × N/100` - the bonus actually applied after the
+  technical-quality correction.
 - **Malus** - deduction from the bonus percent for repetition
   violations (FAI 3.3.3).
 - **Choreo(sym)** - `+1` if the trick sides are balanced across the
@@ -186,6 +184,29 @@ Where:
 - **malus** - repetition penalty (FAI 3.3.3), applied to the bonus
   percentage.
 
+### Program total and the change indicator
+
+The header shows the **program total** (sum of all per-run Final
+Scores). Next to it is a small change indicator in green or red
+showing the difference from a comparison baseline:
+
+- **Auto mode** (default). The baseline trails behind your edits:
+  when you stop editing for a few seconds it catches up to the
+  current total, and the indicator disappears. While you are
+  actively editing, the indicator shows the running total of all
+  changes since the baseline.
+- **Pinned mode**. Click (tap on mobile) the score to pin the
+  current total as a baseline. The indicator immediately appears as
+  `(+0.000)` and stays put - it never auto-clears, no matter how
+  many edits you make. Click the score again to unpin and return to
+  the auto mode. Useful for measuring the impact of a planned
+  series of edits against a fixed reference point.
+
+Imports, loads and resets are not treated specially: in auto mode
+the indicator briefly shows the jump and then settles to zero a few
+seconds later; in pinned mode the comparison against the pinned
+point is preserved.
+
 ### Score distribution
 
 The menu has three sliders (Technical / Choreo / Landing) totalling
@@ -197,10 +218,10 @@ be set manually and compensates.
 
 **Tq (Technical quality correction)** and **Cq (Choreography
 quality correction)** model judge marks you cannot predict from the
-program structure. Defaults are both **60%**. They apply like this:
+program structure. Defaults are both **50%**. They apply like this:
 
 - `T mark = 10 × Tq/100` - the execution component of the technical
-  mark. At `Tq = 60%` the builder shows `T = 6.0`.
+  mark. At `Tq = 50%` the builder shows `T = 5.0`.
 - `C mark base = 9 × Cq/100` - the subjective part of the
   choreography mark. Symmetry adds `+1` after this correction and
   is not scaled.
@@ -209,18 +230,12 @@ program structure. Defaults are both **60%**. They apply like this:
   trick is technically valid. This matches how judges deduct on
   execution.
 
-Use the `+ / -` buttons in `Quality correction` to step in 10%
-increments. Two common setups:
+Use the `+ / -` buttons in `Quality correction` to step in 5%
+increments. Leave the defaults (50 / 50) for a conservative estimate
+that assumes average judge marks; raise them if you have specific
+marks from a real performance you want to model.
 
-- **Planning a new routine**: leave defaults (60 / 60) to get a
-  realistic estimate that assumes average judge marks.
-- **Analysing an actual competition**: when you import from
-  acroworldtour.com the preview offers an **Apply accuracy** toggle
-  that sets `Tq` and `Cq` to the pilot's actual averaged judge
-  marks at that event, so the builder's score mirrors the real
-  scoreboard.
-
-The `reset` link next to the heading restores both to 60%.
+The `reset` link next to the heading restores both to 50%.
 
 ### AWT vs AWQ
 
@@ -275,34 +290,6 @@ sharing a plan by email.
 `.apc.json` extension still works). If the current program has
 tricks you will be asked whether to overwrite.
 
-### Import from AcroWorldTour
-
-`Import AWT` fetches programs directly from
-[acroworldtour.com](https://acroworldtour.com). The wizard has
-three steps:
-
-1. **Competition** - search by name, code, location or season. Only
-   solo competitions are listed, sorted by end date (most recent
-   first). The refresh icon (`↻`) in the header clears the cache
-   if the list is stale.
-2. **Pilot** - pick from the pilots that flew that competition. The
-   `X runs` badge tells you how many runs the pilot produced.
-3. **Preview** - see the mapped runs and the pilot's overall score
-   before committing. Tricks the AWT API uses that ARB does not
-   recognise are listed as warnings and skipped; the rest import
-   cleanly.
-
-At the preview step you can toggle **Apply accuracy**: if the AWT
-API exposes the pilot's judge marks, the toggle sets the builder's
-Tq and Cq to the averaged values from that event so the builder's
-Final Score matches the actual scoreboard. When judge marks are
-missing the toggle is disabled.
-
-Hitting `Import` replaces the current program (with confirmation if
-it is non-empty) and names it `<pilot> - <competition>`. The Reset
-gap is also set - to the pilot's run count in general, or to 2 when
-there are 5 runs (superfinal).
-
 ## Mobile vs desktop
 
 The layout auto-switches based on viewport width
@@ -318,7 +305,7 @@ particular:
   for remove.
 
 The address bar is shared: URLs like
-`#/docs/tricks?trick=sat-to-misty` or `#/docs/rules?s=3-3-1` deep
+`/docs/tricks?trick=sat-to-misty` or `/docs/rules?s=3-3-1` deep
 link into a specific section, on either layout.
 
 ## Feedback and links
