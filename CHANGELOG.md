@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- New `Import link` button in the file menu pulls a share URL or
+  bare id from your clipboard (or a manual paste field) and loads
+  the routine - useful inside the installed PWA on iOS, where chat
+  links always open in Safari instead of the app.
+- `Import` is renamed to `Import JSON` for clarity now that there
+  are two import sources, and `New` no longer renders muted (the
+  confirm dialog is the safety net).
+
 ## v0.7.1
 
 - Reduce share link TTL from 30 days to 7 days. New `Share link`
