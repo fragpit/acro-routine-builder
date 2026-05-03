@@ -10,7 +10,7 @@ export interface Env {
 }
 
 const MAX_PAYLOAD_BYTES = 10 * 1024;
-const TTL_SECONDS = 60 * 60 * 24 * 30;
+const TTL_SECONDS = 60 * 60 * 24 * 7;
 const RATE_LIMIT_WINDOW = 60;
 const RATE_LIMIT_MAX = 10;
 const ID_LENGTH = 8;

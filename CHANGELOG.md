@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Reduce share link TTL from 30 days to 7 days. New `Share link`
+  buttons create week-long links; the in-app toast and docs are
+  updated. Links created before this change keep their original
+  30-day expiry (TTL is set at write time on Cloudflare KV).
+
 ## v0.7.0
 
 - Share a routine via a short URL. The new `Share link` button in

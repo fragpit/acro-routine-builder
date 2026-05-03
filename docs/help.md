@@ -298,8 +298,8 @@ directly into their builder.
 
 The link looks like `…/builder?s=Ab12Cd34`. Behind the scenes the
 program is uploaded to a small Cloudflare Worker and stored under
-that 8-character id for **30 days**, then automatically deleted.
-After 30 days the link returns "expired or not found".
+that 8-character id for **7 days**, then automatically deleted.
+After 7 days the link returns "expired or not found".
 
 When the recipient opens the link, the builder asks before
 overwriting an existing program with content. The query parameter

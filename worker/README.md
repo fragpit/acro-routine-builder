@@ -17,7 +17,7 @@ POST /r           text/plain body, returns { "id": "<8-char-id>" }
                   403 if Origin not in ALLOWED_ORIGINS
 
 GET  /r/:id       returns the stored payload as text/plain
-                  404 if expired (30-day TTL) or missing
+                  404 if expired (7-day TTL) or missing
 ```
 
 ## One-time setup
@@ -61,7 +61,7 @@ SHARE_SHORTENER_URL=http://localhost:8787 npm run dev
 - Per-IP rate limit is implemented in KV (best-effort, eventually
   consistent). It's a casual-abuse barrier, not a security
   boundary. If real spam shows up, swap in Cloudflare Turnstile.
-- TTL is 30 days. Recipients of share links should be told that up
+- TTL is 7 days. Recipients of share links should be told that up
   front; the toast in the app does this.
 - The worker logs only id, status and the connecting IP - never
   payload contents.

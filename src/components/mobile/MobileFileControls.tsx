@@ -47,7 +47,7 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
     try {
       const url = await createShortLink(program, currentName);
       await navigator.clipboard.writeText(url);
-      alert('Short link copied to clipboard (expires in 30 days).');
+      alert('Short link copied to clipboard (expires in 7 days).');
     } catch (err) {
       alert(`Could not create share link: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
