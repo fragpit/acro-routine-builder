@@ -40,9 +40,11 @@ used tricks appear at the top under a `Recent` heading.
 
 ### Adding, moving and copying tricks (desktop)
 
-- **Add**: drag a trick from the palette into any run column. You
-  can drop anywhere inside the column to append, or on a precise
-  between-trick slot to insert at that position.
+- **Add**: drag a trick from the palette into any run column. As
+  the cursor moves through the column, the nearest gap between two
+  cells opens up to mark where the trick will land - hover over a
+  cell and the gap above or below it (whichever is closer) becomes
+  the insertion point. Drop anywhere outside a column to cancel.
 - **Move**: drag an existing trick cell to a new slot (same or
   different run).
 - **Copy**: hold `Alt` while dragging an existing cell - the overlay
