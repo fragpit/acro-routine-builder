@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add Cloudflare Web Analytics (privacy-friendly, no cookies); enabled
+  only in production builds.
+
 ## v0.6.35
 
 - Soften the "more than 2 tumbling/infinity/rhythmic related

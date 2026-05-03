@@ -7,3 +7,4 @@ declare module '*.md?raw' {
 }
 
 declare const __APP_VERSION__: string;
+declare const __CF_ANALYTICS_TOKEN__: string | null;
