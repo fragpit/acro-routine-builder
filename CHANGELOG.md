@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.9
 
 - Internal: split Builder.tsx into `builder/` submodules, extract
   `useProgramDnd` / `useTrickPalette` hooks, and replace dnd-kit
