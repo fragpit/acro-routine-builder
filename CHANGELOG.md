@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Markdown export now uses a numbered flat list per run instead of a
+  GFM table, so the raw `.md` reads cleanly in chat clients and plain
+  text editors. Side and bonuses appear inline only when set.
+
 ## v0.7.6
 
 - Desktop drag-and-drop now mirrors the mobile sortable feel: as
