@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Import: stricter JSON validation. Files with duplicate run or
+  trick ids, more than `MAX_RUNS` runs, or `repeatAfterRuns` out of
+  range now fail with a specific error instead of loading silently.
+  Unknown ids in `defaultBonuses` are dropped on import.
+
 ## v0.7.7
 
 - Markdown export now uses a numbered flat list per run instead of a
