@@ -6,8 +6,9 @@ import { exclusionsByTrick } from '../scoring/eligibility';
 
 /**
  * Render a program as a human-readable markdown report with settings, a
- * per-run trick table, scoring summary, and any rule violations. Markdown
- * is one-way: it cannot be re-imported (use exportProgramJson for that).
+ * per-run numbered trick list, scoring summary, and any rule violations.
+ * Markdown is one-way: it cannot be re-imported (use exportProgramJson for
+ * that).
  */
 export function exportProgramMarkdown(
   program: Program,
@@ -39,8 +40,6 @@ export function exportProgramMarkdown(
       lines.push('');
       continue;
     }
-    lines.push('| # | Manoeuvre | Coeff | Side | Bonuses | Ignored |');
-    lines.push('|---|-----------|-------|------|---------|---------|');
     run.tricks.forEach((t, ti) => {
       const m = MANOEUVRES_BY_ID[t.manoeuvreId];
       if (!m) return;
@@ -48,9 +47,13 @@ export function exportProgramMarkdown(
         .map((b) => m.availableBonuses.find((ab) => ab.id === b)?.label ?? b)
         .join(', ');
       const reasons = ignored.get(t.id);
-      lines.push(
-        `| ${ti + 1} | ${m.name} | ${m.coefficient.toFixed(2)} | ${t.side ?? '-'} | ${bonuses || '-'} | ${reasons ? reasons.join('; ') : '-'} |`,
-      );
+      const head = t.side
+        ? `${m.name} (${m.coefficient.toFixed(2)}, ${t.side})`
+        : `${m.name} (${m.coefficient.toFixed(2)})`;
+      const parts = [`${ti + 1}. ${head}`];
+      if (bonuses) parts.push(bonuses);
+      if (reasons) parts.push(`ignored: ${reasons.join('; ')}`);
+      lines.push(parts.join(' - '));
     });
     lines.push('');
     const tc = runTechnicity(run, MANOEUVRES_BY_ID);
