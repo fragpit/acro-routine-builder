@@ -23,11 +23,6 @@
 
 ## P3 - техдолг и чистка
 
-- [ ] **Проверить размер Builder.tsx (722 строки)**. Логику
-  DnD-сенсоров, sensors config и layout стоит вынести в хуки
-  (`useProgramDnd`, `useTrickPalette`). Частично начато:
-  `useViolationHighlights` и `useChoreoPenaltyPerRun` вынесены в
-  [useScoringDerived.ts](../src/hooks/useScoringDerived.ts).
 - [ ] **Общий helper для selectors Zustand** - сейчас в каждом
   компоненте свой селектор.
 - [ ] **E2E-тесты** (Playwright) на ключевой флоу: drag trick -> see
@@ -47,11 +42,6 @@ hygiene. Требуют отдельной визуальной/поведенч
 либо слишком большую поверхность изменений для одного PR, либо
 меняют re-render / pixel-diff.
 
-- [ ] **Декомпозиция Builder.tsx**. Пять inline-субкомпонентов
-  (`PaletteCard`, `RunColumn`, `DropZone`, `BonusSlot`, `EmptyDropZone`)
-  на ~260 строк. Риск: dnd-kit context coupling и мемоизация. Вынести
-  в `src/components/builder/` отдельным PR с визуальной проверкой
-  drag-and-drop.
 - [ ] **RunMobile.tsx: сократить количество пропсов** (сейчас 13).
   `distribution`, `quality`, `awtMode` можно читать селекторами
   Zustand напрямую в `FinalScorePanel` и `TrickCellMobile`. Меняет
