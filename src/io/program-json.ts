@@ -1,5 +1,6 @@
 import type { Program } from '../rules/types';
-import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
+import { BONUS_CATALOG, MANOEUVRES_BY_ID } from '../data/manoeuvres';
+import { MAX_RUNS } from '../data/competition-types';
 import { sanitizeProgram } from '../data/sanitize';
 
 const FORMAT = 'acro-routine-builder';
@@ -71,19 +72,35 @@ function validateProgram(raw: unknown): Program {
   if (typeof p.repeatAfterRuns !== 'number' || p.repeatAfterRuns < 1) {
     throw new Error('program.repeatAfterRuns must be >= 1');
   }
+  if (p.repeatAfterRuns > MAX_RUNS) {
+    throw new Error(`program.repeatAfterRuns must be <= ${MAX_RUNS}`);
+  }
   if (!Array.isArray(p.runs)) throw new Error('program.runs must be an array');
+  if (p.runs.length < 1) throw new Error('program.runs must have at least 1 run');
+  if (p.runs.length > MAX_RUNS) {
+    throw new Error(`program.runs must have at most ${MAX_RUNS} runs`);
+  }
+  const knownBonusIds = new Set(BONUS_CATALOG.map((b) => b.id));
   const defaultBonuses = Array.isArray(p.defaultBonuses)
-    ? p.defaultBonuses.filter((x): x is string => typeof x === 'string')
+    ? p.defaultBonuses.filter((x): x is string => typeof x === 'string' && knownBonusIds.has(x))
     : [];
+  const seenRunIds = new Set<string>();
+  const seenTrickIds = new Set<string>();
   const runs = p.runs.map((r, ri) => {
     if (!r || typeof r !== 'object') throw new Error(`Run ${ri} is not an object`);
     const run = r as Record<string, unknown>;
     if (typeof run.id !== 'string') throw new Error(`Run ${ri} missing id`);
+    if (seenRunIds.has(run.id)) throw new Error(`Duplicate run id "${run.id}"`);
+    seenRunIds.add(run.id);
     if (!Array.isArray(run.tricks)) throw new Error(`Run ${ri} tricks must be an array`);
     const tricks = run.tricks.map((t, ti) => {
       if (!t || typeof t !== 'object') throw new Error(`Trick ${ri}:${ti} is not an object`);
       const trick = t as Record<string, unknown>;
       if (typeof trick.id !== 'string') throw new Error(`Trick ${ri}:${ti} missing id`);
+      if (seenTrickIds.has(trick.id)) {
+        throw new Error(`Duplicate trick id "${trick.id}"`);
+      }
+      seenTrickIds.add(trick.id);
       if (typeof trick.manoeuvreId !== 'string') {
         throw new Error(`Trick ${ri}:${ti} missing manoeuvreId`);
       }
