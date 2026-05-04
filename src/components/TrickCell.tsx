@@ -2,6 +2,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import type { PlacedTrick, Side } from '../rules/types';
 import { useProgramStore } from '../store/program-store';
+import type { DragData } from './builder/drag-types';
 
 interface Props {
   trick: PlacedTrick;
@@ -17,9 +18,10 @@ export default function TrickCell({ trick, highlight, selected, ignoredReasons, 
   const manoeuvre = MANOEUVRES_BY_ID[trick.manoeuvreId];
   const removeTrick = useProgramStore((s) => s.removeTrick);
   const setTrickSide = useProgramStore((s) => s.setTrickSide);
+  const data: DragData = { type: 'cell', trickId: trick.id };
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `cell_${trick.id}`,
-    data: { type: 'cell', trickId: trick.id },
+    data,
   });
 
   if (!manoeuvre) return null;
