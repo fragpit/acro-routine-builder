@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.8
 
 - Import: stricter JSON validation. Files with duplicate run or
   trick ids, more than `MAX_RUNS` runs, or `repeatAfterRuns` out of
