@@ -2,8 +2,10 @@
 
 ## Unreleased
 
-- Internal: split Builder.tsx into `builder/` submodules and extract
-  `useProgramDnd` / `useTrickPalette` hooks. No behavior change.
+- Internal: split Builder.tsx into `builder/` submodules, extract
+  `useProgramDnd` / `useTrickPalette` hooks, and replace dnd-kit
+  drag-data `as`-casts with a discriminated union and type guards.
+  No behavior change.
 
 ## v0.7.8
 

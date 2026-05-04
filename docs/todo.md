@@ -46,10 +46,6 @@ hygiene. Требуют отдельной визуальной/поведенч
   `distribution`, `quality`, `awtMode` можно читать селекторами
   Zustand напрямую в `FinalScorePanel` и `TrickCellMobile`. Меняет
   re-render surface - нужна проверка отсутствия лишних перерисовок.
-- [ ] **Типизация dnd-kit drag-data**. Сейчас в
-  [Builder.tsx](../src/components/Builder.tsx) четыре каста
-  `as { type: 'palette' | 'cell'; ... }`. Завести union type
-  `DragData` + guard-функции, убрать касты.
 - [ ] **Консолидация дублированных иконок**. Inline SVG иконки в
   [MobileFileControls.tsx](../src/components/mobile/MobileFileControls.tsx)
   можно вынести в shared

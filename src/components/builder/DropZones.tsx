@@ -1,4 +1,5 @@
 import { useDroppable } from '@dnd-kit/core';
+import type { DropData } from './drag-types';
 
 export function RunDropArea({
   runIndex,
@@ -9,9 +10,10 @@ export function RunDropArea({
   insertIndex: number;
   children: React.ReactNode;
 }) {
+  const data: DropData = { runIndex, insertIndex };
   const { setNodeRef, isOver } = useDroppable({
     id: `drop_run_${runIndex}`,
-    data: { runIndex, insertIndex },
+    data,
   });
   return (
     <div
@@ -26,9 +28,10 @@ export function RunDropArea({
 }
 
 export function EmptyDropZone({ runIndex }: { runIndex: number }) {
+  const data: DropData = { runIndex, insertIndex: 0 };
   const { setNodeRef, isOver } = useDroppable({
     id: `drop_${runIndex}_0`,
-    data: { runIndex, insertIndex: 0 },
+    data,
   });
   return (
     <div
@@ -45,9 +48,10 @@ export function EmptyDropZone({ runIndex }: { runIndex: number }) {
 }
 
 export function DropZone({ runIndex, insertIndex }: { runIndex: number; insertIndex: number }) {
+  const data: DropData = { runIndex, insertIndex };
   const { setNodeRef, isOver } = useDroppable({
     id: `drop_${runIndex}_${insertIndex}`,
-    data: { runIndex, insertIndex },
+    data,
   });
   return (
     <div

@@ -1,5 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
 import type { Manoeuvre } from '../../rules/types';
+import type { DragData } from './drag-types';
 
 /**
  * Visual-only palette card used inside DragOverlay (no DnD listeners).
@@ -24,9 +25,10 @@ export function PaletteCard({
   manoeuvre: Manoeuvre;
   recent?: boolean;
 }) {
+  const data: DragData = { type: 'palette', manoeuvreId: manoeuvre.id };
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: recent ? `palette_recent_${manoeuvre.id}` : `palette_${manoeuvre.id}`,
-    data: { type: 'palette', manoeuvreId: manoeuvre.id },
+    data,
   });
   return (
     <div

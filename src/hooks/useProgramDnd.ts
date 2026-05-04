@@ -8,9 +8,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import { useProgramStore } from '../store/program-store';
-
-type DragData = { type: 'palette' | 'cell'; manoeuvreId?: string; trickId?: string };
-type DropData = { runIndex: number; insertIndex: number };
+import { isDragData, isDropData } from '../components/builder/drag-types';
 
 export type ActiveDrag = { type: 'palette' | 'cell'; id: string };
 
@@ -57,31 +55,36 @@ export function useProgramDnd(opts: { onPaletteAddCommit: (manoeuvreId: string) 
   );
 
   function onDragStart(e: DragStartEvent) {
-    const data = e.active.data.current as DragData | undefined;
-    if (!data) return;
-    setActiveDrag({
-      type: data.type,
-      id: data.type === 'palette' ? data.manoeuvreId! : data.trickId!,
-    });
+    const data = e.active.data.current;
+    if (!isDragData(data)) return;
+    if (data.type === 'palette') {
+      setActiveDrag({ type: 'palette', id: data.manoeuvreId });
+    } else {
+      setActiveDrag({ type: 'cell', id: data.trickId });
+    }
   }
 
   function onDragEnd(e: DragEndEvent) {
     setActiveDrag(null);
-    const over = e.over;
-    if (!over) return;
-    const overData = over.data.current as DropData | undefined;
-    if (!overData) return;
-    const data = e.active.data.current as DragData;
-    if (data.type === 'palette' && data.manoeuvreId) {
+    const overData = e.over?.data.current;
+    if (!isDropData(overData)) return;
+    const data = e.active.data.current;
+    if (!isDragData(data)) return;
+
+    if (data.type === 'palette') {
       addTrick(overData.runIndex, data.manoeuvreId, overData.insertIndex);
       opts.onPaletteAddCommit(data.manoeuvreId);
-    } else if (data.type === 'cell' && data.trickId) {
-      const activator = e.activatorEvent as { altKey?: boolean } | null;
-      if (altHeldRef.current || activator?.altKey) {
-        copyTrick(data.trickId, overData.runIndex, overData.insertIndex);
-      } else {
-        moveTrick(data.trickId, overData.runIndex, overData.insertIndex);
-      }
+      return;
+    }
+
+    const activator = e.activatorEvent;
+    const altFromEvent = activator instanceof KeyboardEvent || activator instanceof MouseEvent
+      ? activator.altKey
+      : false;
+    if (altHeldRef.current || altFromEvent) {
+      copyTrick(data.trickId, overData.runIndex, overData.insertIndex);
+    } else {
+      moveTrick(data.trickId, overData.runIndex, overData.insertIndex);
     }
   }
 
