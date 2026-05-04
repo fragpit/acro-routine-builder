@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Internal: split Builder.tsx into `builder/` submodules and extract
+  `useProgramDnd` / `useTrickPalette` hooks. No behavior change.
+
 ## v0.7.8
 
 - Import: stricter JSON validation. Files with duplicate run or

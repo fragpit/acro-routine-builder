@@ -1,43 +1,29 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  DndContext,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  useDraggable,
-  useDroppable,
-  type DragEndEvent,
-  DragOverlay,
-  type DragStartEvent,
-  pointerWithin,
-  rectIntersection,
-  closestCenter,
-  type CollisionDetection,
-} from '@dnd-kit/core';
-import { MANOEUVRES, MANOEUVRES_BY_ID } from '../data/manoeuvres';
+import { useEffect, useMemo, useState } from 'react';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
+import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { runTechnicity } from '../scoring/technicity';
 import { runBonus } from '../scoring/bonus';
-import { runBonusUsage, BONUS_LIMITS } from '../scoring/bonus-usage';
+import { runBonusUsage } from '../scoring/bonus-usage';
 import { exclusionsByTrick } from '../scoring/eligibility';
-import { runScoreBreakdown, type ScoreDistribution, type QualityCorrection } from '../scoring/final-score';
+import { runScoreBreakdown } from '../scoring/final-score';
 import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
 import { useScoreSettings } from '../store/score-settings';
-import type { Manoeuvre, PlacedTrick, Run } from '../rules/types';
 import TrickInfoCard from './TrickInfoCard';
 import ViolationsPanel from './ViolationsPanel';
-import TrickCell from './TrickCell';
-import FinalScorePanel from './FinalScorePanel';
 import DesktopMenu from './DesktopMenu';
 import BuilderMobile from './mobile/BuilderMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useChoreoPenaltyPerRun, useViolationHighlights } from '../hooks/useScoringDerived';
 import { useScoreDelta } from '../hooks/useScoreDelta';
+import { useProgramDnd } from '../hooks/useProgramDnd';
+import { useTrickPalette } from '../hooks/useTrickPalette';
 import ScoreDelta from './ScoreDelta';
-import { loadRecentTricks, pushRecentTrick } from '../store/recent-tricks';
 import { IconUndo, IconRedo, IconMenu } from './icons';
+import { PaletteCard, PaletteCardPresentation } from './builder/PaletteCard';
+import { RunColumn } from './builder/RunColumn';
+import { closestStripInPointerRun } from './builder/collision';
 
 export default function Builder() {
   const isMobile = useIsMobile();
@@ -49,9 +35,6 @@ function BuilderDesktop() {
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const currentName = useProgramStore((s) => s.currentName);
-  const addTrick = useProgramStore((s) => s.addTrick);
-  const moveTrick = useProgramStore((s) => s.moveTrick);
-  const copyTrick = useProgramStore((s) => s.copyTrick);
   const resetRun = useProgramStore((s) => s.resetRun);
   const resetProgram = useProgramStore((s) => s.resetProgram);
   const undo = useProgramStore((s) => s.undo);
@@ -63,28 +46,19 @@ function BuilderDesktop() {
   const distribution = useScoreSettings((s) => s.distribution);
   const quality = useScoreSettings((s) => s.quality);
 
-  const [activeDrag, setActiveDrag] = useState<{ type: 'palette' | 'cell'; id: string } | null>(null);
-  const altHeldRef = useRef(false);
-  const [altHeld, setAltHeld] = useState(false);
+  const {
+    paletteFilter,
+    setPaletteFilter,
+    sortDir,
+    toggleSort,
+    sortedAvailable,
+    recentAvailable,
+    pushRecent,
+  } = useTrickPalette();
 
-  useEffect(() => {
-    function sync(e: KeyboardEvent) {
-      altHeldRef.current = e.altKey;
-      setAltHeld(e.altKey);
-    }
-    function clear() {
-      altHeldRef.current = false;
-      setAltHeld(false);
-    }
-    window.addEventListener('keydown', sync);
-    window.addEventListener('keyup', sync);
-    window.addEventListener('blur', clear);
-    return () => {
-      window.removeEventListener('keydown', sync);
-      window.removeEventListener('keyup', sync);
-      window.removeEventListener('blur', clear);
-    };
-  }, []);
+  const { sensors, activeDrag, altHeld, onDragStart, onDragEnd } = useProgramDnd({
+    onPaletteAddCommit: pushRecent,
+  });
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -108,28 +82,7 @@ function BuilderDesktop() {
     return () => window.removeEventListener('keydown', onKey);
   }, [undo, redo]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
-  );
-
   const [menuOpen, setMenuOpen] = useState(false);
-  const [paletteFilter, setPaletteFilter] = useState('');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
-  const [recent, setRecent] = useState<string[]>(() => loadRecentTricks());
-  const sortedAvailable = useMemo(
-    () =>
-      [...MANOEUVRES]
-        .filter((m) => m.name.toLowerCase().includes(paletteFilter.toLowerCase()))
-        .sort((a, b) => (sortDir === 'asc' ? a.coefficient - b.coefficient : b.coefficient - a.coefficient)),
-    [paletteFilter, sortDir],
-  );
-  const recentAvailable = useMemo(() => {
-    const q = paletteFilter.toLowerCase();
-    return recent
-      .map((id) => MANOEUVRES_BY_ID[id])
-      .filter((m): m is Manoeuvre => !!m && m.name.toLowerCase().includes(q));
-  }, [recent, paletteFilter]);
 
   const selectedTrick = useMemo(() => {
     if (!selectedTrickId) return null;
@@ -161,33 +114,6 @@ function BuilderDesktop() {
   const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
     useScoreDelta(programTotal?.total ?? null);
 
-  function onDragStart(e: DragStartEvent) {
-    const data = e.active.data.current as { type: 'palette' | 'cell'; manoeuvreId?: string; trickId?: string } | undefined;
-    if (!data) return;
-    setActiveDrag({ type: data.type, id: data.type === 'palette' ? data.manoeuvreId! : data.trickId! });
-  }
-
-  function onDragEnd(e: DragEndEvent) {
-    setActiveDrag(null);
-    const over = e.over;
-    if (!over) return;
-    const overData = over.data.current as { runIndex: number; insertIndex: number } | undefined;
-    if (!overData) return;
-    const data = e.active.data.current as { type: 'palette' | 'cell'; manoeuvreId?: string; trickId?: string };
-    if (data.type === 'palette' && data.manoeuvreId) {
-      addTrick(overData.runIndex, data.manoeuvreId, overData.insertIndex);
-      const id = data.manoeuvreId;
-      setRecent((prev) => pushRecentTrick(prev, id));
-    } else if (data.type === 'cell' && data.trickId) {
-      const activator = e.activatorEvent as { altKey?: boolean } | null;
-      if (altHeldRef.current || activator?.altKey) {
-        copyTrick(data.trickId, overData.runIndex, overData.insertIndex);
-      } else {
-        moveTrick(data.trickId, overData.runIndex, overData.insertIndex);
-      }
-    }
-  }
-
   return (
     <DndContext
       sensors={sensors}
@@ -202,7 +128,7 @@ function BuilderDesktop() {
               <div className="text-xs uppercase text-slate-500">Palette</div>
               <button
                 type="button"
-                onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
+                onClick={toggleSort}
                 className="text-xs text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-1"
                 title="Toggle sort direction"
               >
@@ -363,267 +289,3 @@ function BuilderDesktop() {
     </DndContext>
   );
 }
-
-function PaletteCardPresentation({ manoeuvre }: { manoeuvre: Manoeuvre }) {
-  return (
-    <div className="px-2 py-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm cursor-grab active:cursor-grabbing select-none flex justify-between shadow-md">
-      <span>{manoeuvre.name}</span>
-      <span className="text-slate-500 dark:text-slate-400">{manoeuvre.coefficient.toFixed(2)}</span>
-    </div>
-  );
-}
-
-function PaletteCard({ manoeuvre, recent = false }: { manoeuvre: Manoeuvre; recent?: boolean }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: recent ? `palette_recent_${manoeuvre.id}` : `palette_${manoeuvre.id}`,
-    data: { type: 'palette', manoeuvreId: manoeuvre.id },
-  });
-  return (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      className={`px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm cursor-grab active:cursor-grabbing select-none flex justify-between ${isDragging ? 'opacity-40' : ''} hover:border-sky-500`}
-    >
-      <span className="truncate">{manoeuvre.name}</span>
-      <span className="text-slate-500 dark:text-slate-400 ml-2 shrink-0">{manoeuvre.coefficient.toFixed(2)}</span>
-    </div>
-  );
-}
-
-function RunColumn({
-  run,
-  runIndex,
-  tricks,
-  technicity,
-  bonus,
-  bonusUsage,
-  choreoPenalty,
-  symmetry,
-  distribution,
-  quality,
-  highlights,
-  ignored,
-  unrewardedBonuses,
-  onSelectTrick,
-  selectedTrickId,
-  onReset,
-}: {
-  run: Run;
-  runIndex: number;
-  tricks: PlacedTrick[];
-  technicity: number;
-  bonus: number;
-  bonusUsage: ReturnType<typeof runBonusUsage>;
-  choreoPenalty: number;
-  symmetry: ReturnType<typeof runSymmetry>;
-  distribution: ScoreDistribution;
-  quality: QualityCorrection;
-  highlights: Map<string, 'error' | 'warning'>;
-  ignored: Map<string, string[]>;
-  unrewardedBonuses: Map<string, Set<string>>;
-  onSelectTrick: (id: string | null) => void;
-  selectedTrickId: string | null;
-  onReset: () => void;
-}) {
-  return (
-    <div className="flex flex-col rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 min-h-[200px]">
-      <div className="px-3 py-2 border-b border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-between">
-        <span>Run {runIndex + 1}</span>
-        {tricks.length > 0 && (
-          <button
-            type="button"
-            onClick={onReset}
-            className="text-xs font-normal text-slate-500 hover:text-red-600 dark:hover:text-red-400"
-            title="Clear this run"
-          >
-            reset
-          </button>
-        )}
-      </div>
-      <RunDropArea runIndex={runIndex} insertIndex={tricks.length}>
-        {tricks.length === 0 ? (
-          <EmptyDropZone runIndex={runIndex} />
-        ) : (
-          <>
-            <DropZone runIndex={runIndex} insertIndex={0} />
-            {tricks.map((t, i) => (
-              <div key={t.id}>
-                <TrickCell
-                  trick={t}
-                  highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
-                  selected={selectedTrickId === t.id}
-                  ignoredReasons={ignored.get(t.id)}
-                  unrewardedBonuses={unrewardedBonuses.get(t.id)}
-                  onSelect={() => onSelectTrick(t.id)}
-                />
-                <DropZone runIndex={runIndex} insertIndex={i + 1} />
-              </div>
-            ))}
-          </>
-        )}
-      </RunDropArea>
-      {tricks.length > 0 && (
-        <div className="px-3 py-1.5 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 space-y-0.5">
-          <div className="flex justify-between" title="Technicity: average of the 3 highest coefficients (max 2 above 1.95)">
-            <span>TC</span>
-            <span className="font-mono">{technicity.toFixed(3)}</span>
-          </div>
-          <div
-            className="flex justify-between text-slate-500 dark:text-slate-400"
-            title="Bonus category slots used per run (FAI 3.5: max 5 twisted / 3 reversed / 2 flipped). Extras are unscored."
-          >
-            <span>Slots</span>
-            <span className="font-mono flex gap-2">
-              <BonusSlot label="T" used={bonusUsage.twisted} limit={BONUS_LIMITS.twisted} />
-              <BonusSlot label="R" used={bonusUsage.reversed} limit={BONUS_LIMITS.reversed} />
-              <BonusSlot label="F" used={bonusUsage.flipped} limit={BONUS_LIMITS.flipped} />
-            </span>
-          </div>
-          <div
-            className="flex justify-between"
-            title="Bonus per run: X(Y×Tq(N%))% - Y is the raw sum of selected bonus percents, X is Y multiplied by the Tq technical-quality correction."
-          >
-            <span>Bonus</span>
-            <span className="font-mono">
-              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
-            </span>
-          </div>
-          {choreoPenalty > 0 && (
-            <div
-              className="flex justify-between text-amber-600 dark:text-amber-400"
-              title="Malus deducted from the bonus percent for repetitions in this run (FAI 3.3.3)"
-            >
-              <span>Malus</span>
-              <span className="font-mono">-{choreoPenalty}%</span>
-            </div>
-          )}
-          <div
-            className={`flex justify-between ${
-              symmetry.balanced
-                ? 'text-emerald-600 dark:text-emerald-400'
-                : 'text-amber-600 dark:text-amber-400'
-            }`}
-            title="Trick directions balance (1/8) - same number of tricks in both directions. Odd number: difference of 1 is OK"
-          >
-            <span>Choreo(sym)</span>
-            <span className="font-mono">{symmetry.balanced ? '+1' : '+0'}</span>
-          </div>
-        </div>
-      )}
-      {tricks.length > 0 && (
-        <FinalScorePanel
-          breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality)}
-          expandsDown
-        />
-      )}
-    </div>
-  );
-}
-
-function BonusSlot({ label, used, limit }: { label: string; used: number; limit: number }) {
-  const over = used > limit;
-  const full = used === limit;
-  const cls = over
-    ? 'text-amber-600 dark:text-amber-400'
-    : full
-      ? 'text-emerald-600 dark:text-emerald-400'
-      : '';
-  return (
-    <span className={cls}>
-      {label} {used}/{limit}
-    </span>
-  );
-}
-
-/**
- * Collision strategy that mirrors the mobile sortable behavior: identify the
- * run column the pointer is currently inside, then pick the insertion strip
- * (DropZone) in that run whose center is closest to the dragged item. The
- * chosen strip is the only one that goes isOver, so only one gap visibly
- * opens up at a time and the surrounding cells shift to make space - without
- * littering every gap with a dashed marker.
- *
- * RunDropArea is intentionally excluded from the active-run pool: its rect
- * center is the column midpoint, so cursor-at-column-middle would otherwise
- * tie with the geometrically-closest strip and silently route the drop to
- * "append at end" via RunDropArea's insertIndex = tricks.length.
- */
-const closestStripInPointerRun: CollisionDetection = (args) => {
-  const pointerRunHits = pointerWithin(args).filter((c) =>
-    String(c.id).startsWith('drop_run_'),
-  );
-  if (pointerRunHits.length > 0) {
-    const match = String(pointerRunHits[0].id).match(/^drop_run_(\d+)$/);
-    if (match) {
-      const runPrefix = `drop_${match[1]}_`;
-      const runStrips = args.droppableContainers.filter((c) =>
-        String(c.id).startsWith(runPrefix),
-      );
-      if (runStrips.length > 0) {
-        return closestCenter({ ...args, droppableContainers: runStrips });
-      }
-    }
-  }
-  return rectIntersection(args);
-};
-
-function RunDropArea({
-  runIndex,
-  insertIndex,
-  children,
-}: {
-  runIndex: number;
-  insertIndex: number;
-  children: React.ReactNode;
-}) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: `drop_run_${runIndex}`,
-    data: { runIndex, insertIndex },
-  });
-  return (
-    <div
-      ref={setNodeRef}
-      className={`flex-1 p-2 space-y-1 flex flex-col rounded transition-colors ${
-        isOver ? 'bg-sky-500/5 ring-1 ring-sky-400/40 ring-inset' : ''
-      }`}
-    >
-      {children}
-    </div>
-  );
-}
-
-function EmptyDropZone({ runIndex }: { runIndex: number }) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: `drop_${runIndex}_0`,
-    data: { runIndex, insertIndex: 0 },
-  });
-  return (
-    <div
-      ref={setNodeRef}
-      className={`flex-1 min-h-[160px] rounded border-2 border-dashed flex items-center justify-center text-sm text-slate-500 transition-colors ${
-        isOver
-          ? 'border-sky-400 bg-sky-500/10 text-sky-600 dark:text-sky-400'
-          : 'border-slate-300 dark:border-slate-700'
-      }`}
-    >
-      Drop tricks here
-    </div>
-  );
-}
-
-function DropZone({ runIndex, insertIndex }: { runIndex: number; insertIndex: number }) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: `drop_${runIndex}_${insertIndex}`,
-    data: { runIndex, insertIndex },
-  });
-  return (
-    <div
-      ref={setNodeRef}
-      className={`h-1.5 rounded transition-all ${isOver ? 'h-8 bg-sky-500/20 border border-dashed border-sky-400' : ''}`}
-    />
-  );
-}
-
-// ensure MANOEUVRES referenced so bundler keeps it for tree-shake debug (no-op)
-void MANOEUVRES;
