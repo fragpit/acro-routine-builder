@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.7
 
 - Markdown export now uses a numbered flat list per run instead of a
   GFM table, so the raw `.md` reads cleanly in chat clients and plain
