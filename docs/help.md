@@ -349,6 +349,12 @@ overwrite confirmation as for shared links applies.
 acroworldtour.com competition. Pick a competition, then a pilot,
 then preview the run-by-run breakdown before confirming.
 
+The pilot list shows each pilot's overall competition score next
+to their run count, and a `Sort: Score / Name` toggle. Score
+sort (default) ranks the field as it finished; Name sort is
+alphabetical. Pilots without a published score appear last under
+score sort.
+
 The competition and result data is bundled with the app from a
 local snapshot, not fetched from acroworldtour.com at runtime.
 The snapshot is refreshed manually on releases, so very recent
