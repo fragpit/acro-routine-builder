@@ -35,7 +35,7 @@ export default function NotesSheetMobile({ open, onClose }: Props) {
       <div
         role="dialog"
         aria-modal="true"
-        className="relative bg-white dark:bg-slate-900 rounded-t-2xl shadow-xl max-h-[85vh] flex flex-col animate-[slideUp_0.18s_ease-out] pb-[env(safe-area-inset-bottom)]"
+        className="relative bg-white dark:bg-slate-900 rounded-t-2xl shadow-xl h-[80vh] flex flex-col animate-[slideUp_0.18s_ease-out] pb-[env(safe-area-inset-bottom)]"
       >
         <div className="shrink-0 flex justify-center py-2">
           <span className="block w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
