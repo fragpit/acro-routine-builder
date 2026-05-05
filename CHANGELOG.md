@@ -3,10 +3,11 @@
 ## Unreleased
 
 - Programs now have a free-form notes field. Open it from the
-  document icon next to any `Run N` heading on desktop or at the
-  right end of the `+ Add trick` bar on mobile. Notes round-trip
-  through Save / Load, JSON, share links and Markdown export, and
-  AWT imports pre-fill them with the per-run judges' notes.
+  document icon next to the program name in the top header bar on
+  desktop or at the right end of the `+ Add trick` bar on mobile.
+  Notes round-trip through Save / Load, JSON, share links and
+  Markdown export, and AWT imports pre-fill them with the per-run
+  judges' notes.
 
 ## v0.8.0
 
