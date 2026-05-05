@@ -10,6 +10,13 @@
   judges' notes. Notes are capped at 10 000 characters - the
   editor shows a live counter, the JSON validator rejects oversized
   payloads, and AWT imports truncate noisy upstream content.
+- Hardened JSON import against malformed or hostile files:
+  preflight rejects payloads above 1 MB before parsing, and the
+  validator now caps name length, run/trick id length, tricks per
+  run, bonuses per trick, and the defaultBonuses array - each
+  with a specific error message. Realistic programs are well
+  under every cap; the limits exist to keep a tampered file from
+  exhausting localStorage or spiking memory on import.
 
 ## v0.8.0
 

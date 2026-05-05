@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { exportProgramJson, importProgramJson } from '../program-json';
+import {
+  exportProgramJson,
+  importProgramJson,
+  MAX_BONUSES_PER_TRICK,
+  MAX_DEFAULT_BONUSES,
+  MAX_ID_LENGTH,
+  MAX_IMPORT_BYTES,
+  MAX_NAME_LENGTH,
+  MAX_TRICKS_PER_RUN,
+} from '../program-json';
 import type { Program } from '../../rules/types';
 import { MAX_NOTES_LENGTH } from '../../rules/types';
 import { MAX_RUNS } from '../../data/competition-types';
@@ -92,6 +101,97 @@ describe('importProgramJson', () => {
     expect(() => importProgramJson(json)).toThrow(
       new RegExp(`notes must be at most ${MAX_NOTES_LENGTH} characters`),
     );
+  });
+
+  describe('defensive caps against hostile imports', () => {
+    it('rejects raw text larger than MAX_IMPORT_BYTES before parsing', () => {
+      const text = 'a'.repeat(MAX_IMPORT_BYTES + 1);
+      expect(() => importProgramJson(text)).toThrow(/File is too large to import/);
+    });
+
+    it(`rejects names longer than ${MAX_NAME_LENGTH} characters`, () => {
+      const json = wrap(baseProgram, { name: 'x'.repeat(MAX_NAME_LENGTH + 1) });
+      expect(() => importProgramJson(json)).toThrow(
+        new RegExp(`name must be at most ${MAX_NAME_LENGTH} characters`),
+      );
+    });
+
+    it(`rejects run ids longer than ${MAX_ID_LENGTH} characters`, () => {
+      const runs = [{ id: 'x'.repeat(MAX_ID_LENGTH + 1), tricks: [] }];
+      expect(() => importProgramJson(wrap({ ...baseProgram, runs }))).toThrow(
+        new RegExp(`Run 0 id must be at most ${MAX_ID_LENGTH} characters`),
+      );
+    });
+
+    it(`rejects trick ids longer than ${MAX_ID_LENGTH} characters`, () => {
+      const runs = [
+        {
+          id: 'r1',
+          tricks: [
+            {
+              id: 'x'.repeat(MAX_ID_LENGTH + 1),
+              manoeuvreId: 'sat',
+              side: 'R',
+              selectedBonuses: [],
+            },
+          ],
+        },
+      ];
+      expect(() => importProgramJson(wrap({ ...baseProgram, runs }))).toThrow(
+        new RegExp(`Trick 0:0 id must be at most ${MAX_ID_LENGTH} characters`),
+      );
+    });
+
+    it(`rejects runs with more than ${MAX_TRICKS_PER_RUN} tricks`, () => {
+      const tricks = Array.from({ length: MAX_TRICKS_PER_RUN + 1 }, (_, i) => ({
+        id: `t${i}`,
+        manoeuvreId: 'sat',
+        side: 'R',
+        selectedBonuses: [],
+      }));
+      const runs = [{ id: 'r1', tricks }];
+      expect(() => importProgramJson(wrap({ ...baseProgram, runs }))).toThrow(
+        new RegExp(`Run 0 must have at most ${MAX_TRICKS_PER_RUN} tricks`),
+      );
+    });
+
+    it(`rejects tricks with more than ${MAX_BONUSES_PER_TRICK} selectedBonuses`, () => {
+      const selectedBonuses = Array.from({ length: MAX_BONUSES_PER_TRICK + 1 }, () => 'twisted');
+      const runs = [
+        {
+          id: 'r1',
+          tricks: [{ id: 't1', manoeuvreId: 'sat', side: 'R', selectedBonuses }],
+        },
+      ];
+      expect(() => importProgramJson(wrap({ ...baseProgram, runs }))).toThrow(
+        new RegExp(`Trick 0:0 must have at most ${MAX_BONUSES_PER_TRICK} selectedBonuses`),
+      );
+    });
+
+    it(`rejects defaultBonuses arrays longer than ${MAX_DEFAULT_BONUSES} entries`, () => {
+      const defaultBonuses = Array.from({ length: MAX_DEFAULT_BONUSES + 1 }, () => 'twisted');
+      expect(() => importProgramJson(wrap({ ...baseProgram, defaultBonuses }))).toThrow(
+        new RegExp(`defaultBonuses must have at most ${MAX_DEFAULT_BONUSES} entries`),
+      );
+    });
+
+    it('accepts a payload that sits exactly at every boundary', () => {
+      const tricks = Array.from({ length: MAX_TRICKS_PER_RUN }, (_, i) => ({
+        id: `t${i}`,
+        manoeuvreId: 'sat',
+        side: 'R' as const,
+        selectedBonuses: Array.from({ length: MAX_BONUSES_PER_TRICK }, () => 'twisted'),
+      }));
+      const json = wrap(
+        {
+          ...baseProgram,
+          runs: [{ id: 'x'.repeat(MAX_ID_LENGTH), tricks }],
+          defaultBonuses: Array.from({ length: MAX_DEFAULT_BONUSES }, () => 'twisted'),
+        },
+        { name: 'n'.repeat(MAX_NAME_LENGTH) },
+      );
+      expect(() => importProgramJson(json)).not.toThrow();
+    });
   });
 
   describe('envelope errors', () => {
