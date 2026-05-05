@@ -10,6 +10,7 @@ import {
 } from '../../io/program-share';
 import { download, safeFileName } from '../../io/download';
 import { IconLink, IconShare } from '../icons';
+import AwtImportDialog from '../AwtImportDialog';
 
 type PanelMode = 'save' | 'load' | 'import-link' | null;
 
@@ -35,6 +36,7 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
   const [importText, setImportText] = useState('');
   const [importBusy, setImportBusy] = useState(false);
   const sharingEnabled = isShortenerEnabled();
+  const [awtDialogOpen, setAwtDialogOpen] = useState(false);
 
   const savedNames = Object.keys(savedPrograms).sort((a, b) => a.localeCompare(b));
 
@@ -159,6 +161,11 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
           onClick={() => fileInputRef.current?.click()}
         />
         <ActionButton
+          icon={<IconCloud />}
+          label="Import AWT"
+          onClick={() => setAwtDialogOpen(true)}
+        />
+        <ActionButton
           icon={<IconDownload />}
           label="Export JSON"
           onClick={onExportJson}
@@ -184,6 +191,12 @@ export default function MobileFileControls({ onImported }: MobileFileControlsPro
           title={sharingEnabled ? undefined : 'Sharing requires the deployed worker'}
         />
       </div>
+
+      <AwtImportDialog
+        open={awtDialogOpen}
+        onClose={() => setAwtDialogOpen(false)}
+        onImported={onImported}
+      />
 
       <input
         ref={fileInputRef}
@@ -429,3 +442,12 @@ function IconDocText() {
   );
 }
 
+function IconCloud() {
+  return (
+    <svg {...SVG_PROPS}>
+      <path d="M18 10a4 4 0 0 0-7.75-1.38A4 4 0 1 0 6 15h11a3 3 0 0 0 1-5.83z" />
+      <polyline points="8 17 12 21 16 17" />
+      <line x1="12" y1="12" x2="12" y2="21" />
+    </svg>
+  );
+}

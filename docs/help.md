@@ -318,6 +318,18 @@ clipboard, falls back to a paste field, and accepts either a full
 URL (`…/builder?s=Ab12Cd34`) or just the 8-character id. The same
 overwrite confirmation as for shared links applies.
 
+### Import AWT
+
+`Import AWT` (mobile menu) loads a pilot's program from a past
+acroworldtour.com competition. Pick a competition, then a pilot,
+then preview the run-by-run breakdown before confirming.
+
+The competition and result data is bundled with the app from a
+local snapshot, not fetched from acroworldtour.com at runtime.
+The snapshot is refreshed manually on releases, so very recent
+events may take a few weeks to appear. The picker shows the
+snapshot date at the top so you can tell how stale the data is.
+
 ## Mobile vs desktop
 
 The layout auto-switches based on viewport width
