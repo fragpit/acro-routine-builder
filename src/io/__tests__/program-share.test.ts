@@ -24,6 +24,7 @@ const SAMPLE_PROGRAM: Program = {
   ],
   repeatAfterRuns: 2,
   defaultBonuses: [],
+  notes: '',
 };
 
 describe('compress / decompress', () => {

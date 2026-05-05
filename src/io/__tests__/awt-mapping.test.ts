@@ -11,6 +11,7 @@ import type {
   AwtFlight,
   AwtUniqueTrick,
 } from '../awt-api';
+import { MAX_NOTES_LENGTH } from '../../rules/types';
 
 function trick(partial: Partial<AwtUniqueTrick> & { base_trick: string }): AwtUniqueTrick {
   return {
@@ -299,6 +300,81 @@ describe('extractPilots / mapCompetitionToProgram', () => {
     expect(mapped.accuracy.cq).toBeNull();
     expect(mapped.accuracy.overallScore).toBeNull();
     expect(mapped.accuracy.runsUsed).toBe(0);
+  });
+
+  it('combines per-run final_marks.notes into program-level notes prefixed by run', () => {
+    const notesComp: AwtCompetitionWithResults = {
+      ...competition,
+      results: {
+        runs_results: [
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  final_marks: {
+                    notes: ['trick #4 has been ignored', 'trick #5 has malus'],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            // Run 2: no notes - should be skipped, not produce "Run 2: "
+            results: {
+              overall: [
+                { pilot: { civlid: 1, name: 'Alice' }, tricks: [], final_marks: { notes: [] } },
+              ],
+            },
+          },
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  final_marks: { notes: ['warning issued'] },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    const mapped = mapCompetitionToProgram(notesComp, 1);
+    expect(mapped.program.notes).toBe(
+      'Run 1: trick #4 has been ignored trick #5 has malus\nRun 3: warning issued',
+    );
+  });
+
+  it('returns empty program notes when no run has any final_marks.notes', () => {
+    const mapped = mapCompetitionToProgram(competition, 1);
+    expect(mapped.program.notes).toBe('');
+  });
+
+  it('truncates combined notes at MAX_NOTES_LENGTH for hostile upstream payloads', () => {
+    const huge = 'x'.repeat(MAX_NOTES_LENGTH * 2);
+    const noisyComp: AwtCompetitionWithResults = {
+      ...competition,
+      results: {
+        runs_results: [
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  final_marks: { notes: [huge] },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    const mapped = mapCompetitionToProgram(noisyComp, 1);
+    expect(mapped.program.notes.length).toBe(MAX_NOTES_LENGTH);
   });
 
   it('mapCompetitionToProgram leaves empty runs for missing pilot and did_not_start', () => {

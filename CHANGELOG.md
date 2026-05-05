@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+- Programs now have a free-form notes field. Open it from the
+  document icon next to the program name in the top header bar on
+  desktop or at the right end of the `+ Add trick` bar on mobile.
+  Notes round-trip through Save / Load, JSON, share links and
+  Markdown export, and AWT imports pre-fill them with the per-run
+  judges' notes. Notes are capped at 10 000 characters - the
+  editor shows a live counter, the JSON validator rejects oversized
+  payloads, and AWT imports truncate noisy upstream content.
+- Hardened JSON import against malformed or hostile files:
+  preflight rejects payloads above 1 MB before parsing, and the
+  validator now caps name length, run/trick id length, tricks per
+  run, bonuses per trick, and the defaultBonuses array - each
+  with a specific error message. Realistic programs are well
+  under every cap; the limits exist to keep a tampered file from
+  exhausting localStorage or spiking memory on import.
+
 ## v0.8.0
 
 - AWT import now reads from a local snapshot bundled with the app

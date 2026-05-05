@@ -1,5 +1,6 @@
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import type { PlacedTrick, Program, Run, Side } from '../rules/types';
+import { MAX_NOTES_LENGTH } from '../rules/types';
 import type {
   AwtCompetitionWithResults,
   AwtFlight,
@@ -323,6 +324,32 @@ function extractAccuracy(
   };
 }
 
+/**
+ * Combine each run's `final_marks.notes` (judges' free-form notes about
+ * malus/ignored tricks) into a single program-level string, prefixed with
+ * `Run N: `. Runs with no notes are skipped so blank prefixes don't pollute
+ * the textarea. Multiple notes within one run are joined with ` ` to keep
+ * each run on a single line, matching the format the user sees when they
+ * paste their own notes into the editor.
+ */
+function combineRunNotes(comp: AwtCompetitionWithResults, civlid: number): string {
+  const lines: string[] = [];
+  const runsResults = comp.results?.runs_results ?? [];
+  runsResults.forEach((runResult, runIndex) => {
+    const flights = runResult.results?.overall ?? [];
+    const flight = flights.find((f) => f.pilot?.civlid === civlid);
+    const notes = flight?.final_marks?.notes ?? [];
+    const cleaned = notes.filter((n) => typeof n === 'string' && n.trim().length > 0);
+    if (cleaned.length === 0) return;
+    lines.push(`Run ${runIndex + 1}: ${cleaned.join(' ')}`);
+  });
+  const combined = lines.join('\n');
+  // Truncate so importing a noisy competition can't push the program past
+  // MAX_NOTES_LENGTH. Realistic AWT notes are well under this; the cap is a
+  // safety net against a hostile or runaway upstream payload.
+  return combined.length > MAX_NOTES_LENGTH ? combined.slice(0, MAX_NOTES_LENGTH) : combined;
+}
+
 export function mapCompetitionToProgram(
   comp: AwtCompetitionWithResults,
   civlid: number,
@@ -356,6 +383,7 @@ export function mapCompetitionToProgram(
     runs,
     repeatAfterRuns: runs.length === 5 ? 2 : Math.max(1, runs.length || 1),
     defaultBonuses: [],
+    notes: combineRunNotes(comp, civlid),
   };
   return {
     program,

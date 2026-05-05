@@ -137,6 +137,18 @@ export function IconShare({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
+/** Document with text lines, used for the program notes editor button. */
+export function IconNote({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+      <path d="M14 3v6h6" />
+      <line x1="8" y1="13" x2="16" y2="13" />
+      <line x1="8" y1="17" x2="13" y2="17" />
+    </svg>
+  );
+}
+
 /** Trash bin icon, used for destructive remove actions. */
 export function IconTrash({ className = 'w-4 h-4' }: { className?: string }) {
   return (

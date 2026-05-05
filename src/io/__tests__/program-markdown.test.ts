@@ -16,6 +16,7 @@ const baseProgram = (): Program => ({
   ],
   repeatAfterRuns: 1,
   defaultBonuses: [],
+  notes: '',
 });
 
 describe('exportProgramMarkdown', () => {
@@ -31,6 +32,20 @@ describe('exportProgramMarkdown', () => {
     expect(out).toMatch(/^1\. SAT \(1\.\d{2}, R\) - Twisted$/m);
     expect(out).toMatch(/^2\. Looping \(Inversion\) \(1\.\d{2}, L\)$/m);
     expect(out).toMatch(/^3\. Tumbling \(1\.\d{2}\)$/m);
+  });
+
+  it('omits the Notes section when notes are empty', () => {
+    const out = exportProgramMarkdown(baseProgram(), 'fixture', []);
+    expect(out).not.toMatch(/^## Notes$/m);
+  });
+
+  it('renders multi-line notes verbatim under a Notes heading', () => {
+    const program = baseProgram();
+    program.notes = 'Run 1: some text\nRun 2: more text';
+    const out = exportProgramMarkdown(program, 'fixture', []);
+    expect(out).toMatch(/^## Notes$/m);
+    expect(out).toMatch(/^Run 1: some text$/m);
+    expect(out).toMatch(/^Run 2: more text$/m);
   });
 
   it('appends ignored reason at the end of a trick line when present', () => {
@@ -49,6 +64,7 @@ describe('exportProgramMarkdown', () => {
       ],
       repeatAfterRuns: 1,
       defaultBonuses: [],
+      notes: '',
     };
     const out = exportProgramMarkdown(program, 'fixture', []);
     expect(out).toMatch(/ignored: more than 5 twisted manoeuvres/);

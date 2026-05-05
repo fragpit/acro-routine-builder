@@ -16,6 +16,7 @@ function makeProgram(tricks: PlacedTrick[]): Program {
     runs: [{ id: 'r1', tricks }],
     repeatAfterRuns: 1,
     defaultBonuses: [],
+    notes: '',
   };
 }
 
@@ -61,6 +62,7 @@ describe('sanitizeProgram', () => {
       ],
       repeatAfterRuns: 2,
       defaultBonuses: [],
+      notes: '',
     };
     const out = sanitizeProgram(p);
     expect(out).not.toBe(p);

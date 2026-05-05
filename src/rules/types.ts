@@ -58,7 +58,26 @@ export interface Program {
   runs: Run[];
   repeatAfterRuns: number;
   defaultBonuses: string[];
+  /**
+   * Free-form program-level notes. Populated by the user via the notes editor
+   * and by AWT imports (combined judges' notes per run, prefixed with
+   * `Run N: `). Empty string when nothing has been entered. Always a string,
+   * never undefined - imports default missing values to '' so consumers can
+   * read it without optional-chaining. Length is capped at MAX_NOTES_LENGTH;
+   * the JSON validator rejects oversized notes and AWT imports truncate.
+   */
+  notes: string;
 }
+
+/**
+ * Hard ceiling on `Program.notes` length. Enough room for ~2 000 words of
+ * free-form notes plus pasted AWT judges' notes - well above any realistic
+ * use case. Enforced at: JSON import validator (rejects), AWT mapping
+ * (truncates combined output), notes editor textarea (browser stops typing).
+ * Avoids: localStorage quota exhaustion, JSON.parse memory blow-up on
+ * malicious imports, and oversized share-link payloads.
+ */
+export const MAX_NOTES_LENGTH = 10_000;
 
 export interface AffectedCell {
   runIndex: number;

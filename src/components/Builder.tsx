@@ -11,6 +11,7 @@ import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
 import { useScoreSettings } from '../store/score-settings';
 import TrickInfoCard from './TrickInfoCard';
+import NotesEditor from './NotesEditor';
 import ViolationsPanel from './ViolationsPanel';
 import DesktopMenu from './DesktopMenu';
 import BuilderMobile from './mobile/BuilderMobile';
@@ -20,7 +21,7 @@ import { useScoreDelta } from '../hooks/useScoreDelta';
 import { useProgramDnd } from '../hooks/useProgramDnd';
 import { useTrickPalette } from '../hooks/useTrickPalette';
 import ScoreDelta from './ScoreDelta';
-import { IconUndo, IconRedo, IconMenu } from './icons';
+import { IconUndo, IconRedo, IconMenu, IconNote } from './icons';
 import { PaletteCard, PaletteCardPresentation } from './builder/PaletteCard';
 import { RunColumn } from './builder/RunColumn';
 import { closestStripInPointerRun } from './builder/collision';
@@ -83,6 +84,18 @@ function BuilderDesktop() {
   }, [undo, redo]);
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const hasNotes = program.notes.trim().length > 0;
+
+  function openNotes() {
+    selectTrick(null);
+    setNotesOpen(true);
+  }
+
+  function handleSelectTrick(id: string | null) {
+    selectTrick(id);
+    if (id) setNotesOpen(false);
+  }
 
   const selectedTrick = useMemo(() => {
     if (!selectedTrickId) return null;
@@ -163,12 +176,27 @@ function BuilderDesktop() {
 
         <section className="flex-1 flex flex-col min-w-0">
           <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center gap-4 text-sm">
-            <span
-              className="text-sm font-semibold text-slate-800 dark:text-slate-200 flex-1 min-w-0 truncate"
-              title={currentName ?? 'Unsaved program'}
-            >
-              {currentName ?? <span className="italic font-normal text-slate-400">Untitled</span>}
-            </span>
+            <div className="flex-1 min-w-0 flex items-center gap-1.5">
+              <span
+                className="text-sm font-semibold text-slate-800 dark:text-slate-200 min-w-0 truncate"
+                title={currentName ?? 'Unsaved program'}
+              >
+                {currentName ?? <span className="italic font-normal text-slate-400">Untitled</span>}
+              </span>
+              <button
+                type="button"
+                onClick={openNotes}
+                aria-label="Open program notes"
+                title={hasNotes ? 'Edit program notes' : 'Add program notes'}
+                className={`shrink-0 inline-flex items-center justify-center ${
+                  hasNotes
+                    ? 'text-sky-600 dark:text-sky-400 hover:text-sky-500'
+                    : 'text-slate-400 dark:text-slate-500 hover:text-sky-600 dark:hover:text-sky-400'
+                }`}
+              >
+                <IconNote className="w-4 h-4" />
+              </button>
+            </div>
             <div className="flex items-center gap-3 shrink-0">
               {programTotal && (
                 <button
@@ -251,7 +279,7 @@ function BuilderDesktop() {
                   highlights={highlights}
                   ignored={exclusionsByTrick(run, MANOEUVRES_BY_ID)}
                   unrewardedBonuses={unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID)}
-                  onSelectTrick={selectTrick}
+                  onSelectTrick={handleSelectTrick}
                   selectedTrickId={selectedTrickId}
                   onReset={() => resetRun(runIndex)}
                 />
@@ -268,6 +296,11 @@ function BuilderDesktop() {
               placedTrick={selectedTrick}
               onClose={() => selectTrick(null)}
             />
+          </aside>
+        )}
+        {!selectedTrick && notesOpen && (
+          <aside className="w-80 shrink-0 border-l border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden flex">
+            <NotesEditor onDone={() => setNotesOpen(false)} />
           </aside>
         )}
       </div>
