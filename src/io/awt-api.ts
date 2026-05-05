@@ -1,27 +1,20 @@
 /**
- * Thin HTTP client for the public acroworldtour.com API.
+ * AWT data access. Reads from a local snapshot bundled with the app
+ * (`public/awt-snapshot/`) instead of hitting api.acroworldtour.com at
+ * runtime. The snapshot is refreshed manually via `npm run snapshot:awt`.
  *
- * All endpoints are CORS-enabled for any origin, so a static build on
- * GitHub Pages can call them directly. No authentication is required.
+ * Function names are kept (`fetchCompetitions`, `fetchCompetition`) so the
+ * UI and mapping layers don't need to change. Types still mirror the AWT
+ * API response shape - the snapshot stores raw API JSON verbatim.
  */
 
-import { cachedJson } from './api-cache';
-
-const AWT_API_BASE = 'https://api.acroworldtour.com/public';
-
-// Competitions list changes infrequently (new events added once or twice
-// a month); 30 minutes balances freshness against request volume.
-const COMPETITIONS_LIST_TTL_MS = 30 * 60 * 1000;
-// Once a competition is `closed`, its results are frozen. Cache for a
-// week. Open / init competitions (live events) skip the cache entirely.
-const COMPETITION_DETAIL_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const SNAPSHOT_BASE = `${import.meta.env.BASE_URL}awt-snapshot`;
 
 export interface AwtCompetitionSummary {
   /**
-   * MongoDB ObjectId as string. The API exposes it verbatim as `_id`
-   * (not `id`), which is unusual for public JSON APIs - keep the
-   * underscore or `fetchCompetition(comp._id)` will call
-   * `/competitions/undefined`.
+   * MongoDB ObjectId as string. The AWT API exposes it verbatim as `_id`
+   * (not `id`), and the snapshot preserves that - keep the underscore or
+   * `fetchCompetition(comp._id)` will resolve to `.../undefined.json`.
    */
   _id: string;
   name: string;
@@ -100,40 +93,46 @@ export interface AwtCompetitionWithResults extends AwtCompetitionSummary {
   results: AwtCompetitionResultsContainer;
 }
 
+export interface AwtSnapshotMeta {
+  fetchedAt: string;
+  count: number;
+  source?: string;
+}
+
 async function getJson<T>(url: string): Promise<T> {
   let response: Response;
   try {
     response = await fetch(url, { headers: { Accept: 'application/json' } });
   } catch (err) {
     throw new Error(
-      `Network error calling ${url}: ${err instanceof Error ? err.message : String(err)}`,
+      `Network error loading ${url}: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
   if (!response.ok) {
-    throw new Error(`AWT API returned ${response.status} ${response.statusText} for ${url}`);
+    throw new Error(
+      `Snapshot file returned ${response.status} ${response.statusText} for ${url}`,
+    );
   }
   return (await response.json()) as T;
 }
 
-/** List all competitions (both solo and synchro, all states). */
+/** List all snapshotted competitions (solo + published, all closed). */
 export async function fetchCompetitions(): Promise<AwtCompetitionSummary[]> {
-  return cachedJson<AwtCompetitionSummary[]>(
-    `${AWT_API_BASE}/competitions/`,
-    getJson,
-    { ttlMs: COMPETITIONS_LIST_TTL_MS },
-  );
+  return getJson<AwtCompetitionSummary[]>(`${SNAPSHOT_BASE}/index.json`);
 }
 
-/** Fetch a single competition including per-run flight results. */
+/** Fetch a single competition with full results from the snapshot. */
 export async function fetchCompetition(id: string): Promise<AwtCompetitionWithResults> {
-  return cachedJson<AwtCompetitionWithResults>(
-    `${AWT_API_BASE}/competitions/${encodeURIComponent(id)}`,
-    getJson,
-    {
-      ttlMs: COMPETITION_DETAIL_TTL_MS,
-      shouldCache: (comp) => comp.state === 'closed',
-    },
+  return getJson<AwtCompetitionWithResults>(
+    `${SNAPSHOT_BASE}/competitions/${encodeURIComponent(id)}.json`,
   );
 }
 
-export { clearApiCache } from './api-cache';
+/** Read snapshot metadata. Returns null if the file is missing. */
+export async function fetchSnapshotMeta(): Promise<AwtSnapshotMeta | null> {
+  try {
+    return await getJson<AwtSnapshotMeta>(`${SNAPSHOT_BASE}/meta.json`);
+  } catch {
+    return null;
+  }
+}

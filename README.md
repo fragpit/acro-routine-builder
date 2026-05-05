@@ -25,6 +25,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
   the total to pin a comparison baseline
 - AWT mode toggle (enables AWT-specific restrictions)
 - Program import/export: JSON roundtrip + human-readable markdown report
+- Import a pilot's routine from a past acroworldtour.com competition
+  (bundled snapshot, refreshed via `npm run snapshot:awt`)
 - Share a routine via a short URL backed by a Cloudflare Worker
   (links expire after 7 days). `Import link` accepts the URL or
   bare id from clipboard / manual paste - useful inside the

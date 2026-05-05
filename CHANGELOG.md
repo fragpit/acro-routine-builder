@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- AWT import now reads from a local snapshot bundled with the app
+  instead of calling api.acroworldtour.com at runtime, so the
+  feature keeps working when their site is down. Refresh the
+  snapshot with `npm run snapshot:awt`.
+
 ## v0.7.9
 
 - Internal: split Builder.tsx into `builder/` submodules, extract

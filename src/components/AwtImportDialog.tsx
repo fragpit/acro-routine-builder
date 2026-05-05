@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  clearApiCache,
   fetchCompetition,
   fetchCompetitions,
+  fetchSnapshotMeta,
   type AwtCompetitionSummary,
   type AwtCompetitionWithResults,
+  type AwtSnapshotMeta,
 } from '../io/awt-api';
 import {
   extractPilots,
@@ -31,6 +32,7 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
 
   const [step, setStep] = useState<Step>('competition');
   const [competitions, setCompetitions] = useState<AwtCompetitionSummary[] | null>(null);
+  const [snapshotMeta, setSnapshotMeta] = useState<AwtSnapshotMeta | null>(null);
   const [competition, setCompetition] = useState<AwtCompetitionWithResults | null>(null);
   const [pilots, setPilots] = useState<PilotSummary[]>([]);
   const [selectedCivlid, setSelectedCivlid] = useState<number | null>(null);
@@ -63,13 +65,14 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetchCompetitions()
-      .then((list) => {
+    Promise.all([fetchCompetitions(), fetchSnapshotMeta()])
+      .then(([list, meta]) => {
         if (cancelled) return;
         const filtered = list
           .filter((c) => c.type === 'solo' && c.published !== false)
           .sort((a, b) => b.end_date.localeCompare(a.end_date));
         setCompetitions(filtered);
+        setSnapshotMeta(meta);
       })
       .catch((err: unknown) => {
         if (!cancelled) setError(err instanceof Error ? err.message : String(err));
@@ -200,34 +203,14 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
               Preview
             </BreadcrumbButton>
           </div>
-          <div className="shrink-0 flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => {
-                clearApiCache();
-                setCompetitions(null);
-                setCompetition(null);
-                setPilots([]);
-                setSelectedCivlid(null);
-                setStep('competition');
-                setSearch('');
-                setError(null);
-              }}
-              className="text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 px-2 text-xs"
-              aria-label="Refresh from API"
-              title="Clear cache and reload from API"
-            >
-              ↻
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-2"
-              aria-label="Close dialog"
-            >
-              ✕
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="shrink-0 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-2"
+            aria-label="Close dialog"
+          >
+            ✕
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto">
@@ -249,6 +232,7 @@ export default function AwtImportDialog({ open, onClose, onImported }: Props) {
               search={search}
               onSearch={setSearch}
               onPick={pickCompetition}
+              snapshotMeta={snapshotMeta}
             />
           )}
 
@@ -362,11 +346,13 @@ function CompetitionPicker({
   search,
   onSearch,
   onPick,
+  snapshotMeta,
 }: {
   competitions: AwtCompetitionSummary[];
   search: string;
   onSearch: (s: string) => void;
   onPick: (c: AwtCompetitionSummary) => void;
+  snapshotMeta: AwtSnapshotMeta | null;
 }) {
   return (
     <div className="p-3 space-y-3">
@@ -375,6 +361,11 @@ function CompetitionPicker({
         onChange={onSearch}
         placeholder="Search by name, code, location, season..."
       />
+      {snapshotMeta && (
+        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+          Snapshot {snapshotMeta.fetchedAt.slice(0, 10)} - {snapshotMeta.count} competitions
+        </div>
+      )}
       {competitions.length === 0 ? (
         <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-6">
           No competitions match.
