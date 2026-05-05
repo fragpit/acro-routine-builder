@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.1
 
 - Programs now have a free-form notes field. Open it from the
   document icon next to the program name in the top header bar on
