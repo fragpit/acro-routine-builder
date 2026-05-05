@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.0
 
 - AWT import now reads from a local snapshot bundled with the app
   instead of calling api.acroworldtour.com at runtime, so the
