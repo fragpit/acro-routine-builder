@@ -8,13 +8,14 @@ import { useChoreoPenaltyPerRun, useViolationHighlights } from '../../hooks/useS
 import { useScoreDelta } from '../../hooks/useScoreDelta';
 import ScoreDelta from '../ScoreDelta';
 import { loadRecentTricks, pushRecentTrick } from '../../store/recent-tricks';
-import { IconUndo, IconRedo } from '../icons';
+import { IconUndo, IconRedo, IconNote } from '../icons';
 import RunSwiper from './RunSwiper';
 import RunMobile from './RunMobile';
 import TrickPicker from './TrickPicker';
 import TrickSheet from './TrickSheet';
 import ViolationsBar from './ViolationsBar';
 import MobileMenu from './MobileMenu';
+import NotesSheetMobile from './NotesSheetMobile';
 
 export default function BuilderMobile() {
   const program = useProgramStore((s) => s.program);
@@ -39,7 +40,9 @@ export default function BuilderMobile() {
   const [activeRunIndex, setActiveRunIndex] = useState(0);
   const [sheetTrickId, setSheetTrickId] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notesSheetOpen, setNotesSheetOpen] = useState(false);
   const [statsExpanded, setStatsExpanded] = useState(false);
+  const hasNotes = program.notes.trim().length > 0;
 
   const anyArmed = !!armedManoeuvreId || !!armedMoveTrickId || !!armedCopyTrickId;
 
@@ -166,7 +169,8 @@ export default function BuilderMobile() {
       </header>
 
       {!anyArmed && (
-        <div className="shrink-0 flex items-center justify-center px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+        <div className="shrink-0 grid grid-cols-[1fr_auto_1fr] items-center px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+          <span />
           <button
             type="button"
             onClick={() => setPickerOpen(true)}
@@ -174,6 +178,21 @@ export default function BuilderMobile() {
           >
             + Add trick
           </button>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setNotesSheetOpen(true)}
+              aria-label="Open program notes"
+              title={hasNotes ? 'Edit program notes' : 'Add program notes'}
+              className={`w-9 h-9 rounded border flex items-center justify-center ${
+                hasNotes
+                  ? 'border-sky-500 bg-sky-500/10 text-sky-700 dark:text-sky-300'
+                  : 'border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200'
+              }`}
+            >
+              <IconNote className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
 
@@ -261,6 +280,7 @@ export default function BuilderMobile() {
         recent={recent}
       />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <NotesSheetMobile open={notesSheetOpen} onClose={() => setNotesSheetOpen(false)} />
     </div>
   );
 }

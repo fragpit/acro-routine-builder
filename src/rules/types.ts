@@ -58,6 +58,14 @@ export interface Program {
   runs: Run[];
   repeatAfterRuns: number;
   defaultBonuses: string[];
+  /**
+   * Free-form program-level notes. Populated by the user via the notes editor
+   * and by AWT imports (combined judges' notes per run, prefixed with
+   * `Run N: `). Empty string when nothing has been entered. Always a string,
+   * never undefined - imports default missing values to '' so consumers can
+   * read it without optional-chaining.
+   */
+  notes: string;
 }
 
 export interface AffectedCell {

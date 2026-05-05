@@ -28,6 +28,14 @@ export function exportProgramMarkdown(
   lines.push(`- Exported: ${new Date().toISOString()}`);
   lines.push('');
 
+  const trimmedNotes = program.notes.trim();
+  if (trimmedNotes) {
+    lines.push('## Notes');
+    lines.push('');
+    for (const line of trimmedNotes.split('\n')) lines.push(line);
+    lines.push('');
+  }
+
   const choreoByRun = collectChoreoPenalty(violations);
 
   for (let i = 0; i < program.runs.length; i++) {

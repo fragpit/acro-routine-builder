@@ -301,6 +301,57 @@ describe('extractPilots / mapCompetitionToProgram', () => {
     expect(mapped.accuracy.runsUsed).toBe(0);
   });
 
+  it('combines per-run final_marks.notes into program-level notes prefixed by run', () => {
+    const notesComp: AwtCompetitionWithResults = {
+      ...competition,
+      results: {
+        runs_results: [
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  final_marks: {
+                    notes: ['trick #4 has been ignored', 'trick #5 has malus'],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            // Run 2: no notes - should be skipped, not produce "Run 2: "
+            results: {
+              overall: [
+                { pilot: { civlid: 1, name: 'Alice' }, tricks: [], final_marks: { notes: [] } },
+              ],
+            },
+          },
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  final_marks: { notes: ['warning issued'] },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    const mapped = mapCompetitionToProgram(notesComp, 1);
+    expect(mapped.program.notes).toBe(
+      'Run 1: trick #4 has been ignored trick #5 has malus\nRun 3: warning issued',
+    );
+  });
+
+  it('returns empty program notes when no run has any final_marks.notes', () => {
+    const mapped = mapCompetitionToProgram(competition, 1);
+    expect(mapped.program.notes).toBe('');
+  });
+
   it('mapCompetitionToProgram leaves empty runs for missing pilot and did_not_start', () => {
     const dnsComp: AwtCompetitionWithResults = {
       ...competition,

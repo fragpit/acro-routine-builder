@@ -28,6 +28,7 @@ interface ProgramState {
   setRunCount: (n: number) => void;
   setRepeatAfterRuns: (n: number) => void;
   setDefaultBonuses: (bonuses: string[]) => void;
+  setNotes: (notes: string) => void;
   addTrick: (runIndex: number, manoeuvreId: string, atIndex?: number) => void;
   removeTrick: (trickId: string) => void;
   moveTrick: (trickId: string, toRunIndex: number, toIndex: number) => void;
@@ -88,6 +89,7 @@ export const useProgramStore = create<ProgramState>()(
     runs: Array.from({ length: DEFAULT_RUNS }, () => emptyRun()),
     repeatAfterRuns: DEFAULT_RUNS,
     defaultBonuses: [],
+    notes: '',
   },
   violations: [],
   selectedTrickId: null,
@@ -113,6 +115,7 @@ export const useProgramStore = create<ProgramState>()(
       if (!saved) return state;
       const program: Program = JSON.parse(JSON.stringify(saved));
       if (!Array.isArray(program.defaultBonuses)) program.defaultBonuses = [];
+      if (typeof program.notes !== 'string') program.notes = '';
       return {
         ...commit(state, sanitizeProgram(program)),
         currentName: name,
@@ -138,6 +141,7 @@ export const useProgramStore = create<ProgramState>()(
         runs: Array.from({ length: DEFAULT_RUNS }, () => emptyRun()),
         repeatAfterRuns: DEFAULT_RUNS,
         defaultBonuses: [],
+        notes: '',
       };
       return {
         ...commit(state, program),
@@ -150,6 +154,7 @@ export const useProgramStore = create<ProgramState>()(
     set((state) => {
       const cloned: Program = JSON.parse(JSON.stringify(program));
       if (!Array.isArray(cloned.defaultBonuses)) cloned.defaultBonuses = [];
+      if (typeof cloned.notes !== 'string') cloned.notes = '';
       return {
         ...commit(state, sanitizeProgram(cloned)),
         currentName: name,
@@ -177,6 +182,9 @@ export const useProgramStore = create<ProgramState>()(
 
   setDefaultBonuses: (bonuses) =>
     set((state) => commit(state, { ...state.program, defaultBonuses: bonuses })),
+
+  setNotes: (notes) =>
+    set((state) => commit(state, { ...state.program, notes })),
 
   addTrick: (runIndex, manoeuvreId, atIndex) =>
     set((state) => {
@@ -340,8 +348,12 @@ export const useProgramStore = create<ProgramState>()(
         if (!Array.isArray(state.program.defaultBonuses)) {
           state.program.defaultBonuses = [];
         }
+        if (typeof state.program.notes !== 'string') {
+          state.program.notes = '';
+        }
         for (const saved of Object.values(state.savedPrograms)) {
           if (!Array.isArray(saved.defaultBonuses)) saved.defaultBonuses = [];
+          if (typeof saved.notes !== 'string') saved.notes = '';
         }
         for (const run of state.program.runs) {
           for (const t of run.tricks) {

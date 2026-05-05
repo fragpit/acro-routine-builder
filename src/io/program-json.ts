@@ -119,10 +119,12 @@ function validateProgram(raw: unknown): Program {
     });
     return { id: run.id, tricks };
   });
+  const notes = typeof p.notes === 'string' ? p.notes : '';
   return {
     awtMode: p.awtMode,
     runs,
     repeatAfterRuns: p.repeatAfterRuns,
     defaultBonuses,
+    notes,
   };
 }

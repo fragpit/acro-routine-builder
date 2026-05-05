@@ -246,6 +246,28 @@ section 4.4 of the Sporting Code). The main scoring difference is
 in the bonus formula - handled internally by `scoring/bonus.ts`,
 not exposed as a separate toggle.
 
+## Program notes
+
+Each program has a free-form notes field. Use it to jot down what
+you wanted out of a routine, what the judges flagged, or anything
+else you want to keep alongside the tricks.
+
+- **Desktop:** click the document icon next to any `Run N` heading.
+  A panel opens on the right with a textarea (newlines preserved)
+  and a `Done` button. The icon turns blue when notes are present.
+- **Mobile:** tap the document icon at the right end of the
+  `+ Add trick` bar. A bottom-sheet slides up with the same
+  textarea and `Done` button.
+
+Notes are saved with the program: they round-trip through Save /
+Load, JSON export and import, share links, and they appear under a
+`## Notes` heading in the Markdown export.
+
+When you import a routine from acroworldtour.com, the per-run
+judges' notes from the original results (malus assignments, ignored
+tricks, etc.) are pulled in and prefixed by run, e.g.
+`Run 1: trick #4 has malus`.
+
 ## Import and export
 
 All file actions live under `File` in the drawer menu. On mobile

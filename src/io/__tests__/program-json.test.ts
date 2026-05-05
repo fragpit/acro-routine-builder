@@ -26,6 +26,7 @@ const baseProgram: Program = {
   ],
   repeatAfterRuns: 1,
   defaultBonuses: [],
+  notes: '',
 };
 
 describe('importProgramJson', () => {
@@ -43,6 +44,7 @@ describe('importProgramJson', () => {
       ],
       repeatAfterRuns: 1,
       defaultBonuses: [],
+      notes: '',
     };
     const json = exportProgramJson(program, 'fixture');
     const { program: imported } = importProgramJson(json);
@@ -59,6 +61,23 @@ describe('importProgramJson', () => {
     const json = wrap({ ...baseProgram, defaultBonuses: ['twisted', 'not-a-real-bonus'] });
     const { program: imported } = importProgramJson(json);
     expect(imported.defaultBonuses).toEqual(['twisted']);
+  });
+
+  it('round-trips program notes including newlines', () => {
+    const program: Program = {
+      ...baseProgram,
+      notes: 'Run 1: malus on trick #4\nRun 2: ignored trick #6',
+    };
+    const { program: imported } = importProgramJson(exportProgramJson(program, null));
+    expect(imported.notes).toBe('Run 1: malus on trick #4\nRun 2: ignored trick #6');
+  });
+
+  it('defaults notes to "" when the field is absent in legacy files', () => {
+    const { notes: _omit, ...legacyProgram } = baseProgram;
+    void _omit;
+    const json = wrap(legacyProgram);
+    const { program: imported } = importProgramJson(json);
+    expect(imported.notes).toBe('');
   });
 
   describe('envelope errors', () => {

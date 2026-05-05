@@ -11,6 +11,7 @@ import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
 import { useScoreSettings } from '../store/score-settings';
 import TrickInfoCard from './TrickInfoCard';
+import NotesEditor from './NotesEditor';
 import ViolationsPanel from './ViolationsPanel';
 import DesktopMenu from './DesktopMenu';
 import BuilderMobile from './mobile/BuilderMobile';
@@ -83,6 +84,18 @@ function BuilderDesktop() {
   }, [undo, redo]);
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const hasNotes = program.notes.trim().length > 0;
+
+  function openNotes() {
+    selectTrick(null);
+    setNotesOpen(true);
+  }
+
+  function handleSelectTrick(id: string | null) {
+    selectTrick(id);
+    if (id) setNotesOpen(false);
+  }
 
   const selectedTrick = useMemo(() => {
     if (!selectedTrickId) return null;
@@ -251,9 +264,11 @@ function BuilderDesktop() {
                   highlights={highlights}
                   ignored={exclusionsByTrick(run, MANOEUVRES_BY_ID)}
                   unrewardedBonuses={unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID)}
-                  onSelectTrick={selectTrick}
+                  onSelectTrick={handleSelectTrick}
                   selectedTrickId={selectedTrickId}
                   onReset={() => resetRun(runIndex)}
+                  hasNotes={hasNotes}
+                  onOpenNotes={openNotes}
                 />
               ))}
             </div>
@@ -268,6 +283,11 @@ function BuilderDesktop() {
               placedTrick={selectedTrick}
               onClose={() => selectTrick(null)}
             />
+          </aside>
+        )}
+        {!selectedTrick && notesOpen && (
+          <aside className="w-80 shrink-0 border-l border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden flex">
+            <NotesEditor onDone={() => setNotesOpen(false)} />
           </aside>
         )}
       </div>

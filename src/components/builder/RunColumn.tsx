@@ -5,6 +5,7 @@ import { runSymmetry } from '../../rules/validators/symmetry';
 import type { PlacedTrick, Run } from '../../rules/types';
 import TrickCell from '../TrickCell';
 import FinalScorePanel from '../FinalScorePanel';
+import { IconNote } from '../icons';
 import { DropZone, EmptyDropZone, RunDropArea } from './DropZones';
 
 function BonusSlot({ label, used, limit }: { label: string; used: number; limit: number }) {
@@ -39,6 +40,8 @@ export type RunColumnProps = {
   onSelectTrick: (id: string | null) => void;
   selectedTrickId: string | null;
   onReset: () => void;
+  hasNotes: boolean;
+  onOpenNotes: () => void;
 };
 
 export function RunColumn({
@@ -58,11 +61,27 @@ export function RunColumn({
   onSelectTrick,
   selectedTrickId,
   onReset,
+  hasNotes,
+  onOpenNotes,
 }: RunColumnProps) {
   return (
     <div className="flex flex-col rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 min-h-[200px]">
-      <div className="px-3 py-2 border-b border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-between">
+      <div className="px-3 py-2 border-b border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
         <span>Run {runIndex + 1}</span>
+        <button
+          type="button"
+          onClick={onOpenNotes}
+          aria-label="Open program notes"
+          title={hasNotes ? 'Edit program notes' : 'Add program notes'}
+          className={`inline-flex items-center justify-center w-6 h-6 rounded ${
+            hasNotes
+              ? 'text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/40'
+              : 'text-slate-400 hover:text-sky-600 dark:hover:text-sky-400'
+          }`}
+        >
+          <IconNote className="w-3.5 h-3.5" />
+        </button>
+        <span className="flex-1" />
         {tricks.length > 0 && (
           <button
             type="button"
