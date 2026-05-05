@@ -262,7 +262,9 @@ else you want to keep alongside the tricks.
 
 Notes are saved with the program: they round-trip through Save /
 Load, JSON export and import, share links, and they appear under a
-`## Notes` heading in the Markdown export.
+`## Notes` heading in the Markdown export. The field is capped at
+10 000 characters; the editor shows a live counter underneath and
+oversized JSON imports are rejected with a specific error.
 
 When you import a routine from acroworldtour.com, the per-run
 judges' notes from the original results (malus assignments, ignored

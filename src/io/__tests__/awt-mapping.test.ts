@@ -11,6 +11,7 @@ import type {
   AwtFlight,
   AwtUniqueTrick,
 } from '../awt-api';
+import { MAX_NOTES_LENGTH } from '../../rules/types';
 
 function trick(partial: Partial<AwtUniqueTrick> & { base_trick: string }): AwtUniqueTrick {
   return {
@@ -350,6 +351,30 @@ describe('extractPilots / mapCompetitionToProgram', () => {
   it('returns empty program notes when no run has any final_marks.notes', () => {
     const mapped = mapCompetitionToProgram(competition, 1);
     expect(mapped.program.notes).toBe('');
+  });
+
+  it('truncates combined notes at MAX_NOTES_LENGTH for hostile upstream payloads', () => {
+    const huge = 'x'.repeat(MAX_NOTES_LENGTH * 2);
+    const noisyComp: AwtCompetitionWithResults = {
+      ...competition,
+      results: {
+        runs_results: [
+          {
+            results: {
+              overall: [
+                {
+                  pilot: { civlid: 1, name: 'Alice' },
+                  tricks: [],
+                  final_marks: { notes: [huge] },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    const mapped = mapCompetitionToProgram(noisyComp, 1);
+    expect(mapped.program.notes.length).toBe(MAX_NOTES_LENGTH);
   });
 
   it('mapCompetitionToProgram leaves empty runs for missing pilot and did_not_start', () => {

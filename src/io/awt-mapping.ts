@@ -1,5 +1,6 @@
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import type { PlacedTrick, Program, Run, Side } from '../rules/types';
+import { MAX_NOTES_LENGTH } from '../rules/types';
 import type {
   AwtCompetitionWithResults,
   AwtFlight,
@@ -342,7 +343,11 @@ function combineRunNotes(comp: AwtCompetitionWithResults, civlid: number): strin
     if (cleaned.length === 0) return;
     lines.push(`Run ${runIndex + 1}: ${cleaned.join(' ')}`);
   });
-  return lines.join('\n');
+  const combined = lines.join('\n');
+  // Truncate so importing a noisy competition can't push the program past
+  // MAX_NOTES_LENGTH. Realistic AWT notes are well under this; the cap is a
+  // safety net against a hostile or runaway upstream payload.
+  return combined.length > MAX_NOTES_LENGTH ? combined.slice(0, MAX_NOTES_LENGTH) : combined;
 }
 
 export function mapCompetitionToProgram(

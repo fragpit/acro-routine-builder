@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useProgramStore } from '../store/program-store';
+import { MAX_NOTES_LENGTH } from '../rules/types';
 
 interface Props {
   onDone: () => void;
@@ -46,10 +47,14 @@ export default function NotesEditor({ onDone }: Props) {
 
       <textarea
         value={draft}
-        onChange={(e) => setDraft(e.target.value)}
+        onChange={(e) => setDraft(e.target.value.slice(0, MAX_NOTES_LENGTH))}
+        maxLength={MAX_NOTES_LENGTH}
         placeholder="Type notes here. Newlines are preserved."
         className="flex-1 min-h-[12rem] w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-sky-500 outline-none resize-none font-mono text-sm leading-snug"
       />
+      <div className="text-[11px] text-slate-500 dark:text-slate-400 text-right tabular-nums">
+        {draft.length} / {MAX_NOTES_LENGTH}
+      </div>
 
       <div className="flex justify-end">
         <button

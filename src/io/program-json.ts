@@ -1,4 +1,5 @@
 import type { Program } from '../rules/types';
+import { MAX_NOTES_LENGTH } from '../rules/types';
 import { BONUS_CATALOG, MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { MAX_RUNS } from '../data/competition-types';
 import { sanitizeProgram } from '../data/sanitize';
@@ -120,6 +121,9 @@ function validateProgram(raw: unknown): Program {
     return { id: run.id, tricks };
   });
   const notes = typeof p.notes === 'string' ? p.notes : '';
+  if (notes.length > MAX_NOTES_LENGTH) {
+    throw new Error(`program.notes must be at most ${MAX_NOTES_LENGTH} characters`);
+  }
   return {
     awtMode: p.awtMode,
     runs,

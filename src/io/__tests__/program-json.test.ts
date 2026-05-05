@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { exportProgramJson, importProgramJson } from '../program-json';
 import type { Program } from '../../rules/types';
+import { MAX_NOTES_LENGTH } from '../../rules/types';
 import { MAX_RUNS } from '../../data/competition-types';
 
 function wrap(program: unknown, overrides: Record<string, unknown> = {}): string {
@@ -78,6 +79,19 @@ describe('importProgramJson', () => {
     const json = wrap(legacyProgram);
     const { program: imported } = importProgramJson(json);
     expect(imported.notes).toBe('');
+  });
+
+  it('accepts notes exactly at the MAX_NOTES_LENGTH boundary', () => {
+    const json = wrap({ ...baseProgram, notes: 'a'.repeat(MAX_NOTES_LENGTH) });
+    const { program: imported } = importProgramJson(json);
+    expect(imported.notes.length).toBe(MAX_NOTES_LENGTH);
+  });
+
+  it('rejects notes longer than MAX_NOTES_LENGTH with a specific error', () => {
+    const json = wrap({ ...baseProgram, notes: 'a'.repeat(MAX_NOTES_LENGTH + 1) });
+    expect(() => importProgramJson(json)).toThrow(
+      new RegExp(`notes must be at most ${MAX_NOTES_LENGTH} characters`),
+    );
   });
 
   describe('envelope errors', () => {
