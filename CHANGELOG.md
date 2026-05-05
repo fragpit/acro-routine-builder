@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.3
 
 - AWT import pilot list now shows each pilot's overall competition
   score and offers a Score / Name sort toggle (defaults to Score).
