@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed iOS Safari / PWA auto-zooming the page when tapping into a
+  search or text input and never zooming back out.
+
 ## v0.8.1
 
 - Programs now have a free-form notes field. Open it from the
