@@ -65,6 +65,14 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: rgb(148 163 184 / 0.4) transparent;
