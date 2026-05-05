@@ -246,13 +246,18 @@ export function mapFlightToRun(flight: AwtFlight, runIndex: number): MappedFligh
 }
 
 /**
- * Extract all unique pilots who flew in this competition, with flight counts.
- * Looks at every run's overall results and deduplicates by civlid.
+ * Extract all unique pilots who flew in this competition, with flight counts
+ * and the server-aggregated overall competition score (sum of per-run final
+ * scores from `results.results.overall[].score`). `score` is `null` when the
+ * snapshot has no overall entry for that pilot - e.g. a competition that
+ * publishes runs but no leaderboard yet. Returned sorted by name; UI layers
+ * are free to re-sort.
  */
 export interface PilotSummary {
   civlid: number;
   name: string;
   runCount: number;
+  score: number | null;
 }
 
 export function extractPilots(comp: AwtCompetitionWithResults): PilotSummary[] {
@@ -270,8 +275,17 @@ export function extractPilots(comp: AwtCompetitionWithResults): PilotSummary[] {
           civlid: pilot.civlid,
           name: pilot.name,
           runCount: 1,
+          score: null,
         });
       }
+    }
+  }
+  for (const entry of comp.results?.results?.overall ?? []) {
+    const pilot = entry.pilot;
+    if (!pilot) continue;
+    const existing = byCivlid.get(pilot.civlid);
+    if (existing && typeof entry.score === 'number') {
+      existing.score = entry.score;
     }
   }
   return Array.from(byCivlid.values()).sort((a, b) => a.name.localeCompare(b.name));

@@ -400,6 +400,8 @@ function CompetitionPicker({
   );
 }
 
+type PilotSortBy = 'score' | 'name';
+
 function PilotPicker({
   competition,
   pilots,
@@ -415,6 +417,26 @@ function PilotPicker({
   onPick: (civlid: number) => void;
   onBack: () => void;
 }) {
+  const [sortBy, setSortBy] = useState<PilotSortBy>('score');
+  const sortedPilots = useMemo(() => {
+    const copy = pilots.slice();
+    if (sortBy === 'name') {
+      copy.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      // Score desc; pilots without a score sink to the bottom and tie-break
+      // by name so the order stays deterministic.
+      copy.sort((a, b) => {
+        const sa = a.score;
+        const sb = b.score;
+        if (sa == null && sb == null) return a.name.localeCompare(b.name);
+        if (sa == null) return 1;
+        if (sb == null) return -1;
+        if (sb !== sa) return sb - sa;
+        return a.name.localeCompare(b.name);
+      });
+    }
+    return copy;
+  }, [pilots, sortBy]);
   return (
     <div className="p-3 space-y-3">
       <div className="flex items-center justify-between gap-2">
@@ -435,24 +457,38 @@ function PilotPicker({
         </button>
       </div>
       <SearchInput value={search} onChange={onSearch} placeholder="Search pilot..." />
-      {pilots.length === 0 ? (
+      <div className="flex items-center gap-1 text-xs">
+        <span className="text-slate-500 dark:text-slate-400 mr-1">Sort:</span>
+        <SortPill active={sortBy === 'score'} onClick={() => setSortBy('score')}>
+          Score
+        </SortPill>
+        <SortPill active={sortBy === 'name'} onClick={() => setSortBy('name')}>
+          Name
+        </SortPill>
+      </div>
+      {sortedPilots.length === 0 ? (
         <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-6">
           No pilots flew in this competition.
         </div>
       ) : (
         <ul className="space-y-1">
-          {pilots.map((p) => (
+          {sortedPilots.map((p) => (
             <li key={p.civlid}>
               <button
                 type="button"
                 onClick={() => onPick(p.civlid)}
-                className="w-full text-left px-3 py-2 rounded border border-slate-200 dark:border-slate-700 hover:border-sky-500 hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-colors flex items-center justify-between"
+                className="w-full text-left px-3 py-2 rounded border border-slate-200 dark:border-slate-700 hover:border-sky-500 hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-colors flex items-center justify-between gap-3"
               >
                 <span className="font-medium text-slate-800 dark:text-slate-200 truncate">
                   {p.name}
                 </span>
-                <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">
-                  {p.runCount} {p.runCount === 1 ? 'run' : 'runs'}
+                <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                  <span className="tabular-nums text-slate-700 dark:text-slate-300">
+                    {p.score != null ? p.score.toFixed(3) : '-'}
+                  </span>
+                  <span>
+                    {p.runCount} {p.runCount === 1 ? 'run' : 'runs'}
+                  </span>
                 </span>
               </button>
             </li>
@@ -460,6 +496,26 @@ function PilotPicker({
         </ul>
       )}
     </div>
+  );
+}
+
+function SortPill({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  const base = 'px-2 py-0.5 rounded border text-xs';
+  const style = active
+    ? 'border-sky-500 bg-sky-50 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300'
+    : 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500';
+  return (
+    <button type="button" onClick={onClick} className={`${base} ${style}`}>
+      {children}
+    </button>
   );
 }
 

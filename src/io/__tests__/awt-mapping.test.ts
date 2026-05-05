@@ -208,6 +208,29 @@ describe('extractPilots / mapCompetitionToProgram', () => {
     expect(pilots.find((p) => p.name === 'Alice')?.runCount).toBe(2);
   });
 
+  it('extractPilots attaches overall competition score from results.results.overall', () => {
+    const scoredComp: AwtCompetitionWithResults = {
+      ...competition,
+      results: {
+        ...competition.results,
+        results: {
+          overall: [
+            { pilot: { civlid: 1, name: 'Alice' }, score: 42.501 },
+            // Bob is in runs_results but missing from the leaderboard
+          ],
+        },
+      },
+    };
+    const pilots = extractPilots(scoredComp);
+    expect(pilots.find((p) => p.name === 'Alice')?.score).toBe(42.501);
+    expect(pilots.find((p) => p.name === 'Bob')?.score).toBeNull();
+  });
+
+  it('extractPilots leaves score null when the snapshot has no leaderboard', () => {
+    const pilots = extractPilots(competition);
+    expect(pilots.every((p) => p.score === null)).toBe(true);
+  });
+
   it('mapCompetitionToProgram assembles all runs for a pilot in AWQ mode', () => {
     const mapped = mapCompetitionToProgram(competition, 1);
     expect(mapped.pilotName).toBe('Alice');

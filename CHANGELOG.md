@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- AWT import pilot list now shows each pilot's overall competition
+  score and offers a Score / Name sort toggle (defaults to Score).
+
 ## v0.8.2
 
 - Fixed iOS Safari / PWA auto-zooming the page when tapping into a
