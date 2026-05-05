@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.2
 
 - Fixed iOS Safari / PWA auto-zooming the page when tapping into a
   search or text input and never zooming back out.
