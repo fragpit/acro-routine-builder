@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.4
 
 - Repetition malus is no longer scaled by Tq. The bonus formula is
   now asymmetric: Tq scales the positive bonus percentage (matching
