@@ -55,14 +55,14 @@ export function validateRepetition(
       byBlock.set(block, arr);
     });
     const flagged = new Set<number>();
-    const choreoPenaltyByRun: Record<number, number> = {};
+    const bonusMalusByRun: Record<number, number> = {};
     for (const arr of byBlock.values()) {
       if (arr.length < 2) continue;
       const sorted = [...arr].sort((a, b) => a - b);
       for (const idx of sorted) flagged.add(idx);
       for (let k = 1; k < sorted.length; k++) {
         const runIndex = list[sorted[k]].runIndex;
-        choreoPenaltyByRun[runIndex] = (choreoPenaltyByRun[runIndex] ?? 0) + 13;
+        bonusMalusByRun[runIndex] = (bonusMalusByRun[runIndex] ?? 0) + 13;
       }
     }
     if (flagged.size === 0) continue;
@@ -74,7 +74,7 @@ export function validateRepetition(
       severity: 'warning',
       description: `${list[0].name} repeated (${flagged.size}x)`,
       affectedCells: cells,
-      choreoPenaltyByRun,
+      bonusMalusByRun,
     });
   }
   return violations;

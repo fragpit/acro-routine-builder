@@ -90,10 +90,12 @@ export interface Violation {
   severity: 'error' | 'warning';
   affectedCells: AffectedCell[];
   /**
-   * Choreography mark deduction in percent, attributed to the specific run.
-   * Per FAI 3.3.3, repetition penalty reduces the choreography mark of the
-   * run containing the repeated (second or later) occurrence - not a global
-   * total across runs.
+   * Bonus malus in percent, attributed to the specific run. Per FAI
+   * 3.3.3, the repetition penalty applies to the run containing the
+   * repeated (second or later) occurrence - not a global total across
+   * runs. The penalty is subtracted from the run's bonus percentage,
+   * matching the AWT canonical formula
+   * `bonus = (technical + choreography) * (bonus% - malus%) / 100`.
    */
-  choreoPenaltyByRun?: Record<number, number>;
+  bonusMalusByRun?: Record<number, number>;
 }

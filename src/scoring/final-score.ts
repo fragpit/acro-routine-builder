@@ -32,7 +32,7 @@ export interface RunScoreBreakdown {
   tc: number;
   bonusPercent: number;
   symmetryBalanced: boolean;
-  choreoPenalty: number;
+  bonusMalus: number;
   distribution: ScoreDistribution;
   quality: QualityCorrection;
   techFinal: number;
@@ -64,16 +64,23 @@ function ceilTo3(n: number): number {
  * L (landing mark) defaults to 0 - landing is not predictable from
  * the routine structure.
  *
- * The repetition penalty (still carried as `choreoPenalty` for legacy
- * reasons) is applied as a malus to the bonus percentage, not to C.
- * When malus exceeds bonus, the bonus turns negative and reduces the
- * total.
+ * The bonus formula is asymmetric: Tq scales the positive bonus
+ * percentage but does NOT scale the malus. This mirrors AWT's
+ * per-trick technical scaling (api/models/competitions.py:1409-1428
+ * in acroworldtour.com), where each trick's bonus contribution is
+ * weighted by its own technical mark before summing, while the
+ * repetition malus applies as a flat percent. We approximate per-
+ * trick technical marks with the global Tq slider, and apply the
+ * same asymmetric model in AWQ for consistency.
+ *   bonus = (techFinal + choreoFinal) * (bonus% * Tq/100 - malus%) / 100
+ * When malus exceeds the scaled bonus, `bonusFinal` turns negative
+ * and reduces the total.
  */
 export function runScoreBreakdown(
   run: Run,
   manoeuvres: Record<string, Manoeuvre>,
   symmetry: RunSymmetry,
-  choreoPenalty: number,
+  bonusMalus: number,
   distribution: ScoreDistribution,
   quality: QualityCorrection,
 ): RunScoreBreakdown {
@@ -89,10 +96,10 @@ export function runScoreBreakdown(
   const techFinal = tMark * tc * (distribution.technical / 100);
   const choreoFinal = cMark * (distribution.choreo / 100);
   const landingFinal = lMark * (distribution.landing / 100);
+  const scaledBonusPercent = bonusPercent * (quality.technical / 100);
   const bonusFinal =
     (techFinal + choreoFinal) *
-    ((bonusPercent - choreoPenalty) / 100) *
-    (quality.technical / 100);
+    ((scaledBonusPercent - bonusMalus) / 100);
   const total = ceilTo3(
     techFinal + choreoFinal + landingFinal + bonusFinal,
   );
@@ -104,7 +111,7 @@ export function runScoreBreakdown(
     tc,
     bonusPercent,
     symmetryBalanced: symmetry.balanced,
-    choreoPenalty,
+    bonusMalus,
     distribution,
     quality,
     techFinal: ceilTo3(techFinal),

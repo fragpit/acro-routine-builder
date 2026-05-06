@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Repetition malus is no longer scaled by Tq. The bonus formula is
+  now asymmetric: Tq scales the positive bonus percentage (matching
+  AWT § 6.6.1 per-trick technical-mark weighting), but the malus is
+  subtracted as a flat percent. At Tq=80% a 13% repetition malus is
+  deducted as 13%, not 10.4%. The violations panel labels the
+  repetition deduction `bonus` instead of the misleading `choreo`.
+
 ## v0.8.3
 
 - AWT import pilot list now shows each pilot's overall competition

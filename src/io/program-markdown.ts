@@ -36,7 +36,7 @@ export function exportProgramMarkdown(
     lines.push('');
   }
 
-  const choreoByRun = collectChoreoPenalty(violations);
+  const malusByRun = collectBonusMalus(violations);
 
   for (let i = 0; i < program.runs.length; i++) {
     const run = program.runs[i];
@@ -68,8 +68,8 @@ export function exportProgramMarkdown(
     const bonus = runBonus(run, MANOEUVRES_BY_ID);
     lines.push(`- Technicity: ${tc.toFixed(3)}`);
     lines.push(`- Bonus: +${bonus.toFixed(1)}%`);
-    const choreo = choreoByRun[i] ?? 0;
-    if (choreo > 0) lines.push(`- Choreo penalty: -${choreo}%`);
+    const malus = malusByRun[i] ?? 0;
+    if (malus > 0) lines.push(`- Bonus malus: -${malus}%`);
     lines.push('');
   }
 
@@ -103,11 +103,11 @@ function labelForBonus(program: Program, bonusId: string): string | null {
   return bonusId;
 }
 
-function collectChoreoPenalty(violations: Violation[]): Record<number, number> {
+function collectBonusMalus(violations: Violation[]): Record<number, number> {
   const totals: Record<number, number> = {};
   for (const v of violations) {
-    if (!v.choreoPenaltyByRun) continue;
-    for (const [runIndex, pct] of Object.entries(v.choreoPenaltyByRun)) {
+    if (!v.bonusMalusByRun) continue;
+    for (const [runIndex, pct] of Object.entries(v.bonusMalusByRun)) {
       const i = Number(runIndex);
       totals[i] = (totals[i] ?? 0) + pct;
     }

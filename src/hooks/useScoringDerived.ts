@@ -21,17 +21,17 @@ export function useViolationHighlights(
 }
 
 /**
- * Sum choreography-mark penalties (percent) per run from violations that
- * attribute a penalty via `choreoPenaltyByRun`. Keys are run indices.
+ * Sum bonus malus (percent) per run from violations that attribute a
+ * penalty via `bonusMalusByRun`. Keys are run indices.
  */
-export function useChoreoPenaltyPerRun(
+export function useBonusMalusPerRun(
   violations: Violation[],
 ): Record<number, number> {
   return useMemo(() => {
     const totals: Record<number, number> = {};
     for (const v of violations) {
-      if (!v.choreoPenaltyByRun) continue;
-      for (const [runIndex, pct] of Object.entries(v.choreoPenaltyByRun)) {
+      if (!v.bonusMalusByRun) continue;
+      for (const [runIndex, pct] of Object.entries(v.bonusMalusByRun)) {
         const i = Number(runIndex);
         totals[i] = (totals[i] ?? 0) + pct;
       }

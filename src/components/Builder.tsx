@@ -16,7 +16,7 @@ import ViolationsPanel from './ViolationsPanel';
 import DesktopMenu from './DesktopMenu';
 import BuilderMobile from './mobile/BuilderMobile';
 import { useIsMobile } from '../hooks/useIsMobile';
-import { useChoreoPenaltyPerRun, useViolationHighlights } from '../hooks/useScoringDerived';
+import { useBonusMalusPerRun, useViolationHighlights } from '../hooks/useScoringDerived';
 import { useScoreDelta } from '../hooks/useScoreDelta';
 import { useProgramDnd } from '../hooks/useProgramDnd';
 import { useTrickPalette } from '../hooks/useTrickPalette';
@@ -107,7 +107,7 @@ function BuilderDesktop() {
   }, [selectedTrickId, program.runs]);
 
   const highlights = useViolationHighlights(violations);
-  const choreoPenaltyPerRun = useChoreoPenaltyPerRun(violations);
+  const bonusMalusPerRun = useBonusMalusPerRun(violations);
 
   const programTotal = useMemo(() => {
     const hasTricks = program.runs.some((r) => r.tricks.length > 0);
@@ -117,12 +117,12 @@ function BuilderDesktop() {
       const run = program.runs[i];
       if (run.tricks.length === 0) continue;
       const sym = runSymmetry(run.tricks, MANOEUVRES_BY_ID);
-      const cp = choreoPenaltyPerRun[i] ?? 0;
-      const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, cp, distribution, quality);
+      const malus = bonusMalusPerRun[i] ?? 0;
+      const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, malus, distribution, quality);
       total += bd.total;
     }
     return { total: Math.ceil(total * 1000) / 1000 };
-  }, [program, distribution, quality, choreoPenaltyPerRun]);
+  }, [program, distribution, quality, bonusMalusPerRun]);
 
   const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
     useScoreDelta(programTotal?.total ?? null);
@@ -272,7 +272,7 @@ function BuilderDesktop() {
                   technicity={runTechnicity(run, MANOEUVRES_BY_ID)}
                   bonus={runBonus(run, MANOEUVRES_BY_ID)}
                   bonusUsage={runBonusUsage(run, MANOEUVRES_BY_ID)}
-                  choreoPenalty={choreoPenaltyPerRun[runIndex] ?? 0}
+                  bonusMalus={bonusMalusPerRun[runIndex] ?? 0}
                   symmetry={runSymmetry(run.tricks, MANOEUVRES_BY_ID)}
                   distribution={distribution}
                   quality={quality}
