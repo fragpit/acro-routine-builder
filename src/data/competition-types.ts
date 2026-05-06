@@ -29,3 +29,12 @@ export const HIGH_COEFF_THRESHOLD = 1.95;
  * run. Extras are unscored.
  */
 export const TUMBLING_RELATED_LIMIT = 2;
+
+/**
+ * Stall-to-infinite family cap (FAI 3.2 / 6.5.1.2): only one of the
+ * stall-to-infinite family (Super Stall, Flat Stall, Tail Slide,
+ * MacFly, MistyFly, HeliFly, SatFly) can be performed per run. Extras
+ * are unscored - section 6.5.1.2 says only allowed manoeuvres in the
+ * order of execution are scored.
+ */
+export const STALL_TO_INFINITE_LIMIT = 1;

@@ -1,8 +1,14 @@
 import type { Program, Manoeuvre, Violation } from '../types';
 
 /**
- * 3.2: Only one stall-to-infinite family manoeuvre per run.
- * 3.6: MacFly/MistyFly/HeliFly/SatFly - each only once per run (and no side).
+ * 3.2 / 6.5.1.2: Only one stall-to-infinite family manoeuvre per run -
+ * extras (in order of execution) are not scored.
+ * 3.6: MacFly/MistyFly/HeliFly/SatFly are no-side and can each appear
+ * only once per run; same "extras unscored" treatment applies because
+ * those manoeuvres are also in the stall-to-infinite family.
+ *
+ * Both rules emit warnings (not errors): scoring drops the extras via
+ * `excludedFromScoring` so the run remains flyable, just lighter.
  */
 export function validateOnePerRun(
   program: Program,
@@ -16,8 +22,8 @@ export function validateOnePerRun(
     if (stallToInfCells.length > 1) {
       violations.push({
         ruleId: 'one-per-run-stall-inf',
-        severity: 'error',
-        description: `Run ${runIndex + 1}: only one stall-to-infinite family manoeuvre allowed per run`,
+        severity: 'warning',
+        description: `Run ${runIndex + 1}: more than one stall-to-infinite family manoeuvre - extras not scored`,
         affectedCells: stallToInfCells.map(({ i }) => ({ runIndex, trickIndex: i })),
       });
     }
@@ -36,8 +42,8 @@ export function validateOnePerRun(
         const m = manoeuvres[id];
         violations.push({
           ruleId: 'no-side-once',
-          severity: 'error',
-          description: `Run ${runIndex + 1}: ${m?.name ?? id} can be performed only once per run`,
+          severity: 'warning',
+          description: `Run ${runIndex + 1}: ${m?.name ?? id} appears more than once - extras not scored`,
           affectedCells: indices.map((i) => ({ runIndex, trickIndex: i })),
         });
       }

@@ -31,6 +31,26 @@ describe('excludedFromScoring', () => {
     expect(ex.has(b.id)).toBe(false);
   });
 
+  it('excludes extras beyond one stall-to-infinite family manoeuvre', () => {
+    const a = placedTrick('super_stall_to_infinity');
+    const b = placedTrick('macfly');
+    const c = placedTrick('satfly');
+    const r = run(a, b, c);
+    const ex = excludedFromScoring(r, MANOEUVRES_BY_ID);
+    expect(ex.has(a.id)).toBe(false);
+    expect(ex.has(b.id)).toBe(true);
+    expect(ex.has(c.id)).toBe(true);
+  });
+
+  it('excludes a duplicated SatFly (no-side once-per-run via stall-to-infinite cap)', () => {
+    const a = placedTrick('satfly');
+    const b = placedTrick('satfly');
+    const r = run(a, b);
+    const ex = excludedFromScoring(r, MANOEUVRES_BY_ID);
+    expect(ex.has(a.id)).toBe(false);
+    expect(ex.has(b.id)).toBe(true);
+  });
+
   it('excludes manoeuvre whose flipped bonus exceeds per-run limit of 2', () => {
     const tricks = [
       placedTrick('stall', { side: null, selectedBonuses: ['flip'] }),
