@@ -29,7 +29,7 @@ interface Props {
   onOpenTrick: (trickId: string) => void;
   onResetRun: (runIndex: number) => void;
   highlights: Map<string, 'error' | 'warning'>;
-  choreoPenalty: number;
+  bonusMalus: number;
   distribution: ScoreDistribution;
   quality: QualityCorrection;
   statsExpanded: boolean;
@@ -45,7 +45,7 @@ export default function RunMobile({
   onOpenTrick,
   onResetRun,
   highlights,
-  choreoPenalty,
+  bonusMalus,
   distribution,
   quality,
   statsExpanded,
@@ -171,8 +171,8 @@ export default function RunMobile({
               <SlotStat label="Twisted" used={bonusUsage.twisted} max={BONUS_LIMITS.twisted} />
               <SlotStat label="Reversed" used={bonusUsage.reversed} max={BONUS_LIMITS.reversed} />
               <SlotStat label="Flipped" used={bonusUsage.flipped} max={BONUS_LIMITS.flipped} />
-              {choreoPenalty > 0 && (
-                <Stat label="Malus" value={`-${choreoPenalty}%`} tone="warn" />
+              {bonusMalus > 0 && (
+                <Stat label="Malus" value={`-${bonusMalus}%`} tone="warn" />
               )}
               </span>
             </button>
@@ -218,7 +218,7 @@ export default function RunMobile({
       {run.tricks.length > 0 && (
         <div className="bg-white dark:bg-slate-900">
           <FinalScorePanel
-            breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality)}
+            breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, bonusMalus, distribution, quality)}
           />
         </div>
       )}

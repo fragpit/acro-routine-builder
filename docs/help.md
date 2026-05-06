@@ -91,11 +91,13 @@ Each run column shows, under the tricks:
 - **Slots T / R / F** - bonus slots used vs the limit per run
   (5 twisted, 3 reversed, 2 flipped). Extras are not scored.
 - **Bonus** - shown as `X(Y×Tq(N%))%`. `Y` is the raw sum of the
-  selected bonus percents, `N` is the current Tq correction, and `X`
-  is `Y × N/100` - the bonus actually applied after the
-  technical-quality correction.
+  selected bonus percents (capped per twisted / reversed / flipped
+  slot limits). `Tq` is the technical-quality correction. `X` is
+  `Y × N/100` - the effective bonus that is plugged into the score
+  formula. The malus is **not** scaled by Tq.
 - **Malus** - deduction from the bonus percent for repetition
-  violations (FAI 3.3.3).
+  violations (FAI 3.3.3). Subtracted from the Tq-scaled bonus, not
+  from the raw `Y`.
 - **Choreo(sym)** - `+1` if the trick sides are balanced across the
   run, `+0` otherwise. Single-sided tricks and `noSide` tricks are
   counted as balanced.
@@ -164,8 +166,7 @@ techFinal   = T × TC × (distribution.technical / 100)
 choreoFinal = C × (distribution.choreo / 100)
 landingFinal = L × (distribution.landing / 100)
 bonusFinal  = (techFinal + choreoFinal)
-            × ((bonusPercent - malus) / 100)
-            × (Tq / 100)
+            × ((bonusPercent × Tq/100 - malus) / 100)
 total       = techFinal + choreoFinal + landingFinal + bonusFinal
 ```
 
@@ -227,10 +228,13 @@ program structure. Defaults are both **50%**. They apply like this:
 - `C mark base = 9 × Cq/100` - the subjective part of the
   choreography mark. Symmetry adds `+1` after this correction and
   is not scaled.
-- `bonusFinal` is also scaled by `Tq/100` - a pilot who does not
-  execute cleanly loses part of the bonus payout even if every
-  trick is technically valid. This matches how judges deduct on
-  execution.
+- `bonusFinal` is asymmetric in Tq: the positive bonus side is
+  scaled by `Tq/100` (modeling FAI § 6.6.1, where each AWT trick's
+  bonus is weighted by its per-trick technical mark before the run
+  total is summed), but the malus is **not** scaled - it is
+  subtracted as a flat percent. We apply the same model in AWQ for
+  consistency. So a sloppy pilot loses part of the bonus payout but
+  pays the full repetition penalty.
 
 Use the `+ / -` buttons in `Quality correction` to step in 5%
 increments. Leave the defaults (50 / 50) for a conservative estimate

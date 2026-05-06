@@ -74,7 +74,7 @@ export default function FinalScorePanel({
           )}
           <FormulaRow
             label="Bonus"
-            formula={`(Tech + Choreo) × (${(breakdown.bonusPercent * breakdown.quality.technical / 100).toFixed(1)}% - ${(breakdown.choreoPenalty * breakdown.quality.technical / 100).toFixed(1)}%)/100`}
+            formula={`(Tech + Choreo) × (${breakdown.bonusPercent.toFixed(1)}%×Tq(${breakdown.quality.technical}%) - ${breakdown.bonusMalus.toFixed(1)}%)/100`}
             value={breakdown.bonusFinal.toFixed(3)}
           />
           <div className="border-t border-slate-200 dark:border-slate-700 pt-1">

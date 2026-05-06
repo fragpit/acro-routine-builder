@@ -4,7 +4,7 @@ import { runScoreBreakdown } from '../../scoring/final-score';
 import { runSymmetry } from '../../rules/validators/symmetry';
 import { useProgramStore } from '../../store/program-store';
 import { useScoreSettings } from '../../store/score-settings';
-import { useChoreoPenaltyPerRun, useViolationHighlights } from '../../hooks/useScoringDerived';
+import { useBonusMalusPerRun, useViolationHighlights } from '../../hooks/useScoringDerived';
 import { useScoreDelta } from '../../hooks/useScoreDelta';
 import ScoreDelta from '../ScoreDelta';
 import { loadRecentTricks, pushRecentTrick } from '../../store/recent-tricks';
@@ -85,7 +85,7 @@ export default function BuilderMobile() {
   }
 
   const highlights = useViolationHighlights(violations);
-  const choreoPenaltyPerRun = useChoreoPenaltyPerRun(violations);
+  const bonusMalusPerRun = useBonusMalusPerRun(violations);
 
   const programTotal = useMemo(() => {
     const hasTricks = program.runs.some((r) => r.tricks.length > 0);
@@ -95,12 +95,12 @@ export default function BuilderMobile() {
       const run = program.runs[i];
       if (run.tricks.length === 0) continue;
       const sym = runSymmetry(run.tricks, MANOEUVRES_BY_ID);
-      const cp = choreoPenaltyPerRun[i] ?? 0;
-      const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, cp, distribution, quality);
+      const malus = bonusMalusPerRun[i] ?? 0;
+      const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, malus, distribution, quality);
       total += bd.total;
     }
     return { total: Math.ceil(total * 1000) / 1000 };
-  }, [program, distribution, quality, choreoPenaltyPerRun]);
+  }, [program, distribution, quality, bonusMalusPerRun]);
 
   const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
     useScoreDelta(programTotal?.total ?? null);
@@ -229,7 +229,7 @@ export default function BuilderMobile() {
             onOpenTrick={setSheetTrickId}
             onResetRun={resetRun}
             highlights={highlights}
-            choreoPenalty={choreoPenaltyPerRun[i] ?? 0}
+            bonusMalus={bonusMalusPerRun[i] ?? 0}
             distribution={distribution}
             quality={quality}
             statsExpanded={statsExpanded}

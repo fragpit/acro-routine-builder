@@ -38,9 +38,9 @@ export default function ViolationsPanel() {
             <li key={`w${i}`} className="text-amber-700 dark:text-amber-300 flex items-start gap-1">
               <span className="text-amber-500">⚠</span>
               <span className="flex-1">{v.description}</span>
-              {v.choreoPenaltyByRun && Object.keys(v.choreoPenaltyByRun).length > 0 && (
+              {v.bonusMalusByRun && Object.keys(v.bonusMalusByRun).length > 0 && (
                 <span className="font-mono text-xs text-amber-600 dark:text-amber-400 shrink-0">
-                  {formatPenaltyByRun(v.choreoPenaltyByRun)} choreo
+                  {formatPenaltyByRun(v.bonusMalusByRun)} bonus
                 </span>
               )}
             </li>

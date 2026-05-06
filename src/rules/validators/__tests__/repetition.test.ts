@@ -17,7 +17,7 @@ describe('validateRepetition', () => {
     expect(v).toHaveLength(1);
     expect(v[0].affectedCells).toHaveLength(2);
     expect(v[0].severity).toBe('warning');
-    expect(v[0].choreoPenaltyByRun).toEqual({ 1: 13 });
+    expect(v[0].bonusMalusByRun).toEqual({ 1: 13 });
   });
 
   it('attributes 13% to each run containing a repeated (non-first) occurrence', () => {
@@ -28,7 +28,7 @@ describe('validateRepetition', () => {
     ]);
     const v = validateRepetition(p, MANOEUVRES_BY_ID);
     expect(v).toHaveLength(1);
-    expect(v[0].choreoPenaltyByRun).toEqual({ 1: 13, 2: 13 });
+    expect(v[0].bonusMalusByRun).toEqual({ 1: 13, 2: 13 });
   });
 
   it('treats opposite sides as different manoeuvres', () => {
@@ -117,7 +117,7 @@ describe('validateRepetition', () => {
     );
     const v = validateRepetition(p, MANOEUVRES_BY_ID);
     expect(v).toHaveLength(1);
-    expect(v[0].choreoPenaltyByRun).toEqual({ 1: 13, 3: 13 });
+    expect(v[0].bonusMalusByRun).toEqual({ 1: 13, 3: 13 });
   });
 
   it('respects repeatAfterRuns gap', () => {

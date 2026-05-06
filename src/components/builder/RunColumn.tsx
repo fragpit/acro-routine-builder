@@ -29,7 +29,7 @@ export type RunColumnProps = {
   technicity: number;
   bonus: number;
   bonusUsage: ReturnType<typeof runBonusUsage>;
-  choreoPenalty: number;
+  bonusMalus: number;
   symmetry: ReturnType<typeof runSymmetry>;
   distribution: ScoreDistribution;
   quality: QualityCorrection;
@@ -48,7 +48,7 @@ export function RunColumn({
   technicity,
   bonus,
   bonusUsage,
-  choreoPenalty,
+  bonusMalus,
   symmetry,
   distribution,
   quality,
@@ -115,20 +115,20 @@ export function RunColumn({
           </div>
           <div
             className="flex justify-between"
-            title="Bonus per run: X(Y×Tq(N%))% - Y is the raw sum of selected bonus percents, X is Y multiplied by the Tq technical-quality correction."
+            title="Bonus per run: X(Y×Tq(N%))%. Y is the raw sum of selected bonus percents. Tq scales the bonus (per FAI 6.6.1 AWT per-trick technical-mark weighting); X is the effective bonus actually plugged into the score formula. The malus is NOT scaled by Tq."
           >
             <span>Bonus</span>
             <span className="font-mono">
               {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
             </span>
           </div>
-          {choreoPenalty > 0 && (
+          {bonusMalus > 0 && (
             <div
               className="flex justify-between text-amber-600 dark:text-amber-400"
               title="Malus deducted from the bonus percent for repetitions in this run (FAI 3.3.3)"
             >
               <span>Malus</span>
-              <span className="font-mono">-{choreoPenalty}%</span>
+              <span className="font-mono">-{bonusMalus}%</span>
             </div>
           )}
           <div
@@ -146,7 +146,7 @@ export function RunColumn({
       )}
       {tricks.length > 0 && (
         <FinalScorePanel
-          breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, choreoPenalty, distribution, quality)}
+          breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, bonusMalus, distribution, quality)}
           expandsDown
         />
       )}
