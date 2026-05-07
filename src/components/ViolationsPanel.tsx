@@ -29,9 +29,14 @@ export default function ViolationsPanel() {
       ) : (
         <ul className="space-y-1 text-sm">
           {errors.map((v, i) => (
-            <li key={`e${i}`} className="text-red-700 dark:text-red-300">
-              <span className="text-red-500 mr-1">⛔</span>
-              {v.description}
+            <li key={`e${i}`} className="text-red-700 dark:text-red-300 flex items-start gap-1">
+              <span className="text-red-500">⛔</span>
+              <span className="flex-1">{v.description}</span>
+              {v.bonusMalusByRun && Object.keys(v.bonusMalusByRun).length > 0 && (
+                <span className="font-mono text-xs text-red-600 dark:text-red-400 shrink-0">
+                  {formatPenaltyByRun(v.bonusMalusByRun)} bonus
+                </span>
+              )}
             </li>
           ))}
           {warnings.map((v, i) => (

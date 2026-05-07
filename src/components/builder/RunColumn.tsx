@@ -124,7 +124,7 @@ export function RunColumn({
           </div>
           {bonusMalus > 0 && (
             <div
-              className="flex justify-between text-amber-600 dark:text-amber-400"
+              className="flex justify-between text-red-600 dark:text-red-400"
               title="Malus deducted from the bonus percent for repetitions in this run (FAI 3.3.3)"
             >
               <span>Malus</span>

@@ -16,7 +16,7 @@ describe('validateRepetition', () => {
     const v = validateRepetition(p, MANOEUVRES_BY_ID);
     expect(v).toHaveLength(1);
     expect(v[0].affectedCells).toHaveLength(2);
-    expect(v[0].severity).toBe('warning');
+    expect(v[0].severity).toBe('error');
     expect(v[0].bonusMalusByRun).toEqual({ 1: 13 });
   });
 

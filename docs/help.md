@@ -112,8 +112,10 @@ Validation runs on every change.
   placement). The run is still flyable, but under FAI these incur
   significant score penalties. The cell gets a red background.
 - **Warnings** (amber) - caps that scoring will handle silently
-  (high-coefficient above 6 tricks, bonus slots over the limit).
-  The run is still flyable; the extras just do not count.
+  (high-coefficient over the limit, tumbling/infinity/rhythmic
+  cap, stall-to-infinite family one-per-run, bonus slots over
+  the limit). The run is still flyable; the extras just do not
+  count.
 
 The **Violations** panel (desktop: bottom; mobile: collapsible bar)
 lists every issue. Tapping an item jumps the viewport to the

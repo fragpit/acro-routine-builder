@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- Stall-to-infinite family one-per-run and the no-side
+  once-per-run cap (MacFly / MistyFly / HeliFly / SatFly) are
+  now warnings, not errors. Per FAI 6.5.1.2 the extras simply
+  do not score - the second SatFly is now struck-through and
+  excluded from technicity / bonus, matching how high-coeff
+  and tumbling-related caps already worked.
+- Repetition violations are now errors, not warnings. They
+  carry a real -13% bonus malus per repeated occurrence, so
+  the visual weight should match the impact - amber under-sold
+  it.
+
 ## v0.8.4
 
 - Repetition malus is no longer scaled by Tq. The bonus formula is

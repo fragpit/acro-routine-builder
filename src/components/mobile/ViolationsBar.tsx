@@ -63,10 +63,10 @@ export default function ViolationsBar({ onJumpTo }: Props) {
             </div>
             <ul className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
               {errors.map((v, i) => (
-                <ViolationRow key={`e${i}`} severity="error" description={v.description} runIndexes={runIndexes(v)} onJumpTo={(ri) => { setOpen(false); onJumpTo(ri); }} />
+                <ViolationRow key={`e${i}`} severity="error" description={v.description} runIndexes={runIndexes(v)} bonusMalusByRun={v.bonusMalusByRun} onJumpTo={(ri) => { setOpen(false); onJumpTo(ri); }} />
               ))}
               {warnings.map((v, i) => (
-                <ViolationRow key={`w${i}`} severity="warning" description={v.description} runIndexes={runIndexes(v)} onJumpTo={(ri) => { setOpen(false); onJumpTo(ri); }} />
+                <ViolationRow key={`w${i}`} severity="warning" description={v.description} runIndexes={runIndexes(v)} bonusMalusByRun={v.bonusMalusByRun} onJumpTo={(ri) => { setOpen(false); onJumpTo(ri); }} />
               ))}
             </ul>
           </div>
@@ -82,24 +82,42 @@ function runIndexes(v: { affectedCells: { runIndex: number }[] }): number[] {
   return [...set].sort((a, b) => a - b);
 }
 
+function formatPenaltyByRun(map: Record<number, number>): string {
+  return Object.entries(map)
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([r, p]) => `Run ${Number(r) + 1}: -${p}%`)
+    .join(', ');
+}
+
 function ViolationRow({
   severity,
   description,
   runIndexes,
+  bonusMalusByRun,
   onJumpTo,
 }: {
   severity: 'error' | 'warning';
   description: string;
   runIndexes: number[];
+  bonusMalusByRun?: Record<number, number>;
   onJumpTo: (runIndex: number) => void;
 }) {
   const icon = severity === 'error' ? '⛔' : '⚠';
   const toneText = severity === 'error' ? 'text-red-700 dark:text-red-300' : 'text-amber-700 dark:text-amber-300';
+  const badgeTone = severity === 'error' ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400';
+  const hasMalus = bonusMalusByRun && Object.keys(bonusMalusByRun).length > 0;
   return (
     <li className="px-4 py-3 text-sm flex items-start gap-2">
       <span className="shrink-0">{icon}</span>
       <div className="flex-1 min-w-0">
-        <div className={toneText}>{description}</div>
+        <div className="flex items-start gap-2">
+          <div className={`flex-1 ${toneText}`}>{description}</div>
+          {hasMalus && (
+            <span className={`font-mono text-xs shrink-0 ${badgeTone}`}>
+              {formatPenaltyByRun(bonusMalusByRun)} bonus
+            </span>
+          )}
+        </div>
         {runIndexes.length > 0 && (
           <div className="mt-1 flex flex-wrap gap-1">
             {runIndexes.map((ri) => (

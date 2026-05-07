@@ -86,10 +86,15 @@ the same run:
 - HeliFly (Helico to Tailslide to Infinity Tumbling)
 - SatFly (SAT to Tailslide to Infinity Tumbling)
 
+If this limitation is not respected, only the allowed
+manoeuvres (in the order of execution) will be scored - the
+extras do not contribute to technicity or bonus.
+
 ### 3.3 Tumbling/infinity/rhythmic limit
 
 Only 2 tumbling, infinity and rhythmic related manoeuvres
-can be performed during the same run.
+can be performed during the same run. Extras (in the order
+of execution) are not scored.
 
 ### 3.4 Mutual exclusion: X-Chopper/Misty to Tumbling vs stall-to-infinite
 
@@ -115,7 +120,9 @@ Flipped manoeuvres must be announced before the run.
 ### 3.6 No-side manoeuvres (once per run)
 
 MacFly, MistyFly, HeliFly, SatFly - each doesn't have
-a side and can be performed only once.
+a side and can be performed only once. If repeated, only the
+first occurrence is scored (per 6.5.1.2 / rule 3.2 - they
+are also stall-to-infinite family).
 
 ## 4. Per-competition repetition rules
 

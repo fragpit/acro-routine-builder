@@ -4,12 +4,15 @@ import {
   BONUS_LIMITS,
   HIGH_COEFF_LIMIT,
   HIGH_COEFF_THRESHOLD,
+  STALL_TO_INFINITE_LIMIT,
   TUMBLING_RELATED_LIMIT,
 } from '../data/competition-types';
 
 /**
  * Returns the set of placed-trick ids that will not be scored in the given run
- * per FAI 3.1 (max 2 manoeuvres with coefficient >= 1.95), 3.3 (max 2
+ * per FAI 3.1 (max 2 manoeuvres with coefficient >= 1.95), 3.2 (only one
+ * stall-to-infinite family manoeuvre - covers no-side once-per-run too,
+ * since MacFly/MistyFly/HeliFly/SatFly are all in that family), 3.3 (max 2
  * tumbling/infinity/rhythmic related manoeuvres) and 3.5 (bonus category
  * limits). Extras in program order are dropped - their coefficients are
  * excluded from technicity and their bonuses from the bonus total.
@@ -32,12 +35,14 @@ export function exclusionsByTrick(
   const reasons = new Map<string, string[]>();
   let highCoeffCount = 0;
   let tumblingRelatedCount = 0;
+  let stallToInfCount = 0;
   const bonusCount: Record<BonusCategory, number> = { twisted: 0, reversed: 0, flipped: 0 };
   for (const t of run.tricks) {
     const m = manoeuvres[t.manoeuvreId];
     if (!m) continue;
     const isHigh = m.coefficient >= HIGH_COEFF_THRESHOLD;
     const isTumblingRelated = m.groups.includes('tumbling_related');
+    const isStallToInf = m.groups.includes('stall_to_infinite');
     const cats = new Set<BonusCategory>();
     for (const b of t.selectedBonuses) {
       const cat = getBonusCategory(m, b);
@@ -50,6 +55,9 @@ export function exclusionsByTrick(
     if (isTumblingRelated && tumblingRelatedCount >= TUMBLING_RELATED_LIMIT) {
       trickReasons.push(`more than ${TUMBLING_RELATED_LIMIT} tumbling/infinity/rhythmic related manoeuvres`);
     }
+    if (isStallToInf && stallToInfCount >= STALL_TO_INFINITE_LIMIT) {
+      trickReasons.push('more than one stall-to-infinite family manoeuvre');
+    }
     for (const cat of cats) {
       if (bonusCount[cat] >= BONUS_LIMITS[cat]) {
         trickReasons.push(`more than ${BONUS_LIMITS[cat]} ${cat} manoeuvres`);
@@ -61,6 +69,7 @@ export function exclusionsByTrick(
     }
     if (isHigh) highCoeffCount++;
     if (isTumblingRelated) tumblingRelatedCount++;
+    if (isStallToInf) stallToInfCount++;
     for (const cat of cats) bonusCount[cat]++;
   }
   return reasons;

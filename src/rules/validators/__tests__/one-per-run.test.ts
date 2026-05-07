@@ -4,12 +4,14 @@ import { MANOEUVRES_BY_ID } from '../../../data/manoeuvres';
 import { placedTrick, run, program } from './helpers';
 
 describe('validateOnePerRun', () => {
-  it('flags two stall-to-infinite family in same run', () => {
+  it('warns on two stall-to-infinite family in same run', () => {
     const p = program([
       run(placedTrick('super_stall_to_infinity'), placedTrick('macfly')),
     ]);
     const v = validateOnePerRun(p, MANOEUVRES_BY_ID);
-    expect(v.some((x) => x.ruleId === 'one-per-run-stall-inf')).toBe(true);
+    const stallInf = v.find((x) => x.ruleId === 'one-per-run-stall-inf');
+    expect(stallInf).toBeDefined();
+    expect(stallInf?.severity).toBe('warning');
   });
 
   it('allows a single stall-to-infinite', () => {
@@ -18,9 +20,11 @@ describe('validateOnePerRun', () => {
     expect(v.filter((x) => x.ruleId === 'one-per-run-stall-inf')).toEqual([]);
   });
 
-  it('flags duplicate no-side manoeuvre', () => {
+  it('warns on duplicate no-side manoeuvre', () => {
     const p = program([run(placedTrick('macfly'), placedTrick('sat'), placedTrick('macfly'))]);
     const v = validateOnePerRun(p, MANOEUVRES_BY_ID);
-    expect(v.some((x) => x.ruleId === 'no-side-once')).toBe(true);
+    const noSide = v.find((x) => x.ruleId === 'no-side-once');
+    expect(noSide).toBeDefined();
+    expect(noSide?.severity).toBe('warning');
   });
 });
