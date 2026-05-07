@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.5
 
 - Stall-to-infinite family one-per-run and the no-side
   once-per-run cap (MacFly / MistyFly / HeliFly / SatFly) are
