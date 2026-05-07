@@ -8,6 +8,10 @@
   do not score - the second SatFly is now struck-through and
   excluded from technicity / bonus, matching how high-coeff
   and tumbling-related caps already worked.
+- Repetition violations are now errors, not warnings. They
+  carry a real -13% bonus malus per repeated occurrence, so
+  the visual weight should match the impact - amber under-sold
+  it.
 
 ## v0.8.4
 

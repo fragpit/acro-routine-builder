@@ -71,7 +71,7 @@ export function validateRepetition(
       .map((i) => ({ runIndex: list[i].runIndex, trickIndex: list[i].trickIndex }));
     violations.push({
       ruleId: 'repetition',
-      severity: 'warning',
+      severity: 'error',
       description: `${list[0].name} repeated (${flagged.size}x)`,
       affectedCells: cells,
       bonusMalusByRun,
