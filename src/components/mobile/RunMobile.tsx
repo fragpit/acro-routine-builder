@@ -172,7 +172,7 @@ export default function RunMobile({
               <SlotStat label="Reversed" used={bonusUsage.reversed} max={BONUS_LIMITS.reversed} />
               <SlotStat label="Flipped" used={bonusUsage.flipped} max={BONUS_LIMITS.flipped} />
               {bonusMalus > 0 && (
-                <Stat label="Malus" value={`-${bonusMalus}%`} tone="warn" />
+                <Stat label="Malus" value={`-${bonusMalus}%`} tone="error" />
               )}
               </span>
             </button>
@@ -239,13 +239,15 @@ function InsertSlot({ armed, onTap }: { armed: boolean; onTap: () => void }) {
   );
 }
 
-function Stat({ label, value, tone = 'neutral', className }: { label: string; value: string; tone?: 'neutral' | 'ok' | 'warn'; className?: string }) {
+function Stat({ label, value, tone = 'neutral', className }: { label: string; value: string; tone?: 'neutral' | 'ok' | 'warn' | 'error'; className?: string }) {
   const valueCls =
     tone === 'ok'
       ? 'text-emerald-600 dark:text-emerald-400'
       : tone === 'warn'
         ? 'text-amber-600 dark:text-amber-400'
-        : 'text-slate-800 dark:text-slate-100';
+        : tone === 'error'
+          ? 'text-red-600 dark:text-red-400'
+          : 'text-slate-800 dark:text-slate-100';
   return (
     <div className={`flex flex-col items-center gap-0.5 rounded bg-slate-50 dark:bg-slate-800/60 px-2 py-1.5 ${className ?? ''}`}>
       <span className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</span>
