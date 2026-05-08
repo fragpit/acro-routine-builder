@@ -4,14 +4,24 @@ import { MANOEUVRES_BY_ID } from '../../../data/manoeuvres';
 import { placedTrick, run, program } from './helpers';
 
 describe('validateForbiddenConnections', () => {
-  it('flags Helicopter → Helicopter-family', () => {
-    const p = program([run(placedTrick('helicopter'), placedTrick('cowboy'))]);
+  it('flags Helicopter → trick that starts with Helicopter', () => {
+    const p = program([run(placedTrick('helicopter'), placedTrick('twister'))]);
     const v = validateForbiddenConnections(p, MANOEUVRES_BY_ID);
     expect(v).toHaveLength(1);
     expect(v[0].affectedCells).toEqual([
       { runIndex: 0, trickIndex: 0 },
       { runIndex: 0, trickIndex: 1 },
     ]);
+  });
+
+  it('does not flag Helicopter → combo that ends with Helicopter', () => {
+    const p = program([run(placedTrick('helicopter'), placedTrick('cowboy'))]);
+    expect(validateForbiddenConnections(p, MANOEUVRES_BY_ID)).toEqual([]);
+  });
+
+  it('still flags combo ending with Helicopter → Helicopter', () => {
+    const p = program([run(placedTrick('cowboy'), placedTrick('helicopter'))]);
+    expect(validateForbiddenConnections(p, MANOEUVRES_BY_ID)).toHaveLength(1);
   });
 
   it('flags Tumbling → Infinity Tumbling', () => {

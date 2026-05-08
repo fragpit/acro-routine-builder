@@ -19,7 +19,7 @@
         "id": "r2",
         "tricks": [
           { "id": "r2t1", "manoeuvreId": "helicopter", "side": "R", "selectedBonuses": [] },
-          { "id": "r2t2", "manoeuvreId": "sat_to_helicopter", "side": "L", "selectedBonuses": [] },
+          { "id": "r2t2", "manoeuvreId": "twister", "side": "L", "selectedBonuses": [] },
           { "id": "r2t3", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
           { "id": "r2t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
         ]
