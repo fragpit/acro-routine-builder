@@ -41,13 +41,22 @@ SatFly. Combos that end with SAT (Misty to SAT, X-Chopper to
 SAT, Mactwist to SAT, Helicopter to SAT) start with a
 different entry, so they are allowed after a plain SAT.
 
+The Helicopter rule applies the same logic: FAI 5.1.12 forbids
+connection "to any helicopter connection", which we read as
+combo tricks that start with a Helicopter entry (Twister,
+Helicopter to SAT). Combos that end with Helicopter (Misty to
+Helicopter, SAT to Helicopter, Cowboy, etc.) start with a
+different entry, so they are allowed after a plain Helicopter.
+Those combos still forbid a Helicopter from following them -
+that creates back-to-back Helicopters at the boundary.
+
 | Manoeuvre                         | Forbidden connection to           |
 | --------------------------------- | --------------------------------- |
 | SAT                               | SAT-based combo manoeuvres        |
 | Misty to SAT                      | SAT                               |
 | Mactwist to SAT                   | SAT                               |
 | X-Chopper to SAT                  | SAT                               |
-| Helicopter                        | any helicopter connection         |
+| Helicopter                        | Twister, Helicopter to SAT        |
 | Misty to Helicopter               | Helicopter                        |
 | Twister                           | Helicopter                        |
 | Tumbling                          | Infinite and Anti-Rhythmic        |

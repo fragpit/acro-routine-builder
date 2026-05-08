@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Helicopter forbidden-connection rule narrowed: a Helicopter is
+  now only blocked from connecting into combos that *start* with
+  Helicopter (Twister, Helicopter to SAT). Combos that merely end
+  with Helicopter (Misty to Helicopter, SAT to Helicopter, Cowboy,
+  SuperCowboy, Corkscrew, Joker, Mac Twist to Helicopter) are now
+  allowed to follow a plain Helicopter.
+
 ## v0.8.5
 
 - Stall-to-infinite family one-per-run and the no-side
