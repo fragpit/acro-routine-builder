@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.6
 
 - Helicopter forbidden-connection rule narrowed: a Helicopter is
   now only blocked from connecting into combos that *start* with
