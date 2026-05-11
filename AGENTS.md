@@ -1,9 +1,9 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 > [!IMPORTANT]
-> Always announce in chat that you have read this file: "Read local CLAUDE.md".
+> Always announce in chat that you have read this file: "Read local AGENTS.md".
 
 ## Scope rules
 

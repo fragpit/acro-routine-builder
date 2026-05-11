@@ -12,7 +12,7 @@ The service must be as simple as possible: no backend, no database,
 just a static frontend on GitHub Pages. It must work well on mobile
 devices in portrait orientation.
 
-Synchro is out of scope for now (see CLAUDE.md).
+Synchro is out of scope for now (see AGENTS.md).
 
 ## Application pages
 
