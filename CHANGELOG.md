@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.7
 
 - Internal project instructions now live in `AGENTS.md` instead of
   `CLAUDE.md`.
