@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Internal project instructions now live in `AGENTS.md` instead of
+  `CLAUDE.md`.
+
 ## v0.8.6
 
 - Helicopter forbidden-connection rule narrowed: a Helicopter is
