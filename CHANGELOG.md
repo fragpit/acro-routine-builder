@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Mobile trick reorder now auto-scrolls the current run stack when
+  dragging near the top or bottom edge.
+
 ## v0.8.9
 
 - Mobile insert mode now keeps the first `Insert here` row but uses

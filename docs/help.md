@@ -67,6 +67,11 @@ sheet, then tap a destination slot. **Copy** and **Remove** are
 also in that sheet. **L / R** buttons on the cell toggle the side
 for two-sided tricks.
 
+Use the `⋮⋮` handle on the right side of a mobile trick cell to
+reorder tricks within the current run. While dragging, the run stack
+auto-scrolls when the trick reaches the top or bottom edge of the
+visible list.
+
 ### Selecting a trick
 
 Clicking a trick cell opens an info panel (desktop: right sidebar,

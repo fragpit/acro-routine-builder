@@ -39,8 +39,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - **Mobile UI**: on viewports below 1024px the builder switches to a
   touch-first layout - swipe between runs, tap-to-insert palette with
   a full-screen trick picker, compact per-row insert controls, recent
-  tricks, bottom-sheet for trick details, and a right-side drawer menu
-  for Save/Load/Export/settings
+  tricks, handle-based reorder with edge auto-scroll, bottom-sheet for
+  trick details, and a right-side drawer menu for Save/Load/Export/settings
   (shares the same Zustand store as the desktop view, so state is
   identical across layouts)
 
