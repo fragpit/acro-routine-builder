@@ -59,10 +59,11 @@ Mobile uses tap-to-arm instead of drag-and-drop.
 
 1. Tap `+ Add trick` - a bottom-sheet with a search box opens.
 2. Tap a trick to arm it; the app shows `Tap a slot to insert`.
-3. Tap any insert slot in any run to place it.
+3. Tap the full-width `Insert here` slot at the top of a run, or
+   the compact `+` button beside a trick, to place it.
 
 To move, tap an existing trick cell, tap **Move** in the action
-sheet, then tap a destination slot. **Duplicate** and **Remove** are
+sheet, then tap a destination slot. **Copy** and **Remove** are
 also in that sheet. **L / R** buttons on the cell toggle the side
 for two-sided tricks.
 
