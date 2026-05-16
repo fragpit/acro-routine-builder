@@ -38,7 +38,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Online documentation: FAI Sporting Code and generated trick reference
 - **Mobile UI**: on viewports below 1024px the builder switches to a
   touch-first layout - swipe between runs, tap-to-insert palette with
-  a full-screen trick picker and up to 10 recent tricks, bottom-sheet for trick
+  a full-screen trick picker and recent tricks, bottom-sheet for trick
   details, and a right-side drawer menu for Save/Load/Export/settings
   (shares the same Zustand store as the desktop view, so state is
   identical across layouts)

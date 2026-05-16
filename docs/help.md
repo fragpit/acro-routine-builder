@@ -35,8 +35,8 @@ number of runs (1-8). On desktop the runs sit side-by-side; on
 mobile they become a swipe-through pager.
 
 The **Palette** (left sidebar on desktop, `+ Add trick` button on
-mobile) lists all 38 solo tricks sorted by coefficient. Up to 10
-recently used tricks appear at the top under a `Recent` heading.
+mobile) lists all 38 solo tricks sorted by coefficient. Recently
+used tricks appear at the top under a `Recent` heading.
 
 ### Adding, moving and copying tricks (desktop)
 
