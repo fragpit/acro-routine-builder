@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.9
 
 - Mobile insert mode now keeps the first `Insert here` row but uses
   compact `+` buttons beside each trick for later insertion points.
