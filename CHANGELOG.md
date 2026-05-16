@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.10
 
 - Mobile trick reorder now auto-scrolls the current run stack when
   dragging near the top or bottom edge.
