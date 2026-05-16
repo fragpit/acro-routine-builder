@@ -4,6 +4,7 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
+  type AutoScrollOptions,
   type DragEndEvent,
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -19,6 +20,13 @@ import { useProgramStore } from '../../store/program-store';
 import type { Run } from '../../rules/types';
 import TrickCellMobile from './TrickCellMobile';
 import FinalScorePanel from '../FinalScorePanel';
+
+const RUN_STACK_SCROLL_CLASS = 'arb-mobile-run-stack-scroll';
+
+const runStackAutoScroll: AutoScrollOptions = {
+  canScroll: (element) => element.classList.contains(RUN_STACK_SCROLL_CLASS),
+  threshold: { x: 0.01, y: 0.18 },
+};
 
 interface Props {
   run: Run;
@@ -81,7 +89,7 @@ export default function RunMobile({
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      <div className={`flex-1 overflow-y-auto p-3 space-y-2 ${RUN_STACK_SCROLL_CLASS}`}>
         {run.tricks.length === 0 ? (
           <button
             type="button"
@@ -97,7 +105,7 @@ export default function RunMobile({
           </button>
         ) : (
           <>
-            <DndContext sensors={sensors} onDragEnd={onDragEnd} autoScroll={false}>
+            <DndContext sensors={sensors} onDragEnd={onDragEnd} autoScroll={runStackAutoScroll}>
               <SortableContext
                 items={run.tricks.map((t) => t.id)}
                 strategy={verticalListSortingStrategy}
