@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Recent tricks now keeps up to 10 entries instead of 5.
+
 ## v0.8.7
 
 - Internal project instructions now live in `AGENTS.md` instead of
