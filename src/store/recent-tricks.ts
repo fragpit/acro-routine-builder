@@ -1,7 +1,7 @@
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { STORAGE_KEYS } from './storage-keys';
 
-export const MAX_RECENT_TRICKS = 5;
+export const MAX_RECENT_TRICKS = 10;
 
 /**
  * Read the recent-tricks list from localStorage, dropping unknown or malformed ids.
