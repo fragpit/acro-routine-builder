@@ -104,17 +104,23 @@ export default function RunMobile({
               >
                 <InsertSlot armed={isArmed} onTap={() => insertAt(0)} />
                 {run.tricks.map((t, i) => (
-                  <div key={t.id} className="space-y-2">
-                    <TrickCellMobile
-                      trick={t}
-                      highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
-                      ignoredReasons={ignored.get(t.id)}
-                      unrewardedBonuses={unrewarded.get(t.id)}
-                      dimmed={movingTrickId === t.id}
-                      sortDisabled={isArmed}
-                      onTap={() => onOpenTrick(t.id)}
+                  <div key={t.id} className="flex items-center gap-2">
+                    <div className="min-w-0 flex-1">
+                      <TrickCellMobile
+                        trick={t}
+                        highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
+                        ignoredReasons={ignored.get(t.id)}
+                        unrewardedBonuses={unrewarded.get(t.id)}
+                        dimmed={movingTrickId === t.id}
+                        sortDisabled={isArmed}
+                        onTap={() => onOpenTrick(t.id)}
+                      />
+                    </div>
+                    <InsertAfterButton
+                      armed={isArmed}
+                      onTap={() => insertAt(i + 1)}
+                      position={i + 2}
                     />
-                    <InsertSlot armed={isArmed} onTap={() => insertAt(i + 1)} />
                   </div>
                 ))}
               </SortableContext>
@@ -234,7 +240,31 @@ function InsertSlot({ armed, onTap }: { armed: boolean; onTap: () => void }) {
       onClick={onTap}
       className="w-full h-8 rounded border border-dashed border-sky-400 bg-sky-500/10 text-[11px] text-sky-700 dark:text-sky-300 active:bg-sky-500/25"
     >
-      + insert here
+      + Insert here
+    </button>
+  );
+}
+
+function InsertAfterButton({
+  armed,
+  onTap,
+  position,
+}: {
+  armed: boolean;
+  onTap: () => void;
+  position: number;
+}) {
+  if (!armed) return null;
+  return (
+    <button
+      type="button"
+      onClick={onTap}
+      className="h-10 w-10 shrink-0 flex items-center justify-center active:bg-sky-500/10"
+      aria-label={`Insert at position ${position}`}
+    >
+      <span className="h-[30px] w-[30px] rounded border border-dashed border-sky-400 bg-sky-500/10 text-base leading-none font-semibold text-sky-700 dark:text-sky-300 flex items-center justify-center">
+        +
+      </span>
     </button>
   );
 }

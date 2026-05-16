@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Mobile insert mode now keeps the first `Insert here` row but uses
+  compact `+` buttons beside each trick for later insertion points.
+
 ## v0.8.8
 
 - Recent tricks now keeps up to 10 entries instead of 5.
