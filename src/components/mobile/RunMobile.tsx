@@ -259,10 +259,12 @@ function InsertAfterButton({
     <button
       type="button"
       onClick={onTap}
-      className="h-10 w-10 shrink-0 rounded border border-dashed border-sky-400 bg-sky-500/10 text-lg leading-none font-semibold text-sky-700 dark:text-sky-300 active:bg-sky-500/25"
+      className="h-10 w-10 shrink-0 flex items-center justify-center active:bg-sky-500/10"
       aria-label={`Insert at position ${position}`}
     >
-      +
+      <span className="h-[30px] w-[30px] rounded border border-dashed border-sky-400 bg-sky-500/10 text-base leading-none font-semibold text-sky-700 dark:text-sky-300 flex items-center justify-center">
+        +
+      </span>
     </button>
   );
 }
