@@ -37,6 +37,7 @@ function BuilderDesktop() {
   const violations = useProgramStore((s) => s.violations);
   const currentName = useProgramStore((s) => s.currentName);
   const resetRun = useProgramStore((s) => s.resetRun);
+  const duplicateRun = useProgramStore((s) => s.duplicateRun);
   const resetProgram = useProgramStore((s) => s.resetProgram);
   const undo = useProgramStore((s) => s.undo);
   const redo = useProgramStore((s) => s.redo);
@@ -85,6 +86,7 @@ function BuilderDesktop() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [duplicateSourceRunIndex, setDuplicateSourceRunIndex] = useState<number | null>(null);
   const hasNotes = program.notes.trim().length > 0;
 
   function openNotes() {
@@ -95,6 +97,14 @@ function BuilderDesktop() {
   function handleSelectTrick(id: string | null) {
     selectTrick(id);
     if (id) setNotesOpen(false);
+  }
+
+  function handleDuplicateRun(targetRunIndex: number) {
+    if (duplicateSourceRunIndex === null || duplicateSourceRunIndex === targetRunIndex) return;
+    const target = program.runs[targetRunIndex];
+    if (target.tricks.length > 0 && !confirm(`Overwrite run ${targetRunIndex + 1}?`)) return;
+    duplicateRun(duplicateSourceRunIndex, targetRunIndex);
+    setDuplicateSourceRunIndex(null);
   }
 
   const selectedTrick = useMemo(() => {
@@ -259,6 +269,20 @@ function BuilderDesktop() {
             </div>
           </div>
           <div className="flex-1 overflow-auto">
+            {duplicateSourceRunIndex !== null && (
+              <div className="mx-4 mt-3 flex items-center gap-3 rounded border border-sky-200 dark:border-sky-900 bg-sky-50 dark:bg-sky-950/40 px-3 py-2 text-xs text-sky-800 dark:text-sky-200">
+                <span className="flex-1">
+                  Duplicating run {duplicateSourceRunIndex + 1}. Choose another run to insert it.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setDuplicateSourceRunIndex(null)}
+                  className="px-2 py-0.5 rounded border border-sky-400 dark:border-sky-700 text-sky-700 dark:text-sky-300 hover:bg-white dark:hover:bg-slate-900"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
             <div
               className="grid gap-3 p-4"
               style={{ gridTemplateColumns: `repeat(${program.runs.length}, minmax(220px, 1fr))` }}
@@ -282,6 +306,10 @@ function BuilderDesktop() {
                   onSelectTrick={handleSelectTrick}
                   selectedTrickId={selectedTrickId}
                   onReset={() => resetRun(runIndex)}
+                  onDuplicate={() => setDuplicateSourceRunIndex(runIndex)}
+                  duplicateMode={duplicateSourceRunIndex !== null}
+                  isDuplicateSource={duplicateSourceRunIndex === runIndex}
+                  onInsertDuplicate={() => handleDuplicateRun(runIndex)}
                 />
               ))}
             </div>

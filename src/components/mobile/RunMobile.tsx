@@ -34,6 +34,10 @@ interface Props {
   isArmed: boolean;
   movingTrickId: string | null;
   onInsertAt: (runIndex: number, index: number) => void;
+  duplicateMode: boolean;
+  isDuplicateSource: boolean;
+  onDuplicateRun: (runIndex: number) => void;
+  onInsertDuplicate: (runIndex: number) => void;
   onOpenTrick: (trickId: string) => void;
   onResetRun: (runIndex: number) => void;
   highlights: Map<string, 'error' | 'warning'>;
@@ -50,6 +54,10 @@ export default function RunMobile({
   isArmed,
   movingTrickId,
   onInsertAt,
+  duplicateMode,
+  isDuplicateSource,
+  onDuplicateRun,
+  onInsertDuplicate,
   onOpenTrick,
   onResetRun,
   highlights,
@@ -66,6 +74,7 @@ export default function RunMobile({
   const ignored = exclusionsByTrick(run, MANOEUVRES_BY_ID);
   const unrewarded = unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID);
   const symmetry = runSymmetry(run.tricks, MANOEUVRES_BY_ID);
+  const canInsertDuplicate = duplicateMode && !isDuplicateSource;
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -90,62 +99,88 @@ export default function RunMobile({
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className={`flex-1 overflow-y-auto p-3 space-y-2 ${RUN_STACK_SCROLL_CLASS}`}>
-        {run.tricks.length === 0 ? (
-          <button
-            type="button"
-            onClick={() => insertAt(0)}
-            disabled={!isArmed}
-            className={`w-full min-h-[160px] rounded border-2 border-dashed flex items-center justify-center text-sm transition-colors ${
-              isArmed
-                ? 'border-sky-400 bg-sky-500/10 text-sky-700 dark:text-sky-300 active:bg-sky-500/20'
-                : 'border-slate-300 dark:border-slate-700 text-slate-400'
+        <div className="relative min-h-full">
+          <div
+            className={`min-h-full space-y-2 transition-opacity ${
+              canInsertDuplicate ? 'opacity-75 saturate-75' : ''
             }`}
+            aria-hidden={canInsertDuplicate}
           >
-            {isArmed ? 'Tap to insert here' : 'No tricks. Pick a trick from the palette above.'}
-          </button>
-        ) : (
-          <>
-            <DndContext sensors={sensors} onDragEnd={onDragEnd} autoScroll={runStackAutoScroll}>
-              <SortableContext
-                items={run.tricks.map((t) => t.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <InsertSlot armed={isArmed} onTap={() => insertAt(0)} />
-                {run.tricks.map((t, i) => (
-                  <div key={t.id} className="flex items-center gap-2">
-                    <div className="min-w-0 flex-1">
-                      <TrickCellMobile
-                        trick={t}
-                        highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
-                        ignoredReasons={ignored.get(t.id)}
-                        unrewardedBonuses={unrewarded.get(t.id)}
-                        dimmed={movingTrickId === t.id}
-                        sortDisabled={isArmed}
-                        onTap={() => onOpenTrick(t.id)}
-                      />
-                    </div>
-                    <InsertAfterButton
-                      armed={isArmed}
-                      onTap={() => insertAt(i + 1)}
-                      position={i + 2}
-                    />
-                  </div>
-                ))}
-              </SortableContext>
-            </DndContext>
-            <div className="pt-1 flex justify-center">
+            {run.tricks.length === 0 ? (
               <button
                 type="button"
-                onClick={() => {
-                  if (confirm(`Clear run ${runIndex + 1}?`)) onResetRun(runIndex);
-                }}
-                className="text-xs text-slate-500 hover:text-red-500 hover:border-red-300 dark:hover:border-red-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/40"
+                onClick={() => insertAt(0)}
+                disabled={!isArmed}
+                className={`w-full min-h-[160px] rounded border-2 border-dashed flex items-center justify-center text-sm transition-colors ${
+                  isArmed
+                    ? 'border-sky-400 bg-sky-500/10 text-sky-700 dark:text-sky-300 active:bg-sky-500/20'
+                    : 'border-slate-300 dark:border-slate-700 text-slate-400'
+                }`}
               >
-                reset run
+                {isArmed ? 'Tap to insert here' : 'No tricks. Pick a trick from the palette above.'}
               </button>
-            </div>
-          </>
-        )}
+            ) : (
+              <>
+                {isDuplicateSource && (
+                  <div className="rounded border border-sky-200 dark:border-sky-900 bg-sky-50 dark:bg-sky-950/40 px-3 py-2 text-center text-xs text-sky-800 dark:text-sky-200">
+                    Duplicating this run
+                  </div>
+                )}
+                <DndContext sensors={sensors} onDragEnd={onDragEnd} autoScroll={runStackAutoScroll}>
+                  <SortableContext
+                    items={run.tricks.map((t) => t.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <InsertSlot armed={isArmed} onTap={() => insertAt(0)} />
+                    {run.tricks.map((t, i) => (
+                      <div key={t.id} className="flex items-center gap-2">
+                        <div className="min-w-0 flex-1">
+                          <TrickCellMobile
+                            trick={t}
+                            highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
+                            ignoredReasons={ignored.get(t.id)}
+                            unrewardedBonuses={unrewarded.get(t.id)}
+                            dimmed={movingTrickId === t.id}
+                            sortDisabled={isArmed || duplicateMode}
+                            onTap={() => onOpenTrick(t.id)}
+                          />
+                        </div>
+                        <InsertAfterButton
+                          armed={isArmed}
+                          onTap={() => insertAt(i + 1)}
+                          position={i + 2}
+                        />
+                      </div>
+                    ))}
+                  </SortableContext>
+                </DndContext>
+                <div className="pt-1 flex justify-center gap-2">
+                  {!duplicateMode && (
+                    <button
+                      type="button"
+                      onClick={() => onDuplicateRun(runIndex)}
+                      className="text-xs text-slate-500 hover:text-sky-600 hover:border-sky-300 dark:hover:border-sky-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/40"
+                    >
+                      duplicate run
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm(`Clear run ${runIndex + 1}?`)) onResetRun(runIndex);
+                    }}
+                    className="text-xs text-slate-500 hover:text-red-500 hover:border-red-300 dark:hover:border-red-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/40"
+                  >
+                    reset run
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+          {canInsertDuplicate && (
+            <DuplicateRunTarget onInsert={() => onInsertDuplicate(runIndex)} />
+          )}
+        </div>
       </div>
 
       {run.tricks.length > 0 && (
@@ -237,6 +272,24 @@ export default function RunMobile({
         </div>
       )}
     </div>
+  );
+}
+
+function DuplicateRunTarget({
+  onInsert,
+}: {
+  onInsert: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onInsert}
+      className="absolute inset-0 z-10 flex items-center justify-center rounded border-2 border-dashed border-sky-400 bg-sky-500/10 text-sm font-semibold text-sky-800 shadow-inner active:bg-sky-500/15 dark:bg-sky-500/10 dark:text-sky-200 dark:active:bg-sky-500/15"
+    >
+      <span className="rounded bg-white/80 px-3 py-1.5 shadow-sm dark:bg-slate-950/80">
+        Insert duplicate here
+      </span>
+    </button>
   );
 }
 
