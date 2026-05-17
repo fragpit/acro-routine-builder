@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Runs can now be duplicated into another run through a full-run insert
+  target, with overwrite confirmation when the target already contains tricks.
+
 ## v0.8.10
 
 - Mobile trick reorder now auto-scrolls the current run stack when

@@ -25,6 +25,7 @@ export default function BuilderMobile() {
   const moveTrick = useProgramStore((s) => s.moveTrick);
   const copyTrick = useProgramStore((s) => s.copyTrick);
   const resetRun = useProgramStore((s) => s.resetRun);
+  const duplicateRun = useProgramStore((s) => s.duplicateRun);
   const undo = useProgramStore((s) => s.undo);
   const redo = useProgramStore((s) => s.redo);
   const canUndo = useProgramStore((s) => s.past.length > 0);
@@ -35,6 +36,7 @@ export default function BuilderMobile() {
   const [armedManoeuvreId, setArmedManoeuvreId] = useState<string | null>(null);
   const [armedMoveTrickId, setArmedMoveTrickId] = useState<string | null>(null);
   const [armedCopyTrickId, setArmedCopyTrickId] = useState<string | null>(null);
+  const [duplicateSourceRunIndex, setDuplicateSourceRunIndex] = useState<number | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [recent, setRecent] = useState<string[]>(() => loadRecentTricks());
   const [activeRunIndex, setActiveRunIndex] = useState(0);
@@ -44,27 +46,39 @@ export default function BuilderMobile() {
   const [statsExpanded, setStatsExpanded] = useState(false);
   const hasNotes = program.notes.trim().length > 0;
 
-  const anyArmed = !!armedManoeuvreId || !!armedMoveTrickId || !!armedCopyTrickId;
+  const slotArmed = !!armedManoeuvreId || !!armedMoveTrickId || !!armedCopyTrickId;
+  const duplicateRunActive = duplicateSourceRunIndex !== null;
+  const anyArmed = slotArmed || duplicateRunActive;
 
   function armPalette(id: string | null) {
+    setDuplicateSourceRunIndex(null);
     setArmedMoveTrickId(null);
     setArmedCopyTrickId(null);
     setArmedManoeuvreId(id);
   }
   function armMove(trickId: string) {
+    setDuplicateSourceRunIndex(null);
     setArmedManoeuvreId(null);
     setArmedCopyTrickId(null);
     setArmedMoveTrickId(trickId);
   }
   function armCopy(trickId: string) {
+    setDuplicateSourceRunIndex(null);
     setArmedManoeuvreId(null);
     setArmedMoveTrickId(null);
     setArmedCopyTrickId(trickId);
+  }
+  function armDuplicateRun(runIndex: number) {
+    setArmedManoeuvreId(null);
+    setArmedMoveTrickId(null);
+    setArmedCopyTrickId(null);
+    setDuplicateSourceRunIndex(runIndex);
   }
   function clearArm() {
     setArmedManoeuvreId(null);
     setArmedMoveTrickId(null);
     setArmedCopyTrickId(null);
+    setDuplicateSourceRunIndex(null);
   }
   function handleInsertAt(runIndex: number, index: number) {
     if (armedManoeuvreId) {
@@ -77,6 +91,13 @@ export default function BuilderMobile() {
       copyTrick(armedCopyTrickId, runIndex, index);
       clearArm();
     }
+  }
+  function handleInsertDuplicate(targetRunIndex: number) {
+    if (duplicateSourceRunIndex === null || duplicateSourceRunIndex === targetRunIndex) return;
+    const target = program.runs[targetRunIndex];
+    if (target.tricks.length > 0 && !confirm(`Overwrite run ${targetRunIndex + 1}?`)) return;
+    duplicateRun(duplicateSourceRunIndex, targetRunIndex);
+    clearArm();
   }
   function handlePickFromFab(id: string) {
     setRecent((prev) => pushRecentTrick(prev, id));
@@ -203,7 +224,9 @@ export default function BuilderMobile() {
               ? 'Tap a slot to insert the trick.'
               : armedMoveTrickId
                 ? 'Tap a slot to move the trick (any run).'
-                : 'Tap a slot to copy the trick (any run).'}
+                : armedCopyTrickId
+                  ? 'Tap a slot to copy the trick (any run).'
+                  : `Duplicating run ${(duplicateSourceRunIndex ?? 0) + 1}. Choose another run.`}
           </span>
           <button
             type="button"
@@ -223,9 +246,13 @@ export default function BuilderMobile() {
           <RunMobile
             run={program.runs[i]}
             runIndex={i}
-            isArmed={anyArmed}
+            isArmed={slotArmed}
             movingTrickId={armedMoveTrickId}
             onInsertAt={handleInsertAt}
+            duplicateMode={duplicateRunActive}
+            isDuplicateSource={duplicateSourceRunIndex === i}
+            onDuplicateRun={armDuplicateRun}
+            onInsertDuplicate={handleInsertDuplicate}
             onOpenTrick={setSheetTrickId}
             onResetRun={resetRun}
             highlights={highlights}

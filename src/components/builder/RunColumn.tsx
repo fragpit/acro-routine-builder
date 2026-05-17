@@ -39,6 +39,10 @@ export type RunColumnProps = {
   onSelectTrick: (id: string | null) => void;
   selectedTrickId: string | null;
   onReset: () => void;
+  onDuplicate: () => void;
+  duplicateMode: boolean;
+  isDuplicateSource: boolean;
+  onInsertDuplicate: () => void;
 };
 
 export function RunColumn({
@@ -58,43 +62,79 @@ export function RunColumn({
   onSelectTrick,
   selectedTrickId,
   onReset,
+  onDuplicate,
+  duplicateMode,
+  isDuplicateSource,
+  onInsertDuplicate,
 }: RunColumnProps) {
+  const canInsertDuplicate = duplicateMode && !isDuplicateSource;
+
   return (
-    <div className="flex flex-col rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 min-h-[200px]">
+    <div
+      className={`flex flex-col rounded-lg bg-slate-50 dark:bg-slate-900 border min-h-[200px] ${
+        canInsertDuplicate
+          ? 'border-sky-300 dark:border-sky-700'
+          : 'border-slate-200 dark:border-slate-700'
+      }`}
+    >
       <div className="px-3 py-2 border-b border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-between">
         <span>Run {runIndex + 1}</span>
         {tricks.length > 0 && (
-          <button
-            type="button"
-            onClick={onReset}
-            className="text-xs font-normal text-slate-500 hover:text-red-600 dark:hover:text-red-400"
-            title="Clear this run"
-          >
-            reset
-          </button>
+          <div className="flex items-center gap-2">
+            {!duplicateMode && (
+              <button
+                type="button"
+                onClick={onDuplicate}
+                className="text-xs font-normal text-slate-500 hover:text-sky-600 dark:hover:text-sky-400"
+                title="Duplicate this run"
+              >
+                duplicate
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onReset}
+              className="text-xs font-normal text-slate-500 hover:text-red-600 dark:hover:text-red-400"
+              title="Clear this run"
+            >
+              reset
+            </button>
+          </div>
         )}
       </div>
       <RunDropArea runIndex={runIndex} insertIndex={tricks.length}>
-        {tricks.length === 0 ? (
-          <EmptyDropZone runIndex={runIndex} />
-        ) : (
-          <>
-            <DropZone runIndex={runIndex} insertIndex={0} />
-            {tricks.map((t, i) => (
-              <div key={t.id}>
-                <TrickCell
-                  trick={t}
-                  highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
-                  selected={selectedTrickId === t.id}
-                  ignoredReasons={ignored.get(t.id)}
-                  unrewardedBonuses={unrewardedBonuses.get(t.id)}
-                  onSelect={() => onSelectTrick(t.id)}
-                />
-                <DropZone runIndex={runIndex} insertIndex={i + 1} />
-              </div>
-            ))}
-          </>
-        )}
+        <div className="relative flex-1 min-h-[160px]">
+          <div
+            className={`min-h-full flex flex-col space-y-1 transition-opacity ${
+              canInsertDuplicate ? 'opacity-75 saturate-75' : ''
+            }`}
+            aria-hidden={canInsertDuplicate}
+          >
+            {tricks.length === 0 ? (
+              <EmptyDropZone runIndex={runIndex} />
+            ) : (
+              <>
+                <DropZone runIndex={runIndex} insertIndex={0} />
+                {tricks.map((t, i) => (
+                  <div key={t.id}>
+                    <TrickCell
+                      trick={t}
+                      highlight={highlights.get(`${runIndex}:${i}`) ?? 'none'}
+                      selected={selectedTrickId === t.id}
+                      ignoredReasons={ignored.get(t.id)}
+                      unrewardedBonuses={unrewardedBonuses.get(t.id)}
+                      onSelect={() => onSelectTrick(t.id)}
+                    />
+                    <DropZone runIndex={runIndex} insertIndex={i + 1} />
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+          {canInsertDuplicate && (
+            <DuplicateRunTarget onInsert={onInsertDuplicate} runIndex={runIndex} />
+          )}
+        </div>
       </RunDropArea>
       {tricks.length > 0 && (
         <div className="px-3 py-1.5 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 space-y-0.5">
@@ -151,5 +191,26 @@ export function RunColumn({
         />
       )}
     </div>
+  );
+}
+
+function DuplicateRunTarget({
+  onInsert,
+  runIndex,
+}: {
+  onInsert: () => void;
+  runIndex: number;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onInsert}
+      className="absolute inset-0 z-10 flex items-center justify-center rounded border-2 border-dashed border-sky-400 bg-sky-500/10 text-sm font-semibold text-sky-800 shadow-inner hover:bg-sky-500/15 dark:bg-sky-500/10 dark:text-sky-200 dark:hover:bg-sky-500/15"
+      aria-label={`Insert duplicated run into run ${runIndex + 1}`}
+    >
+      <span className="rounded bg-white/80 px-3 py-1.5 shadow-sm dark:bg-slate-950/80">
+        Insert duplicate here
+      </span>
+    </button>
   );
 }

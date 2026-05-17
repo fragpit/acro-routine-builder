@@ -18,6 +18,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Side selection (L/R) and bonus modifiers per placed trick
   (twisted / reverse / flipped, with mutual exclusions)
 - Default bonuses applied automatically on trick insertion
+- Duplicate a complete run into another run, with confirmation before
+  overwriting non-empty targets
 - Live validation of all structural FAI rules (see
   [docs/trick_rules.md](docs/trick_rules.md))
 - Technicity and bonus estimation per run (AWT/AWQ formulas)

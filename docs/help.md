@@ -50,6 +50,10 @@ used tricks appear at the top under a `Recent` heading.
 - **Copy**: hold `Alt` while dragging an existing cell - the overlay
   turns green and the trick is duplicated instead of moved.
 - **Remove**: click the small `✕` on the top-right of a trick cell.
+- **Duplicate run**: click `duplicate` in a run header, then click
+  the full-run `Insert duplicate here` target on another run. Empty
+  targets are filled immediately; non-empty targets ask before being
+  overwritten.
 - **Reset run**: click `reset` in a run header to clear only that
   run. `Reset all` in the toolbar clears every run.
 
@@ -66,6 +70,11 @@ To move, tap an existing trick cell, tap **Move** in the action
 sheet, then tap a destination slot. **Copy** and **Remove** are
 also in that sheet. **L / R** buttons on the cell toggle the side
 for two-sided tricks.
+
+Tap **duplicate run** below a non-empty run to copy that whole run
+into another run. Swipe to the target and tap the full-run
+`Insert duplicate here` target; the app asks before replacing tricks
+in a non-empty target.
 
 Use the `⋮⋮` handle on the right side of a mobile trick cell to
 reorder tricks within the current run. While dragging, the run stack

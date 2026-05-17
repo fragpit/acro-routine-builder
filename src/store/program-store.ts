@@ -33,6 +33,7 @@ interface ProgramState {
   removeTrick: (trickId: string) => void;
   moveTrick: (trickId: string, toRunIndex: number, toIndex: number) => void;
   copyTrick: (trickId: string, toRunIndex: number, toIndex: number) => void;
+  duplicateRun: (sourceRunIndex: number, targetRunIndex: number) => void;
   setTrickSide: (trickId: string, side: Side | null) => void;
   toggleBonus: (trickId: string, bonusId: string) => void;
   selectTrick: (trickId: string | null) => void;
@@ -57,6 +58,15 @@ function findTrick(program: Program, trickId: string): { runIndex: number; trick
     if (i >= 0) return { runIndex: r, trickIndex: i };
   }
   return null;
+}
+
+function clonePlacedTricks(tricks: PlacedTrick[]): PlacedTrick[] {
+  return tricks.map((t) => ({
+    id: nextId(),
+    manoeuvreId: t.manoeuvreId,
+    side: t.side,
+    selectedBonuses: [...t.selectedBonuses],
+  }));
 }
 
 function pushHistory(past: Program[], prev: Program): Program[] {
@@ -251,12 +261,7 @@ export const useProgramStore = create<ProgramState>()(
       const loc = findTrick(state.program, trickId);
       if (!loc) return state;
       const source = state.program.runs[loc.runIndex].tricks[loc.trickIndex];
-      const copy: PlacedTrick = {
-        id: nextId(),
-        manoeuvreId: source.manoeuvreId,
-        side: source.side,
-        selectedBonuses: [...source.selectedBonuses],
-      };
+      const copy = clonePlacedTricks([source])[0];
       const runs = state.program.runs.map((r, i) => {
         if (i !== toRunIndex) return r;
         const tricks = [...r.tricks];
@@ -264,6 +269,19 @@ export const useProgramStore = create<ProgramState>()(
         return { ...r, tricks };
       });
       return commit(state, { ...state.program, runs });
+    }),
+
+  duplicateRun: (sourceRunIndex, targetRunIndex) =>
+    set((state) => {
+      if (sourceRunIndex === targetRunIndex) return state;
+      const source = state.program.runs[sourceRunIndex];
+      const target = state.program.runs[targetRunIndex];
+      if (!source || !target) return state;
+
+      const runs = state.program.runs.map((r, i) =>
+        i === targetRunIndex ? { ...r, tricks: clonePlacedTricks(source.tricks) } : r,
+      );
+      return { ...commit(state, { ...state.program, runs }), selectedTrickId: null };
     }),
 
   setTrickSide: (trickId, side) =>
