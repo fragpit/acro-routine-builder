@@ -69,6 +69,21 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
     });
   }
 
+  function setTechnicalMarkValue(value: number) {
+    const normalized = normalizeTechnicalMark(value);
+    setTechnicalMark(manoeuvre.id, normalized);
+    setTechnicalMarkDraft({
+      key: `${manoeuvre.id}:${normalized}`,
+      value: normalized.toFixed(1),
+    });
+  }
+
+  function stepTechnicalMark(direction: 1 | -1) {
+    const current = Number(technicalMarkInput);
+    const base = Number.isFinite(current) ? current : technicalMark;
+    setTechnicalMarkValue(base + direction * 0.5);
+  }
+
   return (
     <div className="p-4 text-sm">
       <div className="flex items-start justify-between gap-2 mb-3">
@@ -96,31 +111,37 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
       <div className="mb-4">
         <h3 className="text-xs uppercase text-slate-500 mb-2">Technical mark</h3>
         <div className="flex items-center gap-2">
-          <input
-            type="text"
-            inputMode="decimal"
-            value={technicalMarkInput}
-            onChange={(e) => onTechnicalMarkChange(e.target.value)}
-            onBlur={(e) => commitTechnicalMark(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.currentTarget.blur();
-              } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                e.preventDefault();
-                const direction = e.key === 'ArrowUp' ? 1 : -1;
-                const current = Number(technicalMarkInput);
-                const base = Number.isFinite(current) ? current : technicalMark;
-                const next = normalizeTechnicalMark(base + direction * 0.5);
-                setTechnicalMark(manoeuvre.id, next);
-                setTechnicalMarkDraft({
-                  key: `${manoeuvre.id}:${next}`,
-                  value: next.toFixed(1),
-                });
-              }
-            }}
-            className="w-24 rounded border border-slate-300 bg-white px-2 py-1 font-mono text-sm text-slate-900 outline-none focus:border-sky-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
-            aria-label="Technical mark"
-          />
+          <div className="flex w-24 overflow-hidden rounded border border-slate-300 bg-white focus-within:border-sky-500 dark:border-slate-700 dark:bg-slate-800">
+            <input
+              type="text"
+              inputMode="decimal"
+              value={technicalMarkInput}
+              onChange={(e) => onTechnicalMarkChange(e.target.value)}
+              onBlur={(e) => commitTechnicalMark(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.currentTarget.blur();
+                } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                  e.preventDefault();
+                  stepTechnicalMark(e.key === 'ArrowUp' ? 1 : -1);
+                }
+              }}
+              className="min-w-0 flex-1 bg-transparent px-2 py-1 font-mono text-sm text-slate-900 outline-none dark:text-slate-100"
+              aria-label="Technical mark"
+            />
+            <div className="flex w-5 shrink-0 flex-col border-l border-slate-300 dark:border-slate-700">
+              <StepButton
+                label="Increase technical mark"
+                direction="up"
+                onClick={() => stepTechnicalMark(1)}
+              />
+              <StepButton
+                label="Decrease technical mark"
+                direction="down"
+                onClick={() => stepTechnicalMark(-1)}
+              />
+            </div>
+          </div>
           <span className="text-xs text-slate-500 dark:text-slate-400">/ 10</span>
           <button
             type="button"
@@ -175,4 +196,40 @@ function isBonusMutuallyExcluded(m: Manoeuvre, t: PlacedTrick, bonusId: string):
     if (group.some((g) => g !== bonusId && t.selectedBonuses.includes(g))) return true;
   }
   return false;
+}
+
+function StepButton({
+  label,
+  direction,
+  onClick,
+}: {
+  label: string;
+  direction: 'up' | 'down';
+  onClick: () => void;
+}) {
+  const points = direction === 'up' ? '5 7 10 3 15 7' : '5 3 10 7 15 3';
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onClick}
+      className={`flex flex-1 items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-sky-600 active:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-sky-400 dark:active:bg-slate-600 ${
+        direction === 'up' ? 'border-b border-slate-300 dark:border-slate-700' : ''
+      }`}
+    >
+      <svg
+        viewBox="0 0 20 10"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-2.5 w-3"
+        aria-hidden
+      >
+        <polyline points={points} />
+      </svg>
+    </button>
+  );
 }
