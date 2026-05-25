@@ -16,5 +16,12 @@ export function program(
   awtMode = false,
   repeatAfterRuns = MAX_RUNS,
 ): Program {
-  return { awtMode, runs, repeatAfterRuns, defaultBonuses: [], notes: '' };
+  return {
+    awtMode,
+    runs,
+    repeatAfterRuns,
+    defaultBonuses: [],
+    technicalMarksByManoeuvreId: {},
+    notes: '',
+  };
 }

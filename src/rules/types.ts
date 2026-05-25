@@ -41,6 +41,8 @@ export interface Manoeuvre {
 
 export type Side = 'L' | 'R';
 
+export type TechnicalMarksByManoeuvreId = Record<string, number>;
+
 export interface PlacedTrick {
   id: string;
   manoeuvreId: string;
@@ -58,6 +60,7 @@ export interface Program {
   runs: Run[];
   repeatAfterRuns: number;
   defaultBonuses: string[];
+  technicalMarksByManoeuvreId: TechnicalMarksByManoeuvreId;
   /**
    * Free-form program-level notes. Populated by the user via the notes editor
    * and by AWT imports (combined judges' notes per run, prefixed with

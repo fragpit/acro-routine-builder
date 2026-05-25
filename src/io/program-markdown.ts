@@ -59,6 +59,8 @@ export function exportProgramMarkdown(
         ? `${m.name} (${m.coefficient.toFixed(2)}, ${t.side})`
         : `${m.name} (${m.coefficient.toFixed(2)})`;
       const parts = [`${ti + 1}. ${head}`];
+      const technicalMark = program.technicalMarksByManoeuvreId?.[t.manoeuvreId];
+      if (technicalMark !== undefined) parts.push(`T ${technicalMark.toFixed(1)}/10`);
       if (bonuses) parts.push(bonuses);
       if (reasons) parts.push(`ignored: ${reasons.join('; ')}`);
       lines.push(parts.join(' - '));

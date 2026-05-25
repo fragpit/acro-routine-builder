@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Trick cards can now override a trick's technical mark, saved with the program.
+
 ## v0.8.17
 
 - Repeated reverse manoeuvres now trigger repetition penalties.

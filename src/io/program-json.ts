@@ -22,6 +22,7 @@ export const MAX_ID_LENGTH = 100;
 export const MAX_TRICKS_PER_RUN = 50;
 export const MAX_BONUSES_PER_TRICK = 20;
 export const MAX_DEFAULT_BONUSES = 20;
+export const MAX_TECHNICAL_MARK_OVERRIDES = 100;
 
 /**
  * On-disk envelope for program export/import. Wraps a Program with a format
@@ -109,6 +110,9 @@ function validateProgram(raw: unknown): Program {
   const defaultBonuses = Array.isArray(p.defaultBonuses)
     ? p.defaultBonuses.filter((x): x is string => typeof x === 'string' && knownBonusIds.has(x))
     : [];
+  const technicalMarksByManoeuvreId = validateTechnicalMarksByManoeuvreId(
+    p.technicalMarksByManoeuvreId,
+  );
   const seenRunIds = new Set<string>();
   const seenTrickIds = new Set<string>();
   const runs = p.runs.map((r, ri) => {
@@ -167,6 +171,32 @@ function validateProgram(raw: unknown): Program {
     runs,
     repeatAfterRuns: p.repeatAfterRuns,
     defaultBonuses,
+    technicalMarksByManoeuvreId,
     notes,
   };
+}
+
+function validateTechnicalMarksByManoeuvreId(raw: unknown): Record<string, number> {
+  if (raw == null) return {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    throw new Error('program.technicalMarksByManoeuvreId must be an object');
+  }
+  const entries = Object.entries(raw);
+  if (entries.length > MAX_TECHNICAL_MARK_OVERRIDES) {
+    throw new Error(
+      `program.technicalMarksByManoeuvreId must have at most ${MAX_TECHNICAL_MARK_OVERRIDES} entries`,
+    );
+  }
+  const out: Record<string, number> = {};
+  for (const [id, mark] of entries) {
+    if (!MANOEUVRES_BY_ID[id]) continue;
+    if (typeof mark !== 'number' || !Number.isFinite(mark)) {
+      throw new Error(`program.technicalMarksByManoeuvreId.${id} must be a number`);
+    }
+    if (mark < 0 || mark > 10) {
+      throw new Error(`program.technicalMarksByManoeuvreId.${id} must be between 0 and 10`);
+    }
+    out[id] = mark;
+  }
+  return out;
 }

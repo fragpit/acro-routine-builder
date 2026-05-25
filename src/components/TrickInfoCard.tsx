@@ -1,5 +1,10 @@
 import type { Manoeuvre, PlacedTrick } from '../rules/types';
+import {
+  defaultTechnicalMark,
+  technicalMarkForManoeuvre,
+} from '../scoring/technical-marks';
 import { useProgramStore } from '../store/program-store';
+import { useScoreSettings } from '../store/score-settings';
 
 interface Props {
   manoeuvre: Manoeuvre;
@@ -9,6 +14,26 @@ interface Props {
 
 export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props) {
   const toggleBonus = useProgramStore((s) => s.toggleBonus);
+  const technicalMarksByManoeuvreId = useProgramStore(
+    (s) => s.program.technicalMarksByManoeuvreId ?? {},
+  );
+  const setTechnicalMark = useProgramStore((s) => s.setTechnicalMark);
+  const quality = useScoreSettings((s) => s.quality);
+  const hasCustomTechnicalMark =
+    technicalMarksByManoeuvreId[manoeuvre.id] !== undefined;
+  const defaultMark = defaultTechnicalMark(quality);
+  const technicalMark = technicalMarkForManoeuvre(
+    manoeuvre.id,
+    technicalMarksByManoeuvreId,
+    quality,
+  );
+
+  function onTechnicalMarkChange(value: string) {
+    const mark = Number(value);
+    if (!Number.isFinite(mark)) return;
+    setTechnicalMark(manoeuvre.id, mark);
+  }
+
   return (
     <div className="p-4 text-sm">
       <div className="flex items-start justify-between gap-2 mb-3">
@@ -32,6 +57,36 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
           <li key={i}>{line}</li>
         ))}
       </ul>
+
+      <div className="mb-4">
+        <h3 className="text-xs uppercase text-slate-500 mb-2">Technical mark</h3>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={0}
+            max={10}
+            step={0.1}
+            value={technicalMark.toFixed(1)}
+            onChange={(e) => onTechnicalMarkChange(e.target.value)}
+            className="w-24 rounded border border-slate-300 bg-white px-2 py-1 font-mono text-sm text-slate-900 outline-none focus:border-sky-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+            aria-label="Technical mark"
+          />
+          <span className="text-xs text-slate-500 dark:text-slate-400">/ 10</span>
+          <button
+            type="button"
+            onClick={() => setTechnicalMark(manoeuvre.id, null)}
+            disabled={!hasCustomTechnicalMark}
+            className="ml-auto rounded border border-slate-300 px-2 py-1 text-xs text-slate-600 hover:border-sky-500 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-slate-300 disabled:hover:text-slate-600 dark:border-slate-700 dark:text-slate-300 dark:hover:text-sky-400 dark:disabled:hover:border-slate-700 dark:disabled:hover:text-slate-300"
+          >
+            Reset
+          </button>
+        </div>
+        <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          {hasCustomTechnicalMark
+            ? 'Custom for this trick'
+            : `Default ${defaultMark.toFixed(1)} from settings`}
+        </div>
+      </div>
 
       {manoeuvre.availableBonuses.length > 0 && (
         <div>

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { runTechnicity } from '../scoring/technicity';
-import { runBonus } from '../scoring/bonus';
+import { runBonus, runScaledBonus } from '../scoring/bonus';
 import { runBonusUsage } from '../scoring/bonus-usage';
 import { exclusionsByTrick } from '../scoring/eligibility';
 import { runScoreBreakdown } from '../scoring/final-score';
@@ -88,6 +88,10 @@ function BuilderDesktop() {
   const [notesOpen, setNotesOpen] = useState(false);
   const [duplicateSourceRunIndex, setDuplicateSourceRunIndex] = useState<number | null>(null);
   const hasNotes = program.notes.trim().length > 0;
+  const technicalMarksByManoeuvreId = useMemo(
+    () => program.technicalMarksByManoeuvreId ?? {},
+    [program.technicalMarksByManoeuvreId],
+  );
 
   function openNotes() {
     selectTrick(null);
@@ -128,11 +132,19 @@ function BuilderDesktop() {
       if (run.tricks.length === 0) continue;
       const sym = runSymmetry(run.tricks, MANOEUVRES_BY_ID);
       const malus = bonusMalusPerRun[i] ?? 0;
-      const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, malus, distribution, quality);
+      const bd = runScoreBreakdown(
+        run,
+        MANOEUVRES_BY_ID,
+        sym,
+        malus,
+        distribution,
+        quality,
+        technicalMarksByManoeuvreId,
+      );
       total += bd.total;
     }
     return { total: Math.ceil(total * 1000) / 1000 };
-  }, [program, distribution, quality, bonusMalusPerRun]);
+  }, [program, distribution, quality, technicalMarksByManoeuvreId, bonusMalusPerRun]);
 
   const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
     useScoreDelta(programTotal?.total ?? null);
@@ -295,11 +307,18 @@ function BuilderDesktop() {
                   tricks={run.tricks}
                   technicity={runTechnicity(run, MANOEUVRES_BY_ID)}
                   bonus={runBonus(run, MANOEUVRES_BY_ID)}
+                  scaledBonus={runScaledBonus(
+                    run,
+                    MANOEUVRES_BY_ID,
+                    technicalMarksByManoeuvreId,
+                    quality,
+                  )}
                   bonusUsage={runBonusUsage(run, MANOEUVRES_BY_ID)}
                   bonusMalus={bonusMalusPerRun[runIndex] ?? 0}
                   symmetry={runSymmetry(run.tricks, MANOEUVRES_BY_ID)}
                   distribution={distribution}
                   quality={quality}
+                  technicalMarksByManoeuvreId={technicalMarksByManoeuvreId}
                   highlights={highlights}
                   ignored={exclusionsByTrick(run, MANOEUVRES_BY_ID)}
                   unrewardedBonuses={unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID)}

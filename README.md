@@ -17,6 +17,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Drag-and-drop program board (`@dnd-kit`) with touch support
 - Side selection (L/R) and bonus modifiers per placed trick
   (twisted / reverse / flipped, with mutual exclusions)
+- Per-trick technical mark overrides saved with the program
 - Default bonuses applied automatically on trick insertion
 - Duplicate a complete run into another run, with confirmation before
   overwriting non-empty targets

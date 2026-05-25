@@ -2,7 +2,11 @@ import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { BONUS_LIMITS, runBonusUsage } from '../../scoring/bonus-usage';
 import { runScoreBreakdown, type ScoreDistribution, type QualityCorrection } from '../../scoring/final-score';
 import { runSymmetry } from '../../rules/validators/symmetry';
-import type { PlacedTrick, Run } from '../../rules/types';
+import type {
+  PlacedTrick,
+  Run,
+  TechnicalMarksByManoeuvreId,
+} from '../../rules/types';
 import TrickCell from '../TrickCell';
 import FinalScorePanel from '../FinalScorePanel';
 import { DropZone, EmptyDropZone, RunDropArea } from './DropZones';
@@ -28,11 +32,13 @@ export type RunColumnProps = {
   tricks: PlacedTrick[];
   technicity: number;
   bonus: number;
+  scaledBonus: number;
   bonusUsage: ReturnType<typeof runBonusUsage>;
   bonusMalus: number;
   symmetry: ReturnType<typeof runSymmetry>;
   distribution: ScoreDistribution;
   quality: QualityCorrection;
+  technicalMarksByManoeuvreId: TechnicalMarksByManoeuvreId;
   highlights: Map<string, 'error' | 'warning'>;
   ignored: Map<string, string[]>;
   unrewardedBonuses: Map<string, Set<string>>;
@@ -51,11 +57,13 @@ export function RunColumn({
   tricks,
   technicity,
   bonus,
+  scaledBonus,
   bonusUsage,
   bonusMalus,
   symmetry,
   distribution,
   quality,
+  technicalMarksByManoeuvreId,
   highlights,
   ignored,
   unrewardedBonuses,
@@ -155,11 +163,11 @@ export function RunColumn({
           </div>
           <div
             className="flex justify-between"
-            title="Bonus per run: X(Y×Tq(N%))%. Y is the raw sum of selected bonus percents. Tq scales the bonus (per FAI 6.6.1 AWT per-trick technical-mark weighting); X is the effective bonus actually plugged into the score formula. The malus is NOT scaled by Tq."
+            title="Bonus per run: X(Y)%. Y is the raw sum of selected bonus percents. X is weighted by each trick's technical mark and plugged into the score formula. The malus is NOT scaled."
           >
             <span>Bonus</span>
             <span className="font-mono">
-              {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
+              {scaledBonus.toFixed(1)}({bonus.toFixed(1)})%
             </span>
           </div>
           {bonusMalus > 0 && (
@@ -186,7 +194,15 @@ export function RunColumn({
       )}
       {tricks.length > 0 && (
         <FinalScorePanel
-          breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, bonusMalus, distribution, quality)}
+          breakdown={runScoreBreakdown(
+            run,
+            MANOEUVRES_BY_ID,
+            symmetry,
+            bonusMalus,
+            distribution,
+            quality,
+            technicalMarksByManoeuvreId,
+          )}
           expandsDown
         />
       )}

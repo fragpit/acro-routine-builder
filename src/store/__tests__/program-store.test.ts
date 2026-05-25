@@ -7,6 +7,7 @@ function makeProgram(): Program {
     awtMode: false,
     repeatAfterRuns: 4,
     defaultBonuses: [],
+    technicalMarksByManoeuvreId: {},
     notes: '',
     runs: [
       {
@@ -80,5 +81,15 @@ describe('program store', () => {
     const state = useProgramStore.getState();
     expect(state.program).toEqual(makeProgram());
     expect(state.past).toHaveLength(0);
+  });
+
+  it('keeps custom technical marks after a trick is removed and added again', () => {
+    useProgramStore.getState().setTechnicalMark('stall', 8.5);
+    useProgramStore.getState().removeTrick('target_1');
+    useProgramStore.getState().addTrick(1, 'stall');
+
+    const state = useProgramStore.getState();
+    expect(state.program.technicalMarksByManoeuvreId.stall).toBe(8.5);
+    expect(state.program.runs[1].tricks[0].manoeuvreId).toBe('stall');
   });
 });

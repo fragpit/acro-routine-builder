@@ -1,6 +1,9 @@
 import type { PlacedTrick, Program } from '../rules/types';
 import { MANOEUVRES_BY_ID } from './manoeuvres';
 
+const MIN_TECHNICAL_MARK = 0;
+const MAX_TECHNICAL_MARK = 10;
+
 /**
  * Drop bonus ids from `selectedBonuses` that are not listed in the
  * manoeuvre's `availableBonuses`. Orphan ids leak in from legacy imports,
@@ -21,6 +24,12 @@ export function sanitizePlacedTrick(trick: PlacedTrick): PlacedTrick {
 /** Apply {@link sanitizePlacedTrick} across every trick in every run. */
 export function sanitizeProgram(program: Program): Program {
   let mutated = false;
+  const technicalMarksByManoeuvreId = sanitizeTechnicalMarksByManoeuvreId(
+    (program as Program & { technicalMarksByManoeuvreId?: unknown }).technicalMarksByManoeuvreId,
+  );
+  if (technicalMarksByManoeuvreId !== program.technicalMarksByManoeuvreId) {
+    mutated = true;
+  }
   const runs = program.runs.map((run) => {
     let runMutated = false;
     const tricks = run.tricks.map((t) => {
@@ -33,5 +42,27 @@ export function sanitizeProgram(program: Program): Program {
     });
     return runMutated ? { ...run, tricks } : run;
   });
-  return mutated ? { ...program, runs } : program;
+  return mutated ? { ...program, runs, technicalMarksByManoeuvreId } : program;
+}
+
+function sanitizeTechnicalMarksByManoeuvreId(raw: unknown): Record<string, number> {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const out: Record<string, number> = {};
+  let changed = false;
+  for (const [id, mark] of Object.entries(raw)) {
+    if (!MANOEUVRES_BY_ID[id]) {
+      changed = true;
+      continue;
+    }
+    if (typeof mark !== 'number' || !Number.isFinite(mark)) {
+      changed = true;
+      continue;
+    }
+    if (mark < MIN_TECHNICAL_MARK || mark > MAX_TECHNICAL_MARK) {
+      changed = true;
+      continue;
+    }
+    out[id] = mark;
+  }
+  return changed ? out : raw as Record<string, number>;
 }

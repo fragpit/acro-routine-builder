@@ -16,6 +16,7 @@ const baseProgram = (): Program => ({
   ],
   repeatAfterRuns: 1,
   defaultBonuses: [],
+  technicalMarksByManoeuvreId: {},
   notes: '',
 });
 
@@ -64,9 +65,17 @@ describe('exportProgramMarkdown', () => {
       ],
       repeatAfterRuns: 1,
       defaultBonuses: [],
+      technicalMarksByManoeuvreId: {},
       notes: '',
     };
     const out = exportProgramMarkdown(program, 'fixture', []);
     expect(out).toMatch(/ignored: more than 5 twisted manoeuvres/);
+  });
+
+  it('includes custom technical marks on trick lines', () => {
+    const program = baseProgram();
+    program.technicalMarksByManoeuvreId = { sat: 8.5 };
+    const out = exportProgramMarkdown(program, 'fixture', []);
+    expect(out).toMatch(/^1\. SAT \(1\.\d{2}, R\) - T 8\.5\/10 - Twisted$/m);
   });
 });

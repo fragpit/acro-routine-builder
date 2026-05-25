@@ -1,7 +1,12 @@
-import type { Manoeuvre, Run } from '../rules/types';
+import type {
+  Manoeuvre,
+  Run,
+  TechnicalMarksByManoeuvreId,
+} from '../rules/types';
 import type { RunSymmetry } from '../rules/validators/symmetry';
 import { runTechnicity } from './technicity';
-import { runBonus } from './bonus';
+import { runBonus, runScaledBonus } from './bonus';
+import { runTechnicalMark } from './technical-marks';
 
 export interface ScoreDistribution {
   technical: number;
@@ -31,6 +36,7 @@ export interface RunScoreBreakdown {
   lMark: number;
   tc: number;
   bonusPercent: number;
+  scaledBonusPercent: number;
   symmetryBalanced: boolean;
   bonusMalus: number;
   distribution: ScoreDistribution;
@@ -52,8 +58,9 @@ function ceilTo3(n: number): number {
 /**
  * Compute the full final score breakdown for a single run.
  *
- * T (technical mark) defaults to 10 - judges score execution quality
- * and we can't predict it, so we assume perfect.
+ * T (technical mark) is the average technical mark across every
+ * scoring-eligible trick in the run. Tricks without a custom mark use
+ * the global Tq default.
  *
  * C (choreography mark) defaults to 9 + symmetry bonus (1 if balanced,
  * 0 otherwise). The 9 base accounts for the 8/10 objective criteria
@@ -64,15 +71,12 @@ function ceilTo3(n: number): number {
  * L (landing mark) defaults to 0 - landing is not predictable from
  * the routine structure.
  *
- * The bonus formula is asymmetric: Tq scales the positive bonus
- * percentage but does NOT scale the malus. This mirrors AWT's
- * per-trick technical scaling (api/models/competitions.py:1409-1428
- * in acroworldtour.com), where each trick's bonus contribution is
- * weighted by its own technical mark before summing, while the
- * repetition malus applies as a flat percent. We approximate per-
- * trick technical marks with the global Tq slider, and apply the
- * same asymmetric model in AWQ for consistency.
- *   bonus = (techFinal + choreoFinal) * (bonus% * Tq/100 - malus%) / 100
+ * The bonus formula is asymmetric: each positive bonus contribution is
+ * weighted by that trick's technical mark, but the malus is not. This
+ * mirrors AWT's per-trick technical scaling (api/models/competitions.py:
+ * 1409-1428 in acroworldtour.com), while the repetition malus applies
+ * as a flat percent.
+ *   bonus = (techFinal + choreoFinal) * (scaledBonus% - malus%) / 100
  * When malus exceeds the scaled bonus, `bonusFinal` turns negative
  * and reduces the total.
  */
@@ -83,11 +87,23 @@ export function runScoreBreakdown(
   bonusMalus: number,
   distribution: ScoreDistribution,
   quality: QualityCorrection,
+  technicalMarksByManoeuvreId: TechnicalMarksByManoeuvreId = {},
 ): RunScoreBreakdown {
   const tc = runTechnicity(run, manoeuvres);
   const bonusPercent = runBonus(run, manoeuvres);
+  const scaledBonusPercent = runScaledBonus(
+    run,
+    manoeuvres,
+    technicalMarksByManoeuvreId,
+    quality,
+  );
 
-  const tMark = 10 * (quality.technical / 100);
+  const tMark = runTechnicalMark(
+    run,
+    manoeuvres,
+    technicalMarksByManoeuvreId,
+    quality,
+  );
   const cSubjective = 9;
   const symBonus = symmetry.balanced ? 1 : 0;
   const cMark = cSubjective * (quality.choreo / 100) + symBonus;
@@ -96,7 +112,6 @@ export function runScoreBreakdown(
   const techFinal = tMark * tc * (distribution.technical / 100);
   const choreoFinal = cMark * (distribution.choreo / 100);
   const landingFinal = lMark * (distribution.landing / 100);
-  const scaledBonusPercent = bonusPercent * (quality.technical / 100);
   const bonusFinal =
     (techFinal + choreoFinal) *
     ((scaledBonusPercent - bonusMalus) / 100);
@@ -110,6 +125,7 @@ export function runScoreBreakdown(
     lMark,
     tc,
     bonusPercent,
+    scaledBonusPercent,
     symmetryBalanced: symmetry.balanced,
     bonusMalus,
     distribution,
