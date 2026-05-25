@@ -1,8 +1,10 @@
 import type { PlacedTrick, Program } from '../rules/types';
+import {
+  MAX_TECHNICAL_MARK,
+  MIN_TECHNICAL_MARK,
+  normalizeTechnicalMark,
+} from '../scoring/technical-marks';
 import { MANOEUVRES_BY_ID } from './manoeuvres';
-
-const MIN_TECHNICAL_MARK = 0;
-const MAX_TECHNICAL_MARK = 10;
 
 /**
  * Drop bonus ids from `selectedBonuses` that are not listed in the
@@ -62,7 +64,9 @@ function sanitizeTechnicalMarksByManoeuvreId(raw: unknown): Record<string, numbe
       changed = true;
       continue;
     }
-    out[id] = mark;
+    const normalized = normalizeTechnicalMark(mark);
+    if (normalized !== mark) changed = true;
+    out[id] = normalized;
   }
   return changed ? out : raw as Record<string, number>;
 }

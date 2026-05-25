@@ -5,7 +5,7 @@ import { DEFAULT_RUNS } from '../data/competition-types';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { sanitizeProgram } from '../data/sanitize';
 import { validateProgram } from '../rules/engine';
-import { clampTechnicalMark } from '../scoring/technical-marks';
+import { normalizeTechnicalMark } from '../scoring/technical-marks';
 import { STORAGE_KEYS } from './storage-keys';
 
 let idCounter = 0;
@@ -219,7 +219,7 @@ export const useProgramStore = create<ProgramState>()(
       if (mark === null) {
         delete technicalMarksByManoeuvreId[manoeuvreId];
       } else {
-        technicalMarksByManoeuvreId[manoeuvreId] = clampTechnicalMark(mark);
+        technicalMarksByManoeuvreId[manoeuvreId] = normalizeTechnicalMark(mark);
       }
       return commit(state, { ...state.program, technicalMarksByManoeuvreId });
     }),

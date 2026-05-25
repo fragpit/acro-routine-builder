@@ -84,7 +84,7 @@ describe('program store', () => {
   });
 
   it('keeps custom technical marks after a trick is removed and added again', () => {
-    useProgramStore.getState().setTechnicalMark('stall', 8.5);
+    useProgramStore.getState().setTechnicalMark('stall', 8.3);
     useProgramStore.getState().removeTrick('target_1');
     useProgramStore.getState().addTrick(1, 'stall');
 

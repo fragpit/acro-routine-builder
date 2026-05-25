@@ -4,10 +4,16 @@ import { excludedFromScoring } from './eligibility';
 
 export const MIN_TECHNICAL_MARK = 0;
 export const MAX_TECHNICAL_MARK = 10;
+export const TECHNICAL_MARK_STEP = 0.5;
 
 export function clampTechnicalMark(mark: number): number {
   if (!Number.isFinite(mark)) return MAX_TECHNICAL_MARK;
   return Math.max(MIN_TECHNICAL_MARK, Math.min(MAX_TECHNICAL_MARK, mark));
+}
+
+export function normalizeTechnicalMark(mark: number): number {
+  return Math.round(clampTechnicalMark(mark) / TECHNICAL_MARK_STEP) *
+    TECHNICAL_MARK_STEP;
 }
 
 export function defaultTechnicalMark(quality: QualityCorrection): number {

@@ -85,4 +85,13 @@ describe('sanitizeProgram', () => {
     const out = sanitizeProgram(p);
     expect(out.technicalMarksByManoeuvreId).toEqual({ sat: 8.5 });
   });
+
+  it('normalizes technical mark overrides to half-point steps', () => {
+    const p = {
+      ...makeProgram([trick('sat', [])]),
+      technicalMarksByManoeuvreId: { sat: 8.3 },
+    };
+    const out = sanitizeProgram(p);
+    expect(out.technicalMarksByManoeuvreId).toEqual({ sat: 8.5 });
+  });
 });

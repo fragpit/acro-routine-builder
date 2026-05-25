@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import type { Manoeuvre, PlacedTrick } from '../rules/types';
 import {
   defaultTechnicalMark,
+  normalizeTechnicalMark,
   technicalMarkForManoeuvre,
 } from '../scoring/technical-marks';
 import { useProgramStore } from '../store/program-store';
@@ -27,11 +29,44 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
     technicalMarksByManoeuvreId,
     quality,
   );
+  const technicalMarkDraftKey = `${manoeuvre.id}:${technicalMark}`;
+  const [technicalMarkDraft, setTechnicalMarkDraft] = useState({
+    key: technicalMarkDraftKey,
+    value: technicalMark.toFixed(1),
+  });
+  const technicalMarkInput =
+    technicalMarkDraft.key === technicalMarkDraftKey
+      ? technicalMarkDraft.value
+      : technicalMark.toFixed(1);
 
   function onTechnicalMarkChange(value: string) {
+    const next = value.replace(',', '.');
+    if (!/^\d{0,2}(\.\d?)?$/.test(next)) return;
+    setTechnicalMarkDraft({ key: technicalMarkDraftKey, value: next });
+  }
+
+  function commitTechnicalMark(value: string) {
+    if (!value.trim()) {
+      setTechnicalMarkDraft({
+        key: technicalMarkDraftKey,
+        value: technicalMark.toFixed(1),
+      });
+      return;
+    }
     const mark = Number(value);
-    if (!Number.isFinite(mark)) return;
-    setTechnicalMark(manoeuvre.id, mark);
+    if (!Number.isFinite(mark)) {
+      setTechnicalMarkDraft({
+        key: technicalMarkDraftKey,
+        value: technicalMark.toFixed(1),
+      });
+      return;
+    }
+    const normalized = normalizeTechnicalMark(mark);
+    setTechnicalMark(manoeuvre.id, normalized);
+    setTechnicalMarkDraft({
+      key: `${manoeuvre.id}:${normalized}`,
+      value: normalized.toFixed(1),
+    });
   }
 
   return (
@@ -62,12 +97,27 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
         <h3 className="text-xs uppercase text-slate-500 mb-2">Technical mark</h3>
         <div className="flex items-center gap-2">
           <input
-            type="number"
-            min={0}
-            max={10}
-            step={0.1}
-            value={technicalMark.toFixed(1)}
+            type="text"
+            inputMode="decimal"
+            value={technicalMarkInput}
             onChange={(e) => onTechnicalMarkChange(e.target.value)}
+            onBlur={(e) => commitTechnicalMark(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.currentTarget.blur();
+              } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                const direction = e.key === 'ArrowUp' ? 1 : -1;
+                const current = Number(technicalMarkInput);
+                const base = Number.isFinite(current) ? current : technicalMark;
+                const next = normalizeTechnicalMark(base + direction * 0.5);
+                setTechnicalMark(manoeuvre.id, next);
+                setTechnicalMarkDraft({
+                  key: `${manoeuvre.id}:${next}`,
+                  value: next.toFixed(1),
+                });
+              }
+            }}
             className="w-24 rounded border border-slate-300 bg-white px-2 py-1 font-mono text-sm text-slate-900 outline-none focus:border-sky-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
             aria-label="Technical mark"
           />
