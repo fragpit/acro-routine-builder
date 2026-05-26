@@ -137,8 +137,13 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
 
       <div>
         <h3 className="text-xs uppercase text-slate-500 mb-2">Technical mark</h3>
-        <div className="flex items-center gap-2">
-          <div className="flex w-24 overflow-hidden rounded border border-slate-300 bg-white focus-within:border-sky-500 dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex flex-wrap items-center gap-2">
+          <LargeStepButton
+            label="Decrease technical mark"
+            value="-"
+            onClick={() => stepTechnicalMark(-1)}
+          />
+          <div className="flex h-12 w-24 overflow-hidden rounded border border-slate-300 bg-white focus-within:border-sky-500 dark:border-slate-700 dark:bg-slate-800 sm:h-auto">
             <input
               type="text"
               inputMode="decimal"
@@ -153,10 +158,10 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
                   stepTechnicalMark(e.key === 'ArrowUp' ? 1 : -1);
                 }
               }}
-              className="min-w-0 flex-1 bg-transparent px-2 py-1 font-mono text-sm text-slate-900 outline-none dark:text-slate-100"
+              className="min-w-0 flex-1 bg-transparent px-3 py-2 font-mono text-lg text-slate-900 outline-none dark:text-slate-100 sm:px-2 sm:py-1 sm:text-sm"
               aria-label="Technical mark"
             />
-            <div className="flex w-5 shrink-0 flex-col border-l border-slate-300 dark:border-slate-700">
+            <div className="hidden w-5 shrink-0 flex-col border-l border-slate-300 dark:border-slate-700 sm:flex">
               <StepButton
                 label="Increase technical mark"
                 direction="up"
@@ -169,12 +174,17 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
               />
             </div>
           </div>
-          <span className="text-xs text-slate-500 dark:text-slate-400">/ 10</span>
+          <LargeStepButton
+            label="Increase technical mark"
+            value="+"
+            onClick={() => stepTechnicalMark(1)}
+          />
+          <span className="text-sm text-slate-500 dark:text-slate-400 sm:text-xs">/ 10</span>
           <button
             type="button"
             onClick={() => setTechnicalMark(manoeuvre.id, null)}
             disabled={!hasCustomTechnicalMark}
-            className="ml-auto rounded border border-slate-300 px-2 py-1 text-xs text-slate-600 hover:border-sky-500 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-slate-300 disabled:hover:text-slate-600 dark:border-slate-700 dark:text-slate-300 dark:hover:text-sky-400 dark:disabled:hover:border-slate-700 dark:disabled:hover:text-slate-300"
+            className="ml-auto h-12 rounded border border-slate-300 px-3 text-sm text-slate-600 hover:border-sky-500 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-slate-300 disabled:hover:text-slate-600 dark:border-slate-700 dark:text-slate-300 dark:hover:text-sky-400 dark:disabled:hover:border-slate-700 dark:disabled:hover:text-slate-300 sm:h-auto sm:px-2 sm:py-1 sm:text-xs"
           >
             Reset
           </button>
@@ -186,6 +196,28 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
         </div>
       </div>
     </div>
+  );
+}
+
+function LargeStepButton({
+  label,
+  value,
+  onClick,
+}: {
+  label: string;
+  value: '+' | '-';
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onClick}
+      className="flex h-12 w-12 items-center justify-center rounded border border-slate-300 bg-white text-2xl font-semibold leading-none text-slate-600 hover:border-sky-500 hover:text-sky-600 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-sky-400 dark:active:bg-slate-700 sm:hidden"
+    >
+      {value}
+    </button>
   );
 }
 
