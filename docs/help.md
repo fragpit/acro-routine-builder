@@ -85,12 +85,13 @@ visible list.
 
 Clicking a trick cell opens an info panel (desktop: right sidebar,
 mobile: bottom sheet). It shows the full description from the
-Sporting Code, the trick's technical mark, and checkboxes for the
-bonuses allowed on that trick. Bonuses that are mutually exclusive
-(for example `SAT` vs `Misty`) disable each other automatically.
-The technical mark is scored from 0 to 10 in 0.5-point steps. When
-it is not customized for that trick, the value follows the `Tq`
-default from Program settings.
+Sporting Code, the trick type's technical mark, and checkboxes for
+the bonuses allowed on that trick. Bonuses that are mutually
+exclusive (for example `SAT` vs `Misty`) disable each other
+automatically. The technical mark is scored from 0 to 10 in
+0.5-point steps. A custom mark applies to every placed copy of that
+trick type in the program. When it is not customized, the value
+follows the `Tq` default from Program settings.
 
 ### Undo and redo
 
@@ -111,7 +112,7 @@ Each run column shows, under the tricks:
 - **Bonus** - shown as `X(Y)%`. `Y` is the raw sum of the selected
   bonus percents (capped per twisted / reversed / flipped slot
   limits). `X` is the effective bonus after each bonus is weighted by
-  that trick's technical mark. The malus is **not** scaled.
+  that trick type's technical mark. The malus is **not** scaled.
 - **Malus** - deduction from the bonus percent for repetition
   violations (FAI 3.3.3). Subtracted from the weighted bonus, not
   from the raw `Y`.
@@ -194,9 +195,9 @@ total       = techFinal + choreoFinal + landingFinal + bonusFinal
 Where:
 
 - **T** - average technical mark across every scoring-eligible trick
-  in the run, 0-10. Each trick can be customized from its info panel
-  in 0.5-point steps; otherwise it uses the Program settings `Tq`
-  default.
+  in the run, 0-10. Each trick type can be customized from its info
+  panel in 0.5-point steps; otherwise it uses the Program settings
+  `Tq` default.
 - **C** - choreography mark, 0-10. Defaults to `9 × Cq/100 + 1` if
   the run is side-balanced, or `9 × Cq/100` otherwise. The `9` is
   the objective ceiling minus the parts (diversity, chaining) a
@@ -255,9 +256,9 @@ program structure. Defaults are both **50%**. They apply like this:
   choreography mark. Symmetry adds `+1` after this correction and
   is not scaled.
 - `bonusFinal` is asymmetric: the positive bonus side is weighted by
-  per-trick technical marks (modeling FAI § 6.6.1, where each AWT
-  trick's bonus is weighted by its per-trick technical mark before
-  the run total is summed), but the malus is **not** scaled - it is
+  trick-type technical marks (modeling FAI § 6.6.1, where each AWT
+  trick's bonus is weighted by its technical mark before the run
+  total is summed), but the malus is **not** scaled - it is
   subtracted as a flat percent. We apply the same model in AWQ for
   consistency. So a sloppy pilot loses part of the bonus payout but
   pays the full repetition penalty.
@@ -330,7 +331,7 @@ it. To move a program between devices, use **Export JSON** below.
 ### Export JSON
 
 `Export JSON` downloads a portable `.arb.json` file. It contains
-the runs, bonuses, custom trick technical marks, program settings
+the runs, bonuses, custom trick-type technical marks, program settings
 and the program name. Send it to a teammate or commit it into
 [test_data/](test_data/) as a fixture.
 
