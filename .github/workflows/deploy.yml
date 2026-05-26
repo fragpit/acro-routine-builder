@@ -33,8 +33,6 @@ jobs:
           CF_ANALYTICS_TOKEN: ${{ secrets.CF_ANALYTICS_TOKEN }}
           SHARE_SHORTENER_URL: ${{ vars.SHARE_SHORTENER_URL }}
 
-      - uses: actions/configure-pages@v5
-
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

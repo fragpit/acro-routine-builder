@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Made the GitHub Pages release workflow avoid the optional
+  `configure-pages` setup action that can block deploys before build starts.
+
 ## v0.8.12
 
 - Added a Cloudflare Pages dev-preview build path with SPA deep-link fallback
