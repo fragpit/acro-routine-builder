@@ -94,6 +94,11 @@ GitHub Pages release flow. Connect the repository in Cloudflare Pages and use:
 from a Cloudflare Pages root URL. GitHub Pages builds keep the default
 `/acro-routine-builder/` base path. `public/_redirects` routes direct deep-link
 requests back to `index.html` for the SPA on Cloudflare Pages.
+Preview deployment cleanup runs from
+[.github/workflows/cleanup-cloudflare-pages.yml](.github/workflows/cleanup-cloudflare-pages.yml)
+when a branch is deleted or a pull request is closed, deleting matching preview
+deployments from the `acro-routine-builder-dev` project. It can also be run
+manually with a branch name.
 
 ## Privacy
 

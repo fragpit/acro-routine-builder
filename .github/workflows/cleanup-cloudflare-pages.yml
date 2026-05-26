@@ -1,0 +1,85 @@
+name: Cleanup Cloudflare Pages previews
+
+on:
+  delete:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Preview branch to clean up
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'delete' && github.event.ref_type == 'branch') ||
+      (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository
+      )
+    env:
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      CF_PAGES_PROJECT: acro-routine-builder-dev
+      PREVIEW_BRANCH: >-
+        ${{
+          github.event_name == 'workflow_dispatch' && inputs.branch ||
+          github.event_name == 'delete' && github.event.ref ||
+          github.event.pull_request.head.ref
+        }}
+    steps:
+      - name: Delete preview deployments
+        run: |
+          set -euo pipefail
+
+          api_base="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${CF_PAGES_PROJECT}"
+          page=1
+          deleted=0
+
+          while :; do
+            response="$(curl -fsS \
+              -H "Authorization: Bearer ${CF_API_TOKEN}" \
+              -H "Content-Type: application/json" \
+              "${api_base}/deployments?page=${page}&per_page=25")"
+
+            ids="$(jq -r --arg branch "${PREVIEW_BRANCH}" '
+              .result[]
+              | select(.environment == "preview")
+              | select(.deployment_trigger.metadata.branch == $branch)
+              | .id
+            ' <<<"${response}")"
+
+            while IFS= read -r deployment_id; do
+              if [[ -z "${deployment_id}" ]]; then
+                continue
+              fi
+
+              echo "Deleting Cloudflare Pages preview deployment ${deployment_id} for ${PREVIEW_BRANCH}"
+              delete_response="$(curl -fsS -X DELETE \
+                -H "Authorization: Bearer ${CF_API_TOKEN}" \
+                -H "Content-Type: application/json" \
+                "${api_base}/deployments/${deployment_id}")"
+
+              if jq -e '.success == true' <<<"${delete_response}" > /dev/null; then
+                deleted=$((deleted + 1))
+              else
+                echo "${delete_response}" | jq -r '.errors[]?.message'
+              fi
+            done <<<"${ids}"
+
+            total_pages="$(jq -r '.result_info.total_pages // 1' <<<"${response}")"
+            if (( page >= total_pages )); then
+              break
+            fi
+            page=$((page + 1))
+          done
+
+          echo "Deleted ${deleted} preview deployment(s) for ${PREVIEW_BRANCH}"

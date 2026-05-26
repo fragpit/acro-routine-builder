@@ -3,7 +3,7 @@
 ## Unreleased
 
 - Added a Cloudflare Pages dev-preview build path with SPA deep-link fallback
-  while keeping GitHub Pages releases tag-driven.
+  and branch cleanup while keeping GitHub Pages releases tag-driven.
 
 ## v0.8.11
 
