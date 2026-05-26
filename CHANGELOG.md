@@ -2,8 +2,8 @@
 
 ## v0.8.13
 
-- Made GitHub Actions use anonymous checkout for the public repository and
-  removed the optional `configure-pages` setup step from Pages releases.
+- Made the GitHub Pages release workflow avoid the optional
+  `configure-pages` setup action that can block deploys before build starts.
 
 ## v0.8.12
 
