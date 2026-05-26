@@ -2,6 +2,9 @@ name: Cleanup Cloudflare Pages previews
 
 on:
   delete:
+  push:
+    branches:
+      - codex/cloudflare-pages-dev-deploy
   pull_request:
     types: [closed]
     branches: [main]
@@ -20,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
       (github.event_name == 'delete' && github.event.ref_type == 'branch') ||
       (
         github.event_name == 'pull_request' &&
@@ -32,6 +36,7 @@ jobs:
       PREVIEW_BRANCH: >-
         ${{
           github.event_name == 'workflow_dispatch' && inputs.branch ||
+          github.event_name == 'push' && github.ref_name ||
           github.event_name == 'delete' && github.event.ref ||
           github.event.pull_request.head.ref
         }}
@@ -66,7 +71,7 @@ jobs:
               delete_response="$(curl -fsS -X DELETE \
                 -H "Authorization: Bearer ${CF_API_TOKEN}" \
                 -H "Content-Type: application/json" \
-                "${api_base}/deployments/${deployment_id}")"
+                "${api_base}/deployments/${deployment_id}?force=true")"
 
               if jq -e '.success == true' <<<"${delete_response}" > /dev/null; then
                 deleted=$((deleted + 1))
