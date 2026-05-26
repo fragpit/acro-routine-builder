@@ -108,7 +108,34 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
         ))}
       </ul>
 
-      <div className="mb-4">
+      {manoeuvre.availableBonuses.length > 0 && (
+        <div className="mb-4">
+          <h3 className="text-xs uppercase text-slate-500 mb-2">Bonuses</h3>
+          <div className="space-y-1">
+            {manoeuvre.availableBonuses.map((b) => {
+              const active = placedTrick.selectedBonuses.includes(b.id);
+              const disabled = isBonusMutuallyExcluded(manoeuvre, placedTrick, b.id);
+              return (
+                <label
+                  key={b.id}
+                  className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer ${active ? 'bg-sky-100 dark:bg-sky-900/50' : 'hover:bg-slate-100 dark:hover:bg-slate-800'} ${disabled ? 'opacity-50' : ''}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    disabled={disabled}
+                    onChange={() => toggleBonus(placedTrick.id, b.id)}
+                  />
+                  <span className="flex-1">{b.label}</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">+{b.percent}%</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <div>
         <h3 className="text-xs uppercase text-slate-500 mb-2">Technical mark</h3>
         <div className="flex items-center gap-2">
           <div className="flex w-24 overflow-hidden rounded border border-slate-300 bg-white focus-within:border-sky-500 dark:border-slate-700 dark:bg-slate-800">
@@ -158,33 +185,6 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
             : `Default ${defaultMark.toFixed(1)} from settings`}
         </div>
       </div>
-
-      {manoeuvre.availableBonuses.length > 0 && (
-        <div>
-          <h3 className="text-xs uppercase text-slate-500 mb-2">Bonuses</h3>
-          <div className="space-y-1">
-            {manoeuvre.availableBonuses.map((b) => {
-              const active = placedTrick.selectedBonuses.includes(b.id);
-              const disabled = isBonusMutuallyExcluded(manoeuvre, placedTrick, b.id);
-              return (
-                <label
-                  key={b.id}
-                  className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer ${active ? 'bg-sky-100 dark:bg-sky-900/50' : 'hover:bg-slate-100 dark:hover:bg-slate-800'} ${disabled ? 'opacity-50' : ''}`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={active}
-                    disabled={disabled}
-                    onChange={() => toggleBonus(placedTrick.id, b.id)}
-                  />
-                  <span className="flex-1">{b.label}</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">+{b.percent}%</span>
-                </label>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
