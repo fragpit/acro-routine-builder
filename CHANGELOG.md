@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Trick cards can now override a trick type's technical mark, saved with the program.
+- Trick cards can now override a trick type's technical mark and update the average T correction.
 
 ## v0.8.17
 

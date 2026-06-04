@@ -91,7 +91,9 @@ exclusive (for example `SAT` vs `Misty`) disable each other
 automatically. The technical mark is scored from 0 to 10 in
 0.5-point steps. A custom mark applies to every placed copy of that
 trick type in the program. When it is not customized, the value
-follows the `Tq` default from Program settings.
+follows the `Tq` default from Program settings. Editing a trick type's
+mark recalculates `Tq` to the average technical mark across the
+currently scoring-eligible placed tricks.
 
 ### Undo and redo
 
@@ -251,7 +253,8 @@ program structure. Defaults are both **50%**. They apply like this:
 
 - `Tq default mark = 10 × Tq/100` - the technical mark used for
   tricks without a custom mark. At `Tq = 50%`, unset tricks use
-  `T = 5.0`.
+  `T = 5.0`. Editing a trick type's custom technical mark updates
+  `Tq` to the current program average.
 - `C mark base = 9 × Cq/100` - the subjective part of the
   choreography mark. Symmetry adds `+1` after this correction and
   is not scaled.
@@ -263,10 +266,11 @@ program structure. Defaults are both **50%**. They apply like this:
   consistency. So a sloppy pilot loses part of the bonus payout but
   pays the full repetition penalty.
 
-Use the `+ / -` buttons in `Quality correction` to step in 5%
-increments. Leave the defaults (50 / 50) for a conservative estimate
-that assumes average judge marks; raise them if you have specific
-marks from a real performance you want to model.
+Use the `+ / -` buttons in `Quality correction` to step `Tq` to the
+next whole percent and `Cq` in 5% increments. Leave the defaults
+(50 / 50) for a conservative estimate that assumes average judge
+marks; raise them if you have specific marks from a real performance
+you want to model.
 
 The `reset` link next to the heading restores both to 50%.
 

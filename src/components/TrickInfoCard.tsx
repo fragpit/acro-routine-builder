@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import type { Manoeuvre, PlacedTrick } from '../rules/types';
 import {
   defaultTechnicalMark,
   normalizeTechnicalMark,
+  programTechnicalQuality,
   technicalMarkForManoeuvre,
 } from '../scoring/technical-marks';
 import { useProgramStore } from '../store/program-store';
@@ -15,12 +17,14 @@ interface Props {
 }
 
 export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props) {
+  const program = useProgramStore((s) => s.program);
   const toggleBonus = useProgramStore((s) => s.toggleBonus);
   const technicalMarksByManoeuvreId = useProgramStore(
     (s) => s.program.technicalMarksByManoeuvreId ?? {},
   );
   const setTechnicalMark = useProgramStore((s) => s.setTechnicalMark);
   const quality = useScoreSettings((s) => s.quality);
+  const setQuality = useScoreSettings((s) => s.setQuality);
   const hasCustomTechnicalMark =
     technicalMarksByManoeuvreId[manoeuvre.id] !== undefined;
   const defaultMark = defaultTechnicalMark(quality);
@@ -45,6 +49,25 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
     setTechnicalMarkDraft({ key: technicalMarkDraftKey, value: next });
   }
 
+  function setTechnicalMarkAndQuality(mark: number | null) {
+    const nextMarks = { ...technicalMarksByManoeuvreId };
+    if (mark === null) {
+      delete nextMarks[manoeuvre.id];
+    } else {
+      nextMarks[manoeuvre.id] = mark;
+    }
+    setTechnicalMark(manoeuvre.id, mark);
+    const nextTechnicalQuality = programTechnicalQuality(
+      program,
+      MANOEUVRES_BY_ID,
+      nextMarks,
+      quality,
+    );
+    if (nextTechnicalQuality !== null && nextTechnicalQuality !== quality.technical) {
+      setQuality({ ...quality, technical: nextTechnicalQuality });
+    }
+  }
+
   function commitTechnicalMark(value: string) {
     if (!value.trim()) {
       setTechnicalMarkDraft({
@@ -62,7 +85,7 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
       return;
     }
     const normalized = normalizeTechnicalMark(mark);
-    setTechnicalMark(manoeuvre.id, normalized);
+    setTechnicalMarkAndQuality(normalized);
     setTechnicalMarkDraft({
       key: `${manoeuvre.id}:${normalized}`,
       value: normalized.toFixed(1),
@@ -71,7 +94,7 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
 
   function setTechnicalMarkValue(value: number) {
     const normalized = normalizeTechnicalMark(value);
-    setTechnicalMark(manoeuvre.id, normalized);
+    setTechnicalMarkAndQuality(normalized);
     setTechnicalMarkDraft({
       key: `${manoeuvre.id}:${normalized}`,
       value: normalized.toFixed(1),
@@ -156,7 +179,7 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
           />
           <button
             type="button"
-            onClick={() => setTechnicalMark(manoeuvre.id, null)}
+            onClick={() => setTechnicalMarkAndQuality(null)}
             disabled={!hasCustomTechnicalMark}
             className="ml-auto h-8 rounded border border-slate-300 px-2 text-xs text-slate-600 hover:border-sky-500 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-slate-300 disabled:hover:text-slate-600 dark:border-slate-700 dark:text-slate-300 dark:hover:text-sky-400 dark:disabled:hover:border-slate-700 dark:disabled:hover:text-slate-300"
           >
@@ -198,7 +221,7 @@ export default function TrickInfoCard({ manoeuvre, placedTrick, onClose }: Props
           <span className="text-xs text-slate-500 dark:text-slate-400">/ 10</span>
           <button
             type="button"
-            onClick={() => setTechnicalMark(manoeuvre.id, null)}
+            onClick={() => setTechnicalMarkAndQuality(null)}
             disabled={!hasCustomTechnicalMark}
             className="ml-auto rounded border border-slate-300 px-2 py-1 text-xs text-slate-600 hover:border-sky-500 hover:text-sky-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-slate-300 disabled:hover:text-slate-600 dark:border-slate-700 dark:text-slate-300 dark:hover:text-sky-400 dark:disabled:hover:border-slate-700 dark:disabled:hover:text-slate-300"
           >
