@@ -391,6 +391,9 @@ particular:
 
 - Mobile uses a horizontal swiper for runs and tap-to-arm for
   placement.
+- The mobile builder keeps its header, violation bar, run indicator
+  and score blocks inside the visible browser window; the trick stack
+  scrolls inside the active run.
 - The Rules and Tricks doc sidebars become off-canvas drawers below
   1024px, opened by the `≡ Contents` bar at the top.
 - Mobile trick cells have `L / R` side toggles and an inline `✕`

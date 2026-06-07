@@ -129,7 +129,7 @@ export default function BuilderMobile() {
   const safeActive = Math.min(activeRunIndex, program.runs.length - 1);
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-slate-50 dark:bg-slate-900">
+    <div className="flex flex-col h-full min-h-0 overflow-hidden overscroll-none bg-slate-50 dark:bg-slate-900">
       <header className="shrink-0 flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pt-[calc(0.5rem+env(safe-area-inset-top))]">
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
@@ -238,32 +238,34 @@ export default function BuilderMobile() {
         </div>
       )}
 
-      <RunSwiper
-        count={program.runs.length}
-        activeIndex={safeActive}
-        onActiveChange={setActiveRunIndex}
-        renderPage={(i) => (
-          <RunMobile
-            run={program.runs[i]}
-            runIndex={i}
-            isArmed={slotArmed}
-            movingTrickId={armedMoveTrickId}
-            onInsertAt={handleInsertAt}
-            duplicateMode={duplicateRunActive}
-            isDuplicateSource={duplicateSourceRunIndex === i}
-            onDuplicateRun={armDuplicateRun}
-            onInsertDuplicate={handleInsertDuplicate}
-            onOpenTrick={setSheetTrickId}
-            onResetRun={resetRun}
-            highlights={highlights}
-            bonusMalus={bonusMalusPerRun[i] ?? 0}
-            distribution={distribution}
-            quality={quality}
-            statsExpanded={statsExpanded}
-            onToggleStats={() => setStatsExpanded((v) => !v)}
-          />
-        )}
-      />
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <RunSwiper
+          count={program.runs.length}
+          activeIndex={safeActive}
+          onActiveChange={setActiveRunIndex}
+          renderPage={(i) => (
+            <RunMobile
+              run={program.runs[i]}
+              runIndex={i}
+              isArmed={slotArmed}
+              movingTrickId={armedMoveTrickId}
+              onInsertAt={handleInsertAt}
+              duplicateMode={duplicateRunActive}
+              isDuplicateSource={duplicateSourceRunIndex === i}
+              onDuplicateRun={armDuplicateRun}
+              onInsertDuplicate={handleInsertDuplicate}
+              onOpenTrick={setSheetTrickId}
+              onResetRun={resetRun}
+              highlights={highlights}
+              bonusMalus={bonusMalusPerRun[i] ?? 0}
+              distribution={distribution}
+              quality={quality}
+              statsExpanded={statsExpanded}
+              onToggleStats={() => setStatsExpanded((v) => !v)}
+            />
+          )}
+        />
+      </div>
 
       <ViolationsBar onJumpTo={setActiveRunIndex} />
 

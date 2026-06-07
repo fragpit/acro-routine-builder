@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Mobile builder now keeps the header and score blocks in view while the
+  active run's trick stack scrolls inside the available viewport.
+
 ## v0.8.13
 
 - Made the GitHub Pages release workflow avoid the optional

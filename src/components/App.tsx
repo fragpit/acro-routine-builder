@@ -16,7 +16,7 @@ export default function App() {
   useCloudflareAnalytics();
   useShareLink();
   return (
-    <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-[100lvh] lg:h-full">
+    <div className="flex flex-col text-slate-900 dark:text-slate-100 relative z-10 h-[100dvh] lg:h-full">
       <div aria-hidden className="paraglider-bg" />
       <div aria-hidden className="mountain-bg" />
       <AppUpdateIndicator />
@@ -50,4 +50,3 @@ export default function App() {
     </div>
   );
 }
-
