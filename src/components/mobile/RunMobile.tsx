@@ -98,7 +98,9 @@ export default function RunMobile({
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className={`flex-1 overflow-y-auto p-3 space-y-2 ${RUN_STACK_SCROLL_CLASS}`}>
+      <div
+        className={`flex-1 min-h-0 overflow-y-auto overscroll-y-contain p-3 space-y-2 ${RUN_STACK_SCROLL_CLASS}`}
+      >
         <div className="relative min-h-full">
           <div
             className={`min-h-full space-y-2 transition-opacity ${
