@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Cloudflare Pages preview cleanup now skips invalid Pages tokens instead of
-  failing branch deletion workflow runs.
+- Cloudflare Pages preview cleanup now requires an explicit enable flag before
+  branch deletion workflow runs call the Pages API.
 
 ## v0.8.14
 

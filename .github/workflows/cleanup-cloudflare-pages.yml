@@ -19,11 +19,14 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'delete' && github.event.ref_type == 'branch') ||
+      vars.CF_PAGES_CLEANUP_ENABLED == 'true' &&
       (
-        github.event_name == 'pull_request' &&
-        github.event.pull_request.head.repo.full_name == github.repository
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'delete' && github.event.ref_type == 'branch') ||
+        (
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        )
       )
     env:
       CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
@@ -41,8 +44,8 @@ jobs:
           set -euo pipefail
 
           if [[ -z "${CF_ACCOUNT_ID:-}" || -z "${CF_PAGES_API_TOKEN:-}" ]]; then
-            echo "::notice title=Cloudflare Pages cleanup skipped::CF_ACCOUNT_ID or CF_PAGES_API_TOKEN is not configured."
-            exit 0
+            echo "::error title=Cloudflare Pages cleanup misconfigured::CF_ACCOUNT_ID or CF_PAGES_API_TOKEN is not configured."
+            exit 1
           fi
 
           api_base="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${CF_PAGES_PROJECT}"
@@ -80,9 +83,9 @@ jobs:
             fi
 
             if [[ "${http_status}" == "401" || "${http_status}" == "403" ]]; then
-              echo "::notice title=Cloudflare Pages cleanup skipped::Cloudflare token cannot list Pages deployments. Configure CF_PAGES_API_TOKEN with Pages Write access."
+              echo "::error title=Cloudflare Pages cleanup failed::Cloudflare token cannot list Pages deployments. Configure CF_PAGES_API_TOKEN with Pages Write access."
               print_cloudflare_errors "${response_file}"
-              exit 0
+              exit 1
             fi
 
             if (( http_status < 200 || http_status >= 300 )); then
@@ -116,9 +119,9 @@ jobs:
               delete_response="$(cat "${delete_file}")"
 
               if [[ "${delete_status}" == "401" || "${delete_status}" == "403" ]]; then
-                echo "::notice title=Cloudflare Pages cleanup skipped::Cloudflare token cannot delete Pages deployments. Configure CF_PAGES_API_TOKEN with Pages Write access."
+                echo "::error title=Cloudflare Pages cleanup failed::Cloudflare token cannot delete Pages deployments. Configure CF_PAGES_API_TOKEN with Pages Write access."
                 print_cloudflare_errors "${delete_file}"
-                exit 0
+                exit 1
               fi
 
               if (( delete_status >= 200 && delete_status < 300 )) && jq -e '.success == true' <<<"${delete_response}" > /dev/null; then
