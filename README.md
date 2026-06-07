@@ -101,9 +101,8 @@ when a branch is deleted or a pull request is closed, deleting matching preview
 deployments from the `acro-routine-builder-dev` project. It can also be run
 manually with a branch name. Cleanup uses Cloudflare's Pages deployment delete
 API with forced deletion enabled for aliased preview deployments. Configure
-`CF_PAGES_API_TOKEN` with Cloudflare Pages Edit access for this cleanup; the
-workflow falls back to `CF_API_TOKEN` for older setups, but skips cleanup
-without failing the run if the token cannot read Pages deployments.
+`CF_PAGES_API_TOKEN` with Cloudflare Pages Edit access for this cleanup; without
+that Pages-specific token, the workflow skips cleanup without failing the run.
 
 ## Privacy
 
