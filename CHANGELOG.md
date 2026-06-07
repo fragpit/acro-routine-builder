@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Cloudflare Pages preview cleanup now skips invalid Pages tokens instead of
+  failing branch deletion workflow runs.
+
 ## v0.8.14
 
 - Mobile builder now keeps the header and score blocks in view while the

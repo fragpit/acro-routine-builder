@@ -27,7 +27,7 @@ jobs:
       )
     env:
       CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      CF_PAGES_API_TOKEN: ${{ secrets.CF_PAGES_API_TOKEN || secrets.CF_API_TOKEN }}
       CF_PAGES_PROJECT: acro-routine-builder-dev
       PREVIEW_BRANCH: >-
         ${{
@@ -40,19 +40,61 @@ jobs:
         run: |
           set -euo pipefail
 
+          if [[ -z "${CF_ACCOUNT_ID:-}" || -z "${CF_PAGES_API_TOKEN:-}" ]]; then
+            echo "::notice title=Cloudflare Pages cleanup skipped::CF_ACCOUNT_ID or CF_PAGES_API_TOKEN is not configured."
+            exit 0
+          fi
+
           api_base="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${CF_PAGES_PROJECT}"
           page=1
           deleted=0
           failed=0
+          response_file=""
+          delete_file=""
+          trap 'rm -f "${response_file}" "${delete_file}"' EXIT
+
+          cloudflare_request() {
+            local method="$1"
+            local url="$2"
+            local output="$3"
+
+            curl -sS -X "${method}" \
+              -H "Authorization: Bearer ${CF_PAGES_API_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -o "${output}" \
+              -w "%{http_code}" \
+              "${url}"
+          }
+
+          print_cloudflare_errors() {
+            local response_path="$1"
+
+            jq -r '.errors[]?.message // empty' "${response_path}" || true
+          }
 
           while :; do
-            response="$(curl -fsS \
-              -H "Authorization: Bearer ${CF_API_TOKEN}" \
-              -H "Content-Type: application/json" \
-              "${api_base}/deployments?page=${page}&per_page=25")"
+            response_file="$(mktemp)"
+            if ! http_status="$(cloudflare_request GET "${api_base}/deployments?env=preview&page=${page}&per_page=25" "${response_file}")"; then
+              echo "::error title=Cloudflare Pages cleanup failed::Failed to call Cloudflare deployments API."
+              exit 1
+            fi
+
+            if [[ "${http_status}" == "401" || "${http_status}" == "403" ]]; then
+              echo "::notice title=Cloudflare Pages cleanup skipped::Cloudflare token cannot list Pages deployments. Configure CF_PAGES_API_TOKEN with Pages Write access."
+              print_cloudflare_errors "${response_file}"
+              exit 0
+            fi
+
+            if (( http_status < 200 || http_status >= 300 )); then
+              echo "::error title=Cloudflare Pages cleanup failed::Cloudflare deployments API returned HTTP ${http_status}."
+              print_cloudflare_errors "${response_file}"
+              exit 1
+            fi
+
+            response="$(cat "${response_file}")"
 
             ids="$(jq -r --arg branch "${PREVIEW_BRANCH}" '
-              .result[]
+              .result[]?
               | select(.environment == "preview")
               | select(.deployment_trigger.metadata.branch == $branch)
               | .id
@@ -64,16 +106,26 @@ jobs:
               fi
 
               echo "Deleting Cloudflare Pages preview deployment ${deployment_id} for ${PREVIEW_BRANCH}"
-              delete_response="$(curl -sS -X DELETE \
-                -H "Authorization: Bearer ${CF_API_TOKEN}" \
-                -H "Content-Type: application/json" \
-                "${api_base}/deployments/${deployment_id}?force=true")"
+              delete_file="$(mktemp)"
+              if ! delete_status="$(cloudflare_request DELETE "${api_base}/deployments/${deployment_id}?force=true" "${delete_file}")"; then
+                failed=$((failed + 1))
+                echo "Cloudflare deployment delete request failed"
+                continue
+              fi
 
-              if jq -e '.success == true' <<<"${delete_response}" > /dev/null; then
+              delete_response="$(cat "${delete_file}")"
+
+              if [[ "${delete_status}" == "401" || "${delete_status}" == "403" ]]; then
+                echo "::notice title=Cloudflare Pages cleanup skipped::Cloudflare token cannot delete Pages deployments. Configure CF_PAGES_API_TOKEN with Pages Write access."
+                print_cloudflare_errors "${delete_file}"
+                exit 0
+              fi
+
+              if (( delete_status >= 200 && delete_status < 300 )) && jq -e '.success == true' <<<"${delete_response}" > /dev/null; then
                 deleted=$((deleted + 1))
               else
                 failed=$((failed + 1))
-                echo "${delete_response}" | jq -r '.errors[]?.message'
+                print_cloudflare_errors "${delete_file}"
               fi
             done <<<"${ids}"
 
