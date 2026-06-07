@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.14
 
 - Mobile builder now keeps the header and score blocks in view while the
   active run's trick stack scrolls inside the available viewport.
