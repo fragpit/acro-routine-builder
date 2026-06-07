@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.15
 
 - Cloudflare Pages preview cleanup now requires an explicit enable flag before
   branch deletion workflow runs call the Pages API.
