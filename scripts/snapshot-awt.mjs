@@ -8,10 +8,9 @@
  *   public/awt-snapshot/meta.json                 — { fetchedAt, count }
  *
  * The runtime client at src/io/awt-api.ts reads these files instead of
- * hitting the AWT API directly. We only commit `closed` competitions:
- * if the API ever returns a non-closed solo+published competition, the
- * script aborts with exit 1 — freezing live results in git would let
- * them drift from the real source.
+ * hitting the AWT API directly. We only commit `closed` competitions;
+ * non-closed solo+published competitions are skipped so live results are
+ * not frozen in git.
  */
 
 import { createHash } from 'node:crypto';
@@ -35,26 +34,22 @@ async function main() {
     throw new Error('Expected an array from /competitions/');
   }
 
-  const eligible = allCompetitions.filter(
+  const soloPublished = allCompetitions.filter(
     (c) => c.type === 'solo' && c.published !== false,
   );
   console.log(
-    `${allCompetitions.length} total / ${eligible.length} solo+published`,
+    `${allCompetitions.length} total / ${soloPublished.length} solo+published`,
   );
 
-  const nonClosed = eligible.filter((c) => c.state !== 'closed');
+  const nonClosed = soloPublished.filter((c) => c.state !== 'closed');
   if (nonClosed.length > 0) {
-    console.error(
-      'Refusing to snapshot live competitions. The following are not closed:',
-    );
+    console.log('Skipping non-closed competitions:');
     for (const c of nonClosed) {
-      console.error(`  ${c._id}  state=${c.state}  ${c.name}`);
+      console.log(`  ${c._id}  state=${c.state}  ${c.name}`);
     }
-    console.error(
-      'Either wait until they close, or update the script to allow non-closed states.',
-    );
-    process.exit(1);
   }
+  const eligible = soloPublished.filter((c) => c.state === 'closed');
+  console.log(`${eligible.length} closed competitions selected`);
 
   await mkdir(COMPETITIONS_DIR, { recursive: true });
 
