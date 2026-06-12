@@ -44,6 +44,19 @@ describe('technical marks', () => {
     ).toBe(73.3);
   });
 
+  it('keeps unset tricks on the supplied Tq default when custom marks change the average', () => {
+    const p = program(run(placedTrick('sat'), placedTrick('stall')));
+
+    expect(
+      programTechnicalQuality(
+        p,
+        MANOEUVRES_BY_ID,
+        { sat: 9 },
+        { technical: 80, choreo: 100 },
+      ),
+    ).toBe(85);
+  });
+
   it('ignores scoring-ineligible tricks', () => {
     const p = program(
       run(

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Trick cards can now override a trick type's technical mark and update the average T correction.
+- Trick technical mark overrides now update the displayed Avg T while leaving the Tq default fixed.
 
 ## v0.8.17
 

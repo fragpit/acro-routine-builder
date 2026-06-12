@@ -60,7 +60,7 @@ function ceilTo3(n: number): number {
  *
  * T (technical mark) is the average technical mark across every
  * scoring-eligible trick in the run. Tricks without a custom mark use
- * the global Tq default.
+ * the stable Tq default.
  *
  * C (choreography mark) defaults to 9 + symmetry bonus (1 if balanced,
  * 0 otherwise). The 9 base accounts for the 8/10 objective criteria

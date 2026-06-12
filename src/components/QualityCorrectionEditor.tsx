@@ -9,8 +9,8 @@ interface Props {
 const CHOREO_STEP = 5;
 
 const KEYS: { key: keyof QualityCorrection; label: string }[] = [
-  { key: 'technical', label: 'T correction' },
-  { key: 'choreo', label: 'C correction' },
+  { key: 'technical', label: 'Tq default' },
+  { key: 'choreo', label: 'Cq correction' },
 ];
 
 const btnCls =

@@ -580,7 +580,7 @@ function ImportPreview({
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               {hasQuality
-                ? `Set T correction to ${accuracy.tq}% and C correction to ${accuracy.cq}% from the pilot's judges' marks averaged across ${accuracy.runsUsed} run${accuracy.runsUsed === 1 ? '' : 's'}.`
+                ? `Set Tq default to ${accuracy.tq}% and Cq correction to ${accuracy.cq}% from the pilot's judges' marks averaged across ${accuracy.runsUsed} run${accuracy.runsUsed === 1 ? '' : 's'}.`
                 : "Judges' marks are not available for this pilot - accuracy cannot be applied."}
             </div>
           </div>

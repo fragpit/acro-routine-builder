@@ -18,7 +18,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Side selection (L/R) and bonus modifiers per placed trick
   (twisted / reverse / flipped, with mutual exclusions)
 - Trick-type technical mark overrides saved with the program and reflected
-  in the average T correction
+  in the displayed average T while the Tq default stays fixed
 - Default bonuses applied automatically on trick insertion
 - Duplicate a complete run into another run, with confirmation before
   overwriting non-empty targets
@@ -27,8 +27,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Repetition penalties distinguish regular and reverse variants while
   still flagging repeated reverse variants
 - Technicity and bonus estimation per run (AWT/AWQ formulas)
-- Program total with a cumulative change indicator next to it; click
-  the total to pin a comparison baseline
+- Program total with average T and a cumulative change indicator next to
+  it; click the total to pin a comparison baseline
 - AWT mode toggle (enables AWT-specific restrictions)
 - Program import/export: JSON roundtrip + human-readable markdown report
 - Free-form program notes editor (right-side panel on desktop, bottom-sheet

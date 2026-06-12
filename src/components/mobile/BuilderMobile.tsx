@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { runScoreBreakdown } from '../../scoring/final-score';
+import { programTechnicalQuality } from '../../scoring/technical-marks';
 import { runSymmetry } from '../../rules/validators/symmetry';
 import { useProgramStore } from '../../store/program-store';
 import { useScoreSettings } from '../../store/score-settings';
 import { useBonusMalusPerRun, useViolationHighlights } from '../../hooks/useScoringDerived';
 import { useScoreDelta } from '../../hooks/useScoreDelta';
 import ScoreDelta from '../ScoreDelta';
+import TechnicalAverage from '../TechnicalAverage';
 import { loadRecentTricks, pushRecentTrick } from '../../store/recent-tricks';
 import { IconUndo, IconRedo, IconNote } from '../icons';
 import RunSwiper from './RunSwiper';
@@ -135,6 +137,16 @@ export default function BuilderMobile() {
     return { total: Math.ceil(total * 1000) / 1000 };
   }, [program, distribution, quality, technicalMarksByManoeuvreId, bonusMalusPerRun]);
 
+  const technicalAverage = useMemo(
+    () => programTechnicalQuality(
+      program,
+      MANOEUVRES_BY_ID,
+      technicalMarksByManoeuvreId,
+      quality,
+    ),
+    [program, technicalMarksByManoeuvreId, quality],
+  );
+
   const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
     useScoreDelta(programTotal?.total ?? null);
 
@@ -167,6 +179,12 @@ export default function BuilderMobile() {
                   </span>
                   <ScoreDelta delta={scoreDelta} />
                 </button>
+              </>
+            )}
+            {technicalAverage !== null && (
+              <>
+                <span>·</span>
+                <TechnicalAverage value={technicalAverage} />
               </>
             )}
           </div>

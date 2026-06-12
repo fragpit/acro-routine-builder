@@ -92,8 +92,8 @@ automatically. The technical mark is scored from 0 to 10 in
 0.5-point steps. A custom mark applies to every placed copy of that
 trick type in the program. When it is not customized, the value
 follows the `Tq` default from Program settings. Editing a trick type's
-mark recalculates `Tq` to the average technical mark across the
-currently scoring-eligible placed tricks.
+mark changes the score and the displayed `Avg T`, but it does not
+change the `Tq` default used by unset trick types.
 
 ### Undo and redo
 
@@ -218,8 +218,9 @@ Where:
 ### Program total and the change indicator
 
 The header shows the **program total** (sum of all per-run Final
-Scores). Next to it is a small change indicator in green or red
-showing the difference from a comparison baseline:
+Scores) and the current **Avg T** across scoring-eligible tricks.
+Next to the score is a small change indicator in green or red showing
+the difference from a comparison baseline:
 
 - **Auto mode** (default). The baseline trails behind your edits:
   when you stop editing for a few seconds it catches up to the
@@ -254,7 +255,8 @@ program structure. Defaults are both **50%**. They apply like this:
 - `Tq default mark = 10 × Tq/100` - the technical mark used for
   tricks without a custom mark. At `Tq = 50%`, unset tricks use
   `T = 5.0`. Editing a trick type's custom technical mark updates
-  `Tq` to the current program average.
+  the displayed `Avg T`, but the `Tq` default stays fixed until you
+  change it in Program settings or import another AWT program.
 - `C mark base = 9 × Cq/100` - the subjective part of the
   choreography mark. Symmetry adds `+1` after this correction and
   is not scaled.
