@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- AWT import snapshot now includes Nest Games 2026 results.
+
 ## v0.8.15
 
 - Cloudflare Pages preview cleanup now requires an explicit enable flag before

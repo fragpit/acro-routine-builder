@@ -328,6 +328,28 @@
     "last_update": "2025-06-07T12:36:58.648265"
   },
   {
+    "_id": "6a0d51b4cab9804cb4f9a21a",
+    "name": "Nest Games 2026",
+    "code": "nest-games-2026",
+    "start_date": "2026-06-06",
+    "end_date": "2026-06-07",
+    "location": "Lumbin",
+    "published": true,
+    "type": "solo",
+    "state": "closed",
+    "number_of_pilots": 9,
+    "number_of_teams": 0,
+    "number_of_judges": 4,
+    "number_of_runs": 3,
+    "image": "/files/766d107c9ba6780c648409d5f3c82053701e919677f601861a2ef408115dd452",
+    "logo": "/files/766d107c9ba6780c648409d5f3c82053701e919677f601861a2ef408115dd452",
+    "website": null,
+    "seasons": [
+      "awt-2026"
+    ],
+    "last_update": "2026-06-06T13:29:59.322532"
+  },
+  {
     "_id": "6810ba0ae2fadfea2cb58017",
     "name": "New School 2025",
     "code": "new-school-2025",
