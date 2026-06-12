@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.8.16
 
 - AWT import snapshot now includes Nest Games 2026 results.
 
