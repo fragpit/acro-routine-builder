@@ -152,6 +152,7 @@ export default function RunMobile({
                             unrewardedBonuses={unrewarded.get(t.id)}
                             dimmed={movingTrickId === t.id}
                             sortDisabled={isArmed || duplicateMode}
+                            technicalMarksByManoeuvreId={technicalMarksByManoeuvreId}
                             onTap={() => onOpenTrick(t.id)}
                           />
                         </div>

@@ -131,6 +131,7 @@ export function RunColumn({
                       selected={selectedTrickId === t.id}
                       ignoredReasons={ignored.get(t.id)}
                       unrewardedBonuses={unrewardedBonuses.get(t.id)}
+                      technicalMarksByManoeuvreId={technicalMarksByManoeuvreId}
                       onSelect={() => onSelectTrick(t.id)}
                     />
                     <DropZone runIndex={runIndex} insertIndex={i + 1} />

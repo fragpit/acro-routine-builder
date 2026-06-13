@@ -18,7 +18,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Side selection (L/R) and bonus modifiers per placed trick
   (twisted / reverse / flipped, with mutual exclusions)
 - Trick-type technical mark overrides saved with the program and reflected
-  in the displayed average T while the Tq default stays fixed
+  in the displayed average T and trick cards while the Tq default stays fixed
 - Default bonuses applied automatically on trick insertion
 - Duplicate a complete run into another run, with confirmation before
   overwriting non-empty targets

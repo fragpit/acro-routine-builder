@@ -93,7 +93,8 @@ automatically. The technical mark is scored from 0 to 10 in
 trick type in the program. When it is not customized, the value
 follows the `Tq` default from Program settings. Editing a trick type's
 mark changes the score and the displayed `Avg T`, but it does not
-change the `Tq` default used by unset trick types.
+change the `Tq` default used by unset trick types. Trick cards show
+custom marks next to the trick coefficient.
 
 ### Undo and redo
 

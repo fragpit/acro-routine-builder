@@ -1,6 +1,10 @@
 import { useDraggable } from '@dnd-kit/core';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
-import type { PlacedTrick, Side } from '../rules/types';
+import type {
+  PlacedTrick,
+  Side,
+  TechnicalMarksByManoeuvreId,
+} from '../rules/types';
 import { useProgramStore } from '../store/program-store';
 import type { DragData } from './builder/drag-types';
 
@@ -10,10 +14,19 @@ interface Props {
   selected: boolean;
   ignoredReasons?: string[];
   unrewardedBonuses?: Set<string>;
+  technicalMarksByManoeuvreId: TechnicalMarksByManoeuvreId;
   onSelect: () => void;
 }
 
-export default function TrickCell({ trick, highlight, selected, ignoredReasons, unrewardedBonuses, onSelect }: Props) {
+export default function TrickCell({
+  trick,
+  highlight,
+  selected,
+  ignoredReasons,
+  unrewardedBonuses,
+  technicalMarksByManoeuvreId,
+  onSelect,
+}: Props) {
   const ignored = (ignoredReasons?.length ?? 0) > 0;
   const manoeuvre = MANOEUVRES_BY_ID[trick.manoeuvreId];
   const removeTrick = useProgramStore((s) => s.removeTrick);
@@ -27,6 +40,7 @@ export default function TrickCell({ trick, highlight, selected, ignoredReasons, 
   if (!manoeuvre) return null;
 
   const sides: Side[] = ['L', 'R'];
+  const customTechnicalMark = technicalMarksByManoeuvreId[manoeuvre.id];
 
   return (
     <div
@@ -49,6 +63,14 @@ export default function TrickCell({ trick, highlight, selected, ignoredReasons, 
             <span className="text-xs text-slate-500 dark:text-slate-400 shrink-0">
               {manoeuvre.coefficient.toFixed(2)}
             </span>
+            {customTechnicalMark !== undefined && (
+              <span
+                className="rounded bg-sky-100 px-1 py-0.5 text-[10px] font-medium text-sky-800 dark:bg-sky-900/50 dark:text-sky-200 shrink-0"
+                title="Custom technical mark"
+              >
+                T {customTechnicalMark.toFixed(1)}
+              </span>
+            )}
           </div>
           {ignored && (
             <div className="text-[10px] uppercase tracking-wide text-slate-500 mt-0.5">
