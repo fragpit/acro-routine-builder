@@ -12,7 +12,8 @@
           { "id": "r1t1", "manoeuvreId": "helicopter", "side": "R", "selectedBonuses": [] },
           { "id": "r1t2", "manoeuvreId": "misty_flip", "side": "L", "selectedBonuses": [] },
           { "id": "r1t3", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
-          { "id": "r1t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+          { "id": "r1t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] },
+          { "id": "r1t5", "manoeuvreId": "joker", "side": "L", "selectedBonuses": ["reverse"] }
         ]
       },
       {
@@ -21,7 +22,8 @@
           { "id": "r2t1", "manoeuvreId": "helicopter", "side": "R", "selectedBonuses": [] },
           { "id": "r2t2", "manoeuvreId": "misty_flip", "side": "L", "selectedBonuses": ["twisted"] },
           { "id": "r2t3", "manoeuvreId": "wingovers", "side": null, "selectedBonuses": [] },
-          { "id": "r2t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] }
+          { "id": "r2t4", "manoeuvreId": "tail_slide", "side": null, "selectedBonuses": [] },
+          { "id": "r2t5", "manoeuvreId": "joker", "side": "L", "selectedBonuses": ["reverse"] }
         ]
       }
     ],

@@ -47,15 +47,21 @@ describe('validateRepetition', () => {
     expect(validateRepetition(p, MANOEUVRES_BY_ID)).toEqual([]);
   });
 
-  it('does not flag two reversed instances of the same manoeuvre', () => {
+  it('flags two reversed instances of the same manoeuvre', () => {
     const p = prog([
       run(placedTrick('joker', { side: 'L', selectedBonuses: ['reverse'] })),
       run(placedTrick('joker', { side: 'L', selectedBonuses: ['reverse'] })),
     ]);
-    expect(validateRepetition(p, MANOEUVRES_BY_ID)).toEqual([]);
+    const v = validateRepetition(p, MANOEUVRES_BY_ID);
+    expect(v).toHaveLength(1);
+    expect(v[0].affectedCells).toEqual([
+      { runIndex: 0, trickIndex: 0 },
+      { runIndex: 1, trickIndex: 0 },
+    ]);
+    expect(v[0].bonusMalusByRun).toEqual({ 1: 13 });
   });
 
-  it('does not flag two twisted+reversed instances of the same manoeuvre', () => {
+  it('treats twisted+reversed as the same reversed manoeuvre', () => {
     const p = prog([
       run(
         placedTrick('joker', {
@@ -70,7 +76,9 @@ describe('validateRepetition', () => {
         }),
       ),
     ]);
-    expect(validateRepetition(p, MANOEUVRES_BY_ID)).toEqual([]);
+    const v = validateRepetition(p, MANOEUVRES_BY_ID);
+    expect(v).toHaveLength(1);
+    expect(v[0].bonusMalusByRun).toEqual({ 1: 13 });
   });
 
   it('reversed instance does not collide with non-reversed siblings', () => {
