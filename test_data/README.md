@@ -20,7 +20,7 @@ Import via the Builder: **Load from file** → pick a file below.
 | [3.4-incompatible-tumbling-stallinf.arb.json](3.4-incompatible-tumbling-stallinf.arb.json) | X-Chopper / Misty to Tumbling + stall-to-infinite in the same run |
 | [3.5-bonus-limits.arb.json](3.5-bonus-limits.arb.json) | Per-run limits: 6 twisted / 4 reversed / 3 flipped |
 | [3.6-no-side-once-per-run.arb.json](3.6-no-side-once-per-run.arb.json) | MacFly / MistyFly / HeliFly / SatFly twice in a run |
-| [4.1-repetition.arb.json](4.1-repetition.arb.json) | Same manoeuvre, same direction repeated across runs |
+| [4.1-repetition.arb.json](4.1-repetition.arb.json) | Same manoeuvre, same direction repeated across runs, including reverse variants |
 | [4.3-repetition-allowed.arb.json](4.3-repetition-allowed.arb.json) | Exception: Tail Slide / Wingover / Full Stall can repeat |
 | [4.3-repeated-bonus-same-run.arb.json](4.3-repeated-bonus-same-run.arb.json) | Twisted / flipped bonus rewarded only once per run |
 | [4.4-awt-misty-to-misty.arb.json](4.4-awt-misty-to-misty.arb.json) | Misty to Misty used with AWT mode on |

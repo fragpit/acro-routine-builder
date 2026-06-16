@@ -141,10 +141,10 @@ Each manoeuvre may only be performed once in each direction
 during the same competition without deduction. A twisted or
 flipped manoeuvre is considered the same manoeuvre as
 an untwisted one. A reverse manoeuvre is considered
-a different manoeuvre altogether - the validator treats
-every reversed instance as unique, so reversed instances
-neither collide with their non-reversed counterparts nor
-with each other.
+a different manoeuvre altogether. Reversed instances do
+not collide with their non-reversed counterparts, but a
+reversed instance still repeats against the same reversed
+manoeuvre in the same direction.
 
 Example: you can do a Joker to the left, followed by
 a twisted Joker to the right, followed by a twisted Joker
@@ -152,8 +152,9 @@ reverse to the left without penalty. But if you do a twisted
 Joker to the left and a Joker to the left you will get
 one malus.
 
-A second twisted Joker reverse to the left is also fine -
-reversed instances are not subject to the repetition rule.
+A second twisted Joker reverse to the left is a repetition:
+twisted still counts as the same manoeuvre, and both entries
+are the reversed Joker variant.
 
 ### 4.2 Repetition penalty
 

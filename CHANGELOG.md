@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Repeated reverse manoeuvres now trigger repetition penalties.
+
 ## v0.8.16
 
 - AWT import snapshot now includes Nest Games 2026 results.

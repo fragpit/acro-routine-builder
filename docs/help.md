@@ -155,7 +155,9 @@ toolbar on desktop). The `Program settings` section has:
   is the number of runs, which means any trick can only be flown
   once across the whole program. Set `MAX` for no reset; set a
   smaller value (e.g. 2 for a superfinal block of 2 runs) if you
-  want repetition allowed outside that window.
+  want repetition allowed outside that window. Reverse variants are
+  tracked separately from regular variants, but repeated reverse
+  variants still count as repetitions.
 - **AWT mode** - switch between AWQ (default) and AWT. AWT enforces
   extra restrictions - such as the Misty-to-Misty ban (section 4.4)
   - and excludes some tricks from the palette entirely. The bonus
