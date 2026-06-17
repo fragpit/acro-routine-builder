@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Program } from '../../rules/types';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { placedTrick, run } from '../../rules/validators/__tests__/helpers';
-import { programTechnicalQuality } from '../technical-marks';
+import { programTechnicalQuality, runTechnicalMark } from '../technical-marks';
 
 function program(...runs: Program['runs']): Program {
   return {
@@ -57,7 +57,7 @@ describe('technical marks', () => {
     ).toBe(85);
   });
 
-  it('ignores scoring-ineligible tricks', () => {
+  it('ignores hard scoring-ineligible tricks', () => {
     const p = program(
       run(
         placedTrick('rhythmic_sat'),
@@ -78,5 +78,26 @@ describe('technical marks', () => {
         { technical: 50, choreo: 100 },
       ),
     ).toBe(90);
+  });
+
+  it('includes bonus-limit extras in technical marks', () => {
+    const r = run(
+      placedTrick('sat', { selectedBonuses: ['twisted'] }),
+      placedTrick('misty_flip', { selectedBonuses: ['twisted'] }),
+      placedTrick('helicopter', { selectedBonuses: ['twisted'] }),
+      placedTrick('asymetric_sat', { selectedBonuses: ['twisted'] }),
+      placedTrick('mac_twist', { selectedBonuses: ['twisted'] }),
+      placedTrick('looping', { selectedBonuses: ['twisted'] }),
+    );
+    const p = program(r);
+    const marks = { looping: 10 };
+    const quality = { technical: 50, choreo: 100 };
+
+    expect(
+      runTechnicalMark(r, MANOEUVRES_BY_ID, marks, quality),
+    ).toBeCloseTo((5 * 5 + 10) / 6, 5);
+    expect(
+      programTechnicalQuality(p, MANOEUVRES_BY_ID, marks, quality),
+    ).toBe(58.3);
   });
 });

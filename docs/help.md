@@ -197,10 +197,12 @@ total       = techFinal + choreoFinal + landingFinal + bonusFinal
 
 Where:
 
-- **T** - average technical mark across every scoring-eligible trick
-  in the run, 0-10. Each trick type can be customized from its info
-  panel in 0.5-point steps; otherwise it uses the Program settings
-  `Tq` default.
+- **T** - average technical mark across every trick that can receive
+  a judge technical mark, 0-10. Extra twisted / reversed / flipped
+  manoeuvres still count here even though their bonus and coefficient
+  do not. Each trick type can be customized from its info panel in
+  0.5-point steps; otherwise it uses the Program settings `Tq`
+  default.
 - **C** - choreography mark, 0-10. Defaults to `9 × Cq/100 + 1` if
   the run is side-balanced, or `9 × Cq/100` otherwise. The `9` is
   the objective ceiling minus the parts (diversity, chaining) a
@@ -219,7 +221,8 @@ Where:
 ### Program total and the change indicator
 
 The header shows the **program total** (sum of all per-run Final
-Scores) and the current **Avg T** across scoring-eligible tricks.
+Scores) and the current **Avg T** across tricks that can receive a
+judge technical mark.
 Next to the score is a small change indicator in green or red showing
 the difference from a comparison baseline:
 

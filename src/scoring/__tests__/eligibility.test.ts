@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { excludedFromScoring } from '../eligibility';
+import {
+  excludedFromScoring,
+  excludedFromTechnicalMarks,
+} from '../eligibility';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { placedTrick, run } from '../../rules/validators/__tests__/helpers';
 
@@ -62,5 +65,22 @@ describe('excludedFromScoring', () => {
     expect(ex.has(tricks[2].id)).toBe(true);
     expect(ex.has(tricks[0].id)).toBe(false);
     expect(ex.has(tricks[1].id)).toBe(false);
+  });
+
+  it('keeps bonus-limit extras eligible for technical marks', () => {
+    const tricks = Array.from({ length: 6 }, (_, i) =>
+      placedTrick(i === 5 ? 'looping' : 'sat', {
+        selectedBonuses: ['twisted'],
+      }),
+    );
+    const r = run(...tricks);
+    const scoringExclusions = excludedFromScoring(r, MANOEUVRES_BY_ID);
+    const technicalMarkExclusions = excludedFromTechnicalMarks(
+      r,
+      MANOEUVRES_BY_ID,
+    );
+
+    expect(scoringExclusions.has(tricks[5].id)).toBe(true);
+    expect(technicalMarkExclusions.has(tricks[5].id)).toBe(false);
   });
 });

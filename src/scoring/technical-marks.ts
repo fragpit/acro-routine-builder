@@ -5,7 +5,7 @@ import type {
   TechnicalMarksByManoeuvreId,
 } from '../rules/types';
 import type { QualityCorrection } from './final-score';
-import { excludedFromScoring } from './eligibility';
+import { excludedFromTechnicalMarks } from './eligibility';
 
 export const MIN_TECHNICAL_MARK = 0;
 export const MAX_TECHNICAL_MARK = 10;
@@ -48,7 +48,7 @@ export function runTechnicalMark(
   marks: TechnicalMarksByManoeuvreId,
   quality: QualityCorrection,
 ): number {
-  const excluded = excludedFromScoring(run, manoeuvres);
+  const excluded = excludedFromTechnicalMarks(run, manoeuvres);
   const values = run.tricks
     .filter((t) => !excluded.has(t.id) && manoeuvres[t.manoeuvreId])
     .map((t) => technicalMarkForManoeuvre(t.manoeuvreId, marks, quality));
@@ -63,7 +63,7 @@ export function programTechnicalQuality(
   quality: QualityCorrection,
 ): number | null {
   const values = program.runs.flatMap((run) => {
-    const excluded = excludedFromScoring(run, manoeuvres);
+    const excluded = excludedFromTechnicalMarks(run, manoeuvres);
     return run.tricks
       .filter((t) => !excluded.has(t.id) && manoeuvres[t.manoeuvreId])
       .map((t) => technicalMarkForManoeuvre(t.manoeuvreId, marks, quality));
