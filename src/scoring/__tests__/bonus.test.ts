@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { runBonus } from '../bonus';
+import { runBonus, runScaledBonus } from '../bonus';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { placedTrick, run } from '../../rules/validators/__tests__/helpers';
 
@@ -32,5 +32,19 @@ describe('runBonus', () => {
       excluded,
     );
     expect(runBonus(r, MANOEUVRES_BY_ID)).toBeCloseTo(4.5 + 3, 5);
+  });
+
+  it('weights selected bonuses by each trick technical mark', () => {
+    const r = run(
+      placedTrick('wingovers', { selectedBonuses: ['twisted'] }),
+      placedTrick('stall', { side: null, selectedBonuses: ['twisted_exit'] }),
+    );
+    const scaled = runScaledBonus(
+      r,
+      MANOEUVRES_BY_ID,
+      { wingovers: 10, stall: 5 },
+      { technical: 80, choreo: 50 },
+    );
+    expect(scaled).toBeCloseTo(3.5 + 4.5 * 0.5, 5);
   });
 });

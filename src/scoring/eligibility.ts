@@ -8,6 +8,11 @@ import {
   TUMBLING_RELATED_LIMIT,
 } from '../data/competition-types';
 
+interface ScoringExclusion {
+  reason: string;
+  excludesTechnicalMark: boolean;
+}
+
 /**
  * Returns the set of placed-trick ids that will not be scored in the given run
  * per FAI 3.1 (max 2 manoeuvres with coefficient >= 1.95), 3.2 (only one
@@ -25,6 +30,24 @@ export function excludedFromScoring(
 }
 
 /**
+ * Returns the set of placed-trick ids excluded from averaged judge technical
+ * marks. Bonus-limit extras lose coefficient and bonus credit, but still
+ * receive a technical mark.
+ */
+export function excludedFromTechnicalMarks(
+  run: Run,
+  manoeuvres: Record<string, Manoeuvre>,
+): Set<string> {
+  return new Set(
+    [...exclusionDetailsByTrick(run, manoeuvres)]
+      .filter(([, details]) =>
+        details.some((detail) => detail.excludesTechnicalMark),
+      )
+      .map(([trickId]) => trickId),
+  );
+}
+
+/**
  * Same as excludedFromScoring but returns a per-trick reason string for UI
  * display (e.g. "more than 5 twisted manoeuvres").
  */
@@ -32,11 +55,27 @@ export function exclusionsByTrick(
   run: Run,
   manoeuvres: Record<string, Manoeuvre>,
 ): Map<string, string[]> {
-  const reasons = new Map<string, string[]>();
+  return new Map(
+    [...exclusionDetailsByTrick(run, manoeuvres)].map(([trickId, details]) => [
+      trickId,
+      details.map((detail) => detail.reason),
+    ]),
+  );
+}
+
+function exclusionDetailsByTrick(
+  run: Run,
+  manoeuvres: Record<string, Manoeuvre>,
+): Map<string, ScoringExclusion[]> {
+  const reasons = new Map<string, ScoringExclusion[]>();
   let highCoeffCount = 0;
   let tumblingRelatedCount = 0;
   let stallToInfCount = 0;
-  const bonusCount: Record<BonusCategory, number> = { twisted: 0, reversed: 0, flipped: 0 };
+  const bonusCount: Record<BonusCategory, number> = {
+    twisted: 0,
+    reversed: 0,
+    flipped: 0,
+  };
   for (const t of run.tricks) {
     const m = manoeuvres[t.manoeuvreId];
     if (!m) continue;
@@ -48,19 +87,31 @@ export function exclusionsByTrick(
       const cat = getBonusCategory(m, b);
       if (cat) cats.add(cat);
     }
-    const trickReasons: string[] = [];
+    const trickReasons: ScoringExclusion[] = [];
     if (isHigh && highCoeffCount >= HIGH_COEFF_LIMIT) {
-      trickReasons.push(`more than ${HIGH_COEFF_LIMIT} manoeuvres with coefficient \u2265 ${HIGH_COEFF_THRESHOLD}`);
+      trickReasons.push({
+        reason: `more than ${HIGH_COEFF_LIMIT} manoeuvres with coefficient \u2265 ${HIGH_COEFF_THRESHOLD}`,
+        excludesTechnicalMark: true,
+      });
     }
     if (isTumblingRelated && tumblingRelatedCount >= TUMBLING_RELATED_LIMIT) {
-      trickReasons.push(`more than ${TUMBLING_RELATED_LIMIT} tumbling/infinity/rhythmic related manoeuvres`);
+      trickReasons.push({
+        reason: `more than ${TUMBLING_RELATED_LIMIT} tumbling/infinity/rhythmic related manoeuvres`,
+        excludesTechnicalMark: true,
+      });
     }
     if (isStallToInf && stallToInfCount >= STALL_TO_INFINITE_LIMIT) {
-      trickReasons.push('more than one stall-to-infinite family manoeuvre');
+      trickReasons.push({
+        reason: 'more than one stall-to-infinite family manoeuvre',
+        excludesTechnicalMark: true,
+      });
     }
     for (const cat of cats) {
       if (bonusCount[cat] >= BONUS_LIMITS[cat]) {
-        trickReasons.push(`more than ${BONUS_LIMITS[cat]} ${cat} manoeuvres`);
+        trickReasons.push({
+          reason: `more than ${BONUS_LIMITS[cat]} ${cat} manoeuvres`,
+          excludesTechnicalMark: false,
+        });
       }
     }
     if (trickReasons.length > 0) {

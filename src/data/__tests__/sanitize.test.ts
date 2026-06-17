@@ -16,6 +16,7 @@ function makeProgram(tricks: PlacedTrick[]): Program {
     runs: [{ id: 'r1', tricks }],
     repeatAfterRuns: 1,
     defaultBonuses: [],
+    technicalMarksByManoeuvreId: {},
     notes: '',
   };
 }
@@ -62,6 +63,7 @@ describe('sanitizeProgram', () => {
       ],
       repeatAfterRuns: 2,
       defaultBonuses: [],
+      technicalMarksByManoeuvreId: {},
       notes: '',
     };
     const out = sanitizeProgram(p);
@@ -69,5 +71,27 @@ describe('sanitizeProgram', () => {
     expect(out.runs[0].tricks[0].selectedBonuses).toEqual([]);
     expect(out.runs[1].tricks[0].selectedBonuses).toEqual(['twisted']);
     expect(out.runs[1]).toBe(p.runs[1]);
+  });
+
+  it('strips invalid technical mark overrides', () => {
+    const p = {
+      ...makeProgram([trick('sat', [])]),
+      technicalMarksByManoeuvreId: {
+        sat: 8.5,
+        unknown: 9,
+        stall: 11,
+      },
+    };
+    const out = sanitizeProgram(p);
+    expect(out.technicalMarksByManoeuvreId).toEqual({ sat: 8.5 });
+  });
+
+  it('normalizes technical mark overrides to half-point steps', () => {
+    const p = {
+      ...makeProgram([trick('sat', [])]),
+      technicalMarksByManoeuvreId: { sat: 8.3 },
+    };
+    const out = sanitizeProgram(p);
+    expect(out.technicalMarksByManoeuvreId).toEqual({ sat: 8.5 });
   });
 });

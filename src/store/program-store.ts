@@ -5,6 +5,7 @@ import { DEFAULT_RUNS } from '../data/competition-types';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { sanitizeProgram } from '../data/sanitize';
 import { validateProgram } from '../rules/engine';
+import { normalizeTechnicalMark } from '../scoring/technical-marks';
 import { STORAGE_KEYS } from './storage-keys';
 
 let idCounter = 0;
@@ -29,6 +30,7 @@ interface ProgramState {
   setRepeatAfterRuns: (n: number) => void;
   setDefaultBonuses: (bonuses: string[]) => void;
   setNotes: (notes: string) => void;
+  setTechnicalMark: (manoeuvreId: string, mark: number | null) => void;
   addTrick: (runIndex: number, manoeuvreId: string, atIndex?: number) => void;
   removeTrick: (trickId: string) => void;
   moveTrick: (trickId: string, toRunIndex: number, toIndex: number) => void;
@@ -91,6 +93,20 @@ function commit(state: { program: Program; past: Program[] }, nextProgram: Progr
   };
 }
 
+function withProgramDefaults(program: Program): Program {
+  const next = program as Program & {
+    defaultBonuses?: unknown;
+    notes?: unknown;
+    technicalMarksByManoeuvreId?: unknown;
+  };
+  if (!Array.isArray(next.defaultBonuses)) next.defaultBonuses = [];
+  if (typeof next.notes !== 'string') next.notes = '';
+  if (!next.technicalMarksByManoeuvreId || typeof next.technicalMarksByManoeuvreId !== 'object') {
+    next.technicalMarksByManoeuvreId = {};
+  }
+  return sanitizeProgram(next as Program);
+}
+
 export const useProgramStore = create<ProgramState>()(
   persist(
     (set) => ({
@@ -99,6 +115,7 @@ export const useProgramStore = create<ProgramState>()(
     runs: Array.from({ length: DEFAULT_RUNS }, () => emptyRun()),
     repeatAfterRuns: DEFAULT_RUNS,
     defaultBonuses: [],
+    technicalMarksByManoeuvreId: {},
     notes: '',
   },
   violations: [],
@@ -124,10 +141,8 @@ export const useProgramStore = create<ProgramState>()(
       const saved = state.savedPrograms[name];
       if (!saved) return state;
       const program: Program = JSON.parse(JSON.stringify(saved));
-      if (!Array.isArray(program.defaultBonuses)) program.defaultBonuses = [];
-      if (typeof program.notes !== 'string') program.notes = '';
       return {
-        ...commit(state, sanitizeProgram(program)),
+        ...commit(state, withProgramDefaults(program)),
         currentName: name,
         selectedTrickId: null,
       };
@@ -151,6 +166,7 @@ export const useProgramStore = create<ProgramState>()(
         runs: Array.from({ length: DEFAULT_RUNS }, () => emptyRun()),
         repeatAfterRuns: DEFAULT_RUNS,
         defaultBonuses: [],
+        technicalMarksByManoeuvreId: {},
         notes: '',
       };
       return {
@@ -163,10 +179,8 @@ export const useProgramStore = create<ProgramState>()(
   importProgram: (program, name) =>
     set((state) => {
       const cloned: Program = JSON.parse(JSON.stringify(program));
-      if (!Array.isArray(cloned.defaultBonuses)) cloned.defaultBonuses = [];
-      if (typeof cloned.notes !== 'string') cloned.notes = '';
       return {
-        ...commit(state, sanitizeProgram(cloned)),
+        ...commit(state, withProgramDefaults(cloned)),
         currentName: name,
         selectedTrickId: null,
       };
@@ -195,6 +209,20 @@ export const useProgramStore = create<ProgramState>()(
 
   setNotes: (notes) =>
     set((state) => commit(state, { ...state.program, notes })),
+
+  setTechnicalMark: (manoeuvreId, mark) =>
+    set((state) => {
+      if (!MANOEUVRES_BY_ID[manoeuvreId]) return state;
+      const technicalMarksByManoeuvreId = {
+        ...(state.program.technicalMarksByManoeuvreId ?? {}),
+      };
+      if (mark === null) {
+        delete technicalMarksByManoeuvreId[manoeuvreId];
+      } else {
+        technicalMarksByManoeuvreId[manoeuvreId] = normalizeTechnicalMark(mark);
+      }
+      return commit(state, { ...state.program, technicalMarksByManoeuvreId });
+    }),
 
   addTrick: (runIndex, manoeuvreId, atIndex) =>
     set((state) => {
@@ -363,26 +391,16 @@ export const useProgramStore = create<ProgramState>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
-        if (!Array.isArray(state.program.defaultBonuses)) {
-          state.program.defaultBonuses = [];
-        }
-        if (typeof state.program.notes !== 'string') {
-          state.program.notes = '';
-        }
-        for (const saved of Object.values(state.savedPrograms)) {
-          if (!Array.isArray(saved.defaultBonuses)) saved.defaultBonuses = [];
-          if (typeof saved.notes !== 'string') saved.notes = '';
-        }
+        state.program = withProgramDefaults(state.program);
         for (const run of state.program.runs) {
           for (const t of run.tricks) {
             const m = MANOEUVRES_BY_ID[t.manoeuvreId];
             if (m && !m.noSide && t.side === null) t.side = 'L';
           }
         }
-        state.program = sanitizeProgram(state.program);
         const savedKeys = Object.keys(state.savedPrograms);
         for (const key of savedKeys) {
-          state.savedPrograms[key] = sanitizeProgram(state.savedPrograms[key]);
+          state.savedPrograms[key] = withProgramDefaults(state.savedPrograms[key]);
         }
         state.past = [];
         state.future = [];

@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { runScoreBreakdown } from '../../scoring/final-score';
+import { programTechnicalQuality } from '../../scoring/technical-marks';
 import { runSymmetry } from '../../rules/validators/symmetry';
 import { useProgramStore } from '../../store/program-store';
 import { useScoreSettings } from '../../store/score-settings';
 import { useBonusMalusPerRun, useViolationHighlights } from '../../hooks/useScoringDerived';
 import { useScoreDelta } from '../../hooks/useScoreDelta';
 import ScoreDelta from '../ScoreDelta';
+import TechnicalAverage from '../TechnicalAverage';
 import { loadRecentTricks, pushRecentTrick } from '../../store/recent-tricks';
 import { IconUndo, IconRedo, IconNote } from '../icons';
 import RunSwiper from './RunSwiper';
@@ -45,6 +47,10 @@ export default function BuilderMobile() {
   const [notesSheetOpen, setNotesSheetOpen] = useState(false);
   const [statsExpanded, setStatsExpanded] = useState(false);
   const hasNotes = program.notes.trim().length > 0;
+  const technicalMarksByManoeuvreId = useMemo(
+    () => program.technicalMarksByManoeuvreId ?? {},
+    [program.technicalMarksByManoeuvreId],
+  );
 
   const slotArmed = !!armedManoeuvreId || !!armedMoveTrickId || !!armedCopyTrickId;
   const duplicateRunActive = duplicateSourceRunIndex !== null;
@@ -117,11 +123,29 @@ export default function BuilderMobile() {
       if (run.tricks.length === 0) continue;
       const sym = runSymmetry(run.tricks, MANOEUVRES_BY_ID);
       const malus = bonusMalusPerRun[i] ?? 0;
-      const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, malus, distribution, quality);
+      const bd = runScoreBreakdown(
+        run,
+        MANOEUVRES_BY_ID,
+        sym,
+        malus,
+        distribution,
+        quality,
+        technicalMarksByManoeuvreId,
+      );
       total += bd.total;
     }
     return { total: Math.ceil(total * 1000) / 1000 };
-  }, [program, distribution, quality, bonusMalusPerRun]);
+  }, [program, distribution, quality, technicalMarksByManoeuvreId, bonusMalusPerRun]);
+
+  const technicalAverage = useMemo(
+    () => programTechnicalQuality(
+      program,
+      MANOEUVRES_BY_ID,
+      technicalMarksByManoeuvreId,
+      quality,
+    ),
+    [program, technicalMarksByManoeuvreId, quality],
+  );
 
   const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
     useScoreDelta(programTotal?.total ?? null);
@@ -155,6 +179,12 @@ export default function BuilderMobile() {
                   </span>
                   <ScoreDelta delta={scoreDelta} />
                 </button>
+              </>
+            )}
+            {technicalAverage !== null && (
+              <>
+                <span>·</span>
+                <TechnicalAverage value={technicalAverage} />
               </>
             )}
           </div>
@@ -260,6 +290,7 @@ export default function BuilderMobile() {
               bonusMalus={bonusMalusPerRun[i] ?? 0}
               distribution={distribution}
               quality={quality}
+              technicalMarksByManoeuvreId={technicalMarksByManoeuvreId}
               statsExpanded={statsExpanded}
               onToggleStats={() => setStatsExpanded((v) => !v)}
             />

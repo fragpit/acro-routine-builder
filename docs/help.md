@@ -85,9 +85,16 @@ visible list.
 
 Clicking a trick cell opens an info panel (desktop: right sidebar,
 mobile: bottom sheet). It shows the full description from the
-Sporting Code plus checkboxes for the bonuses allowed on that
-trick. Bonuses that are mutually exclusive (for example `SAT` vs
-`Misty`) disable each other automatically.
+Sporting Code, the trick type's technical mark, and checkboxes for
+the bonuses allowed on that trick. Bonuses that are mutually
+exclusive (for example `SAT` vs `Misty`) disable each other
+automatically. The technical mark is scored from 0 to 10 in
+0.5-point steps. A custom mark applies to every placed copy of that
+trick type in the program. When it is not customized, the value
+follows the `Tq` default from Program settings. Editing a trick type's
+mark changes the score and the displayed `Avg T`, but it does not
+change the `Tq` default used by unset trick types. Trick cards show
+custom marks next to the trick coefficient.
 
 ### Undo and redo
 
@@ -105,13 +112,12 @@ Each run column shows, under the tricks:
   tricks in the run (with at most two above 1.95).
 - **Slots T / R / F** - bonus slots used vs the limit per run
   (5 twisted, 3 reversed, 2 flipped). Extras are not scored.
-- **Bonus** - shown as `X(Y×Tq(N%))%`. `Y` is the raw sum of the
-  selected bonus percents (capped per twisted / reversed / flipped
-  slot limits). `Tq` is the technical-quality correction. `X` is
-  `Y × N/100` - the effective bonus that is plugged into the score
-  formula. The malus is **not** scaled by Tq.
+- **Bonus** - shown as `X(Y)%`. `Y` is the raw sum of the selected
+  bonus percents (capped per twisted / reversed / flipped slot
+  limits). `X` is the effective bonus after each bonus is weighted by
+  that trick type's technical mark. The malus is **not** scaled.
 - **Malus** - deduction from the bonus percent for repetition
-  violations (FAI 3.3.3). Subtracted from the Tq-scaled bonus, not
+  violations (FAI 3.3.3). Subtracted from the weighted bonus, not
   from the raw `Y`.
 - **Choreo(sym)** - `+1` if the trick sides are balanced across the
   run, `+0` otherwise. Single-sided tricks and `noSide` tricks are
@@ -185,14 +191,18 @@ techFinal   = T × TC × (distribution.technical / 100)
 choreoFinal = C × (distribution.choreo / 100)
 landingFinal = L × (distribution.landing / 100)
 bonusFinal  = (techFinal + choreoFinal)
-            × ((bonusPercent × Tq/100 - malus) / 100)
+            × ((scaledBonusPercent - malus) / 100)
 total       = techFinal + choreoFinal + landingFinal + bonusFinal
 ```
 
 Where:
 
-- **T** - technical mark, 0-10. Defaults to 10 (perfect execution -
-  we cannot predict it from the program structure alone).
+- **T** - average technical mark across every trick that can receive
+  a judge technical mark, 0-10. Extra twisted / reversed / flipped
+  manoeuvres still count here even though their bonus and coefficient
+  do not. Each trick type can be customized from its info panel in
+  0.5-point steps; otherwise it uses the Program settings `Tq`
+  default.
 - **C** - choreography mark, 0-10. Defaults to `9 × Cq/100 + 1` if
   the run is side-balanced, or `9 × Cq/100` otherwise. The `9` is
   the objective ceiling minus the parts (diversity, chaining) a
@@ -201,16 +211,20 @@ Where:
   after the correction.
 - **L** - landing mark. Defaults to 0 - not predictable.
 - **TC** - technicity computed from the run's tricks.
-- **bonusPercent** - sum of selected bonuses on every trick in the
-  run.
+- **bonusPercent** - raw sum of selected bonuses on every trick in
+  the run.
+- **scaledBonusPercent** - selected bonuses weighted by each trick's
+  technical mark.
 - **malus** - repetition penalty (FAI 3.3.3), applied to the bonus
   percentage.
 
 ### Program total and the change indicator
 
 The header shows the **program total** (sum of all per-run Final
-Scores). Next to it is a small change indicator in green or red
-showing the difference from a comparison baseline:
+Scores) and the current **Avg T** across tricks that can receive a
+judge technical mark.
+Next to the score is a small change indicator in green or red showing
+the difference from a comparison baseline:
 
 - **Auto mode** (default). The baseline trails behind your edits:
   when you stop editing for a few seconds it catches up to the
@@ -232,9 +246,13 @@ point is preserved.
 ### Score distribution
 
 The menu has three sliders (Technical / Choreo / Landing) totalling
-100%. Defaults are `50 / 50 / 0`. Technical and Choreo are linked -
+100%. Defaults are `40 / 40 / 20`. Technical and Choreo are linked -
 moving one moves the other in the opposite direction. Landing can
 be set manually and compensates.
+
+Score distribution is saved as a browser-local scoring setting. It is
+not part of the program file, so JSON export / import and share links
+keep the routine but do not move this setting between devices.
 
 ### Quality correction coefficients
 
@@ -242,23 +260,27 @@ be set manually and compensates.
 quality correction)** model judge marks you cannot predict from the
 program structure. Defaults are both **50%**. They apply like this:
 
-- `T mark = 10 × Tq/100` - the execution component of the technical
-  mark. At `Tq = 50%` the builder shows `T = 5.0`.
+- `Tq default mark = 10 × Tq/100` - the technical mark used for
+  tricks without a custom mark. At `Tq = 50%`, unset tricks use
+  `T = 5.0`. Editing a trick type's custom technical mark updates
+  the displayed `Avg T`, but the `Tq` default stays fixed until you
+  change it in Program settings or import another AWT program.
 - `C mark base = 9 × Cq/100` - the subjective part of the
   choreography mark. Symmetry adds `+1` after this correction and
   is not scaled.
-- `bonusFinal` is asymmetric in Tq: the positive bonus side is
-  scaled by `Tq/100` (modeling FAI § 6.6.1, where each AWT trick's
-  bonus is weighted by its per-trick technical mark before the run
+- `bonusFinal` is asymmetric: the positive bonus side is weighted by
+  trick-type technical marks (modeling FAI § 6.6.1, where each AWT
+  trick's bonus is weighted by its technical mark before the run
   total is summed), but the malus is **not** scaled - it is
   subtracted as a flat percent. We apply the same model in AWQ for
   consistency. So a sloppy pilot loses part of the bonus payout but
   pays the full repetition penalty.
 
-Use the `+ / -` buttons in `Quality correction` to step in 5%
-increments. Leave the defaults (50 / 50) for a conservative estimate
-that assumes average judge marks; raise them if you have specific
-marks from a real performance you want to model.
+Use the `+ / -` buttons in `Quality correction` to step `Tq` to the
+next whole percent and `Cq` in 5% increments. Leave the defaults
+(50 / 50) for a conservative estimate that assumes average judge
+marks; raise them if you have specific marks from a real performance
+you want to model.
 
 The `reset` link next to the heading restores both to 50%.
 
@@ -323,8 +345,10 @@ it. To move a program between devices, use **Export JSON** below.
 ### Export JSON
 
 `Export JSON` downloads a portable `.arb.json` file. It contains
-the runs, bonuses, program settings and the program name. Send it
-to a teammate or commit it into [test_data/](test_data/) as a
+the runs, bonuses, custom trick-type technical marks, notes, program
+mode, reset gap and the program name. Browser-local scoring settings
+such as Score distribution and Quality correction are not included.
+Send it to a teammate or commit it into [test_data/](test_data/) as a
 fixture.
 
 ### Export Markdown

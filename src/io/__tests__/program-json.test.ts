@@ -7,6 +7,7 @@ import {
   MAX_ID_LENGTH,
   MAX_IMPORT_BYTES,
   MAX_NAME_LENGTH,
+  MAX_TECHNICAL_MARK_OVERRIDES,
   MAX_TRICKS_PER_RUN,
 } from '../program-json';
 import type { Program } from '../../rules/types';
@@ -36,6 +37,7 @@ const baseProgram: Program = {
   ],
   repeatAfterRuns: 1,
   defaultBonuses: [],
+  technicalMarksByManoeuvreId: {},
   notes: '',
 };
 
@@ -54,6 +56,7 @@ describe('importProgramJson', () => {
       ],
       repeatAfterRuns: 1,
       defaultBonuses: [],
+      technicalMarksByManoeuvreId: {},
       notes: '',
     };
     const json = exportProgramJson(program, 'fixture');
@@ -82,6 +85,15 @@ describe('importProgramJson', () => {
     expect(imported.notes).toBe('Run 1: malus on trick #4\nRun 2: ignored trick #6');
   });
 
+  it('round-trips custom technical marks by manoeuvre', () => {
+    const program: Program = {
+      ...baseProgram,
+      technicalMarksByManoeuvreId: { sat: 8.5 },
+    };
+    const { program: imported } = importProgramJson(exportProgramJson(program, null));
+    expect(imported.technicalMarksByManoeuvreId).toEqual({ sat: 8.5 });
+  });
+
   it('defaults notes to "" when the field is absent in legacy files', () => {
     const { notes: _omit, ...legacyProgram } = baseProgram;
     void _omit;
@@ -94,6 +106,14 @@ describe('importProgramJson', () => {
     const json = wrap({ ...baseProgram, notes: 'a'.repeat(MAX_NOTES_LENGTH) });
     const { program: imported } = importProgramJson(json);
     expect(imported.notes.length).toBe(MAX_NOTES_LENGTH);
+  });
+
+  it('defaults technical marks to {} when the field is absent in legacy files', () => {
+    const { technicalMarksByManoeuvreId: _omit, ...legacyProgram } = baseProgram;
+    void _omit;
+    const json = wrap(legacyProgram);
+    const { program: imported } = importProgramJson(json);
+    expect(imported.technicalMarksByManoeuvreId).toEqual({});
   });
 
   it('rejects notes longer than MAX_NOTES_LENGTH with a specific error', () => {
@@ -172,6 +192,31 @@ describe('importProgramJson', () => {
       const defaultBonuses = Array.from({ length: MAX_DEFAULT_BONUSES + 1 }, () => 'twisted');
       expect(() => importProgramJson(wrap({ ...baseProgram, defaultBonuses }))).toThrow(
         new RegExp(`defaultBonuses must have at most ${MAX_DEFAULT_BONUSES} entries`),
+      );
+    });
+
+    it('rejects technical marks outside the 0-10 range', () => {
+      expect(() =>
+        importProgramJson(wrap({
+          ...baseProgram,
+          technicalMarksByManoeuvreId: { sat: 10.5 },
+        })),
+      ).toThrow(/technicalMarksByManoeuvreId\.sat must be between 0 and 10/);
+    });
+
+    it(`rejects technical mark maps longer than ${MAX_TECHNICAL_MARK_OVERRIDES} entries`, () => {
+      const technicalMarksByManoeuvreId = Object.fromEntries(
+        Array.from({ length: MAX_TECHNICAL_MARK_OVERRIDES + 1 }, (_, i) => [
+          `unknown_${i}`,
+          5,
+        ]),
+      );
+      expect(() =>
+        importProgramJson(wrap({ ...baseProgram, technicalMarksByManoeuvreId })),
+      ).toThrow(
+        new RegExp(
+          `technicalMarksByManoeuvreId must have at most ${MAX_TECHNICAL_MARK_OVERRIDES} entries`,
+        ),
       );
     });
 

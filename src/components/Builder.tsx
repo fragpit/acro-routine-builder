@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { runTechnicity } from '../scoring/technicity';
-import { runBonus } from '../scoring/bonus';
+import { runBonus, runScaledBonus } from '../scoring/bonus';
 import { runBonusUsage } from '../scoring/bonus-usage';
 import { exclusionsByTrick } from '../scoring/eligibility';
 import { runScoreBreakdown } from '../scoring/final-score';
+import { programTechnicalQuality } from '../scoring/technical-marks';
 import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
@@ -21,6 +22,7 @@ import { useScoreDelta } from '../hooks/useScoreDelta';
 import { useProgramDnd } from '../hooks/useProgramDnd';
 import { useTrickPalette } from '../hooks/useTrickPalette';
 import ScoreDelta from './ScoreDelta';
+import TechnicalAverage from './TechnicalAverage';
 import { IconUndo, IconRedo, IconMenu, IconNote } from './icons';
 import { PaletteCard, PaletteCardPresentation } from './builder/PaletteCard';
 import { RunColumn } from './builder/RunColumn';
@@ -88,6 +90,10 @@ function BuilderDesktop() {
   const [notesOpen, setNotesOpen] = useState(false);
   const [duplicateSourceRunIndex, setDuplicateSourceRunIndex] = useState<number | null>(null);
   const hasNotes = program.notes.trim().length > 0;
+  const technicalMarksByManoeuvreId = useMemo(
+    () => program.technicalMarksByManoeuvreId ?? {},
+    [program.technicalMarksByManoeuvreId],
+  );
 
   function openNotes() {
     selectTrick(null);
@@ -128,11 +134,29 @@ function BuilderDesktop() {
       if (run.tricks.length === 0) continue;
       const sym = runSymmetry(run.tricks, MANOEUVRES_BY_ID);
       const malus = bonusMalusPerRun[i] ?? 0;
-      const bd = runScoreBreakdown(run, MANOEUVRES_BY_ID, sym, malus, distribution, quality);
+      const bd = runScoreBreakdown(
+        run,
+        MANOEUVRES_BY_ID,
+        sym,
+        malus,
+        distribution,
+        quality,
+        technicalMarksByManoeuvreId,
+      );
       total += bd.total;
     }
     return { total: Math.ceil(total * 1000) / 1000 };
-  }, [program, distribution, quality, bonusMalusPerRun]);
+  }, [program, distribution, quality, technicalMarksByManoeuvreId, bonusMalusPerRun]);
+
+  const technicalAverage = useMemo(
+    () => programTechnicalQuality(
+      program,
+      MANOEUVRES_BY_ID,
+      technicalMarksByManoeuvreId,
+      quality,
+    ),
+    [program, technicalMarksByManoeuvreId, quality],
+  );
 
   const { delta: scoreDelta, isPinned: scorePinned, togglePin: toggleScorePin } =
     useScoreDelta(programTotal?.total ?? null);
@@ -226,6 +250,7 @@ function BuilderDesktop() {
                   <ScoreDelta delta={scoreDelta} />
                 </button>
               )}
+              <TechnicalAverage value={technicalAverage} />
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -295,11 +320,18 @@ function BuilderDesktop() {
                   tricks={run.tricks}
                   technicity={runTechnicity(run, MANOEUVRES_BY_ID)}
                   bonus={runBonus(run, MANOEUVRES_BY_ID)}
+                  scaledBonus={runScaledBonus(
+                    run,
+                    MANOEUVRES_BY_ID,
+                    technicalMarksByManoeuvreId,
+                    quality,
+                  )}
                   bonusUsage={runBonusUsage(run, MANOEUVRES_BY_ID)}
                   bonusMalus={bonusMalusPerRun[runIndex] ?? 0}
                   symmetry={runSymmetry(run.tricks, MANOEUVRES_BY_ID)}
                   distribution={distribution}
                   quality={quality}
+                  technicalMarksByManoeuvreId={technicalMarksByManoeuvreId}
                   highlights={highlights}
                   ignored={exclusionsByTrick(run, MANOEUVRES_BY_ID)}
                   unrewardedBonuses={unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID)}

@@ -56,7 +56,7 @@ describe('runScoreBreakdown', () => {
   it('scales bonusPercent by Tq but leaves the malus raw (asymmetric)', () => {
     // AWT § 6.6.1 weights each trick's bonus by its per-trick technical
     // mark before summing; the malus is then subtracted as a flat %.
-    // We model per-trick technical marks with the global Tq slider, so:
+    // Without custom marks, every trick uses the global Tq default, so:
     //   bonusFinal = (tech + choreo) × (bonus% × Tq/100 − malus%) / 100
     // Bug regression to guard against: applying `× Tq/100` to the whole
     // (bonus − malus) bracket (or to neither) gives different numbers.
@@ -83,6 +83,46 @@ describe('runScoreBreakdown', () => {
     // ceil-rounded; bonusFinal is computed from raw values then
     // rounded - a few-thousandths slack is rounding noise, not a bug.
     expect(bd.bonusFinal).toBeCloseTo(expected, 2);
+  });
+
+  it('averages technical marks across every scoring-eligible trick', () => {
+    const rWithFourTricks = run(
+      placedTrick('sat'),
+      placedTrick('stall'),
+      placedTrick('wingovers'),
+      placedTrick('looping'),
+    );
+    const bd = runScoreBreakdown(
+      rWithFourTricks,
+      MANOEUVRES_BY_ID,
+      { left: 4, right: 0, sided: 4, balanced: false },
+      0,
+      DEFAULT_DISTRIBUTION,
+      { technical: 50, choreo: 100 },
+      { sat: 10, stall: 8, wingovers: 6, looping: 4 },
+    );
+    const expectedTc = (1.6 + 1.5 + 1.35) / 3;
+    const expectedT = (10 + 8 + 6 + 4) / 4;
+    expect(bd.tc).toBeCloseTo(expectedTc, 5);
+    expect(bd.tMark).toBeCloseTo(expectedT, 5);
+    expect(bd.techFinal).toBeCloseTo(
+      Math.ceil(expectedT * expectedTc * (DEFAULT_DISTRIBUTION.technical / 100) * 1000) /
+        1000,
+      5,
+    );
+  });
+
+  it('uses the global Tq default for tricks without custom technical marks', () => {
+    const bd = runScoreBreakdown(
+      r,
+      MANOEUVRES_BY_ID,
+      symmetry,
+      0,
+      DEFAULT_DISTRIBUTION,
+      { technical: 70, choreo: 100 },
+      { sat: 10 },
+    );
+    expect(bd.tMark).toBeCloseTo((10 + 7) / 2, 5);
   });
 
   it('malus contribution to bonusFinal is independent of Tq', () => {

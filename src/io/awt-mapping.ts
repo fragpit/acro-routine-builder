@@ -397,6 +397,7 @@ export function mapCompetitionToProgram(
     runs,
     repeatAfterRuns: runs.length === 5 ? 2 : Math.max(1, runs.length || 1),
     defaultBonuses: [],
+    technicalMarksByManoeuvreId: {},
     notes: combineRunNotes(comp, civlid),
   };
   return {

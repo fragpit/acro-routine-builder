@@ -10,14 +10,14 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { MANOEUVRES_BY_ID } from '../../data/manoeuvres';
 import { BONUS_LIMITS, runBonusUsage } from '../../scoring/bonus-usage';
-import { runBonus } from '../../scoring/bonus';
+import { runBonus, runScaledBonus } from '../../scoring/bonus';
 import { runTechnicity } from '../../scoring/technicity';
 import { exclusionsByTrick } from '../../scoring/eligibility';
 import { runScoreBreakdown, type ScoreDistribution, type QualityCorrection } from '../../scoring/final-score';
 import { unrewardedBonusesByTrick } from '../../rules/repeated-bonus';
 import { runSymmetry } from '../../rules/validators/symmetry';
 import { useProgramStore } from '../../store/program-store';
-import type { Run } from '../../rules/types';
+import type { Run, TechnicalMarksByManoeuvreId } from '../../rules/types';
 import TrickCellMobile from './TrickCellMobile';
 import FinalScorePanel from '../FinalScorePanel';
 
@@ -44,6 +44,7 @@ interface Props {
   bonusMalus: number;
   distribution: ScoreDistribution;
   quality: QualityCorrection;
+  technicalMarksByManoeuvreId: TechnicalMarksByManoeuvreId;
   statsExpanded: boolean;
   onToggleStats: () => void;
 }
@@ -64,12 +65,19 @@ export default function RunMobile({
   bonusMalus,
   distribution,
   quality,
+  technicalMarksByManoeuvreId,
   statsExpanded,
   onToggleStats,
 }: Props) {
   const moveTrick = useProgramStore((s) => s.moveTrick);
   const technicity = runTechnicity(run, MANOEUVRES_BY_ID);
   const bonus = runBonus(run, MANOEUVRES_BY_ID);
+  const scaledBonus = runScaledBonus(
+    run,
+    MANOEUVRES_BY_ID,
+    technicalMarksByManoeuvreId,
+    quality,
+  );
   const bonusUsage = runBonusUsage(run, MANOEUVRES_BY_ID);
   const ignored = exclusionsByTrick(run, MANOEUVRES_BY_ID);
   const unrewarded = unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID);
@@ -144,6 +152,7 @@ export default function RunMobile({
                             unrewardedBonuses={unrewarded.get(t.id)}
                             dimmed={movingTrickId === t.id}
                             sortDisabled={isArmed || duplicateMode}
+                            technicalMarksByManoeuvreId={technicalMarksByManoeuvreId}
                             onTap={() => onOpenTrick(t.id)}
                           />
                         </div>
@@ -212,7 +221,7 @@ export default function RunMobile({
               <Stat label="TC" value={technicity.toFixed(3)} />
               <Stat
                 label="Bonus"
-                value={`${(bonus * quality.technical / 100).toFixed(1)}%`}
+                value={`${scaledBonus.toFixed(1)}%`}
               />
               <Stat
                 label="Sym"
@@ -247,7 +256,7 @@ export default function RunMobile({
                 <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mr-1.5">
                   Bonus
                 </span>
-                {(bonus * quality.technical / 100).toFixed(1)}({bonus.toFixed(1)}×Tq({quality.technical}%))%
+                {scaledBonus.toFixed(1)}({bonus.toFixed(1)})%
               </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -269,7 +278,15 @@ export default function RunMobile({
       {run.tricks.length > 0 && (
         <div className="bg-white dark:bg-slate-900">
           <FinalScorePanel
-            breakdown={runScoreBreakdown(run, MANOEUVRES_BY_ID, symmetry, bonusMalus, distribution, quality)}
+            breakdown={runScoreBreakdown(
+              run,
+              MANOEUVRES_BY_ID,
+              symmetry,
+              bonusMalus,
+              distribution,
+              quality,
+              technicalMarksByManoeuvreId,
+            )}
           />
         </div>
       )}

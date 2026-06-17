@@ -1,15 +1,16 @@
 import type { QualityCorrection } from '../scoring/final-score';
+import { normalizeTechnicalQuality } from '../scoring/technical-marks';
 
 interface Props {
   quality: QualityCorrection;
   onChange: (q: QualityCorrection) => void;
 }
 
-const STEP = 5;
+const CHOREO_STEP = 5;
 
 const KEYS: { key: keyof QualityCorrection; label: string }[] = [
-  { key: 'technical', label: 'T correction' },
-  { key: 'choreo', label: 'C correction' },
+  { key: 'technical', label: 'Tq default' },
+  { key: 'choreo', label: 'Cq correction' },
 ];
 
 const btnCls =
@@ -19,16 +20,32 @@ const btnCls =
   'disabled:opacity-30 disabled:hover:bg-transparent ' +
   'disabled:cursor-not-allowed select-none text-sm';
 
+function formatValue(key: keyof QualityCorrection, value: number): string {
+  return key === 'technical' ? value.toFixed(1) : `${value}`;
+}
+
+function stepValue(
+  key: keyof QualityCorrection,
+  value: number,
+  direction: 1 | -1,
+): number {
+  if (key !== 'technical') {
+    return Math.max(0, Math.min(100, value + direction * CHOREO_STEP));
+  }
+  const next = direction > 0 ? Math.floor(value) + 1 : Math.ceil(value) - 1;
+  return normalizeTechnicalQuality(Math.max(0, Math.min(100, next)));
+}
+
 export default function QualityCorrectionEditor({
   quality,
   onChange,
 }: Props) {
   function step(
     key: keyof QualityCorrection,
-    delta: number,
+    direction: 1 | -1,
   ) {
     const cur = quality[key];
-    const next = Math.max(0, Math.min(100, cur + delta));
+    const next = stepValue(key, cur, direction);
     if (next !== cur) onChange({ ...quality, [key]: next });
   }
 
@@ -51,7 +68,7 @@ export default function QualityCorrectionEditor({
             >
               <button
                 type="button"
-                onClick={() => step(key, -STEP)}
+                onClick={() => step(key, -1)}
                 disabled={val <= 0}
                 aria-label={`Decrease ${label}`}
                 className={btnCls}
@@ -59,11 +76,11 @@ export default function QualityCorrectionEditor({
                 -
               </button>
               <span className="min-w-[2.5rem] px-1 text-center text-sm tabular-nums select-none">
-                {val}%
+                {formatValue(key, val)}%
               </span>
               <button
                 type="button"
-                onClick={() => step(key, STEP)}
+                onClick={() => step(key, 1)}
                 disabled={val >= 100}
                 aria-label={`Increase ${label}`}
                 className={btnCls}

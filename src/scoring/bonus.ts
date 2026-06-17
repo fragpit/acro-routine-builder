@@ -1,6 +1,12 @@
-import type { Manoeuvre, Run } from '../rules/types';
+import type {
+  Manoeuvre,
+  Run,
+  TechnicalMarksByManoeuvreId,
+} from '../rules/types';
+import type { QualityCorrection } from './final-score';
 import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { excludedFromScoring } from './eligibility';
+import { technicalMarkForManoeuvre } from './technical-marks';
 
 /**
  * Raw sum of selected bonus percents across scoring-eligible tricks in a run.
@@ -23,6 +29,31 @@ export function runBonus(run: Run, manoeuvres: Record<string, Manoeuvre>): numbe
       if (skip?.has(bonusId)) continue;
       const def = m.availableBonuses.find((ab) => ab.id === bonusId);
       if (def) total += def.percent;
+    }
+  }
+  return total;
+}
+
+export function runScaledBonus(
+  run: Run,
+  manoeuvres: Record<string, Manoeuvre>,
+  marks: TechnicalMarksByManoeuvreId,
+  quality: QualityCorrection,
+): number {
+  const excluded = excludedFromScoring(run, manoeuvres);
+  const unrewarded = unrewardedBonusesByTrick(run, manoeuvres);
+  let total = 0;
+  for (const t of run.tricks) {
+    if (excluded.has(t.id)) continue;
+    const m = manoeuvres[t.manoeuvreId];
+    if (!m) continue;
+    const skip = unrewarded.get(t.id);
+    const technicalWeight =
+      technicalMarkForManoeuvre(t.manoeuvreId, marks, quality) / 10;
+    for (const bonusId of t.selectedBonuses) {
+      if (skip?.has(bonusId)) continue;
+      const def = m.availableBonuses.find((ab) => ab.id === bonusId);
+      if (def) total += def.percent * technicalWeight;
     }
   }
   return total;

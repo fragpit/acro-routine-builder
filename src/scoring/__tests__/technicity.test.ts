@@ -34,4 +34,20 @@ describe('technicity', () => {
     const t = runTechnicity(r, MANOEUVRES_BY_ID);
     expect(t).toBeCloseTo((1.95 + 1.95) / 2, 5);
   });
+
+  it('excludes bonus-limit extras from average coefficient', () => {
+    const r = run(
+      placedTrick('sat', { selectedBonuses: ['twisted'] }),
+      placedTrick('wingovers', { selectedBonuses: ['twisted'] }),
+      placedTrick('looping', { selectedBonuses: ['twisted'] }),
+      placedTrick('asymetric_sat', { selectedBonuses: ['twisted'] }),
+      placedTrick('stall', { selectedBonuses: ['twisted'] }),
+      placedTrick('cowboy', { selectedBonuses: ['twisted'] }),
+    );
+
+    expect(runTechnicity(r, MANOEUVRES_BY_ID)).toBeCloseTo(
+      (1.6 + 1.55 + 1.5) / 3,
+      5,
+    );
+  });
 });

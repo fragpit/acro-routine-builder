@@ -1,4 +1,9 @@
 import type { PlacedTrick, Program } from '../rules/types';
+import {
+  MAX_TECHNICAL_MARK,
+  MIN_TECHNICAL_MARK,
+  normalizeTechnicalMark,
+} from '../scoring/technical-marks';
 import { MANOEUVRES_BY_ID } from './manoeuvres';
 
 /**
@@ -21,6 +26,12 @@ export function sanitizePlacedTrick(trick: PlacedTrick): PlacedTrick {
 /** Apply {@link sanitizePlacedTrick} across every trick in every run. */
 export function sanitizeProgram(program: Program): Program {
   let mutated = false;
+  const technicalMarksByManoeuvreId = sanitizeTechnicalMarksByManoeuvreId(
+    (program as Program & { technicalMarksByManoeuvreId?: unknown }).technicalMarksByManoeuvreId,
+  );
+  if (technicalMarksByManoeuvreId !== program.technicalMarksByManoeuvreId) {
+    mutated = true;
+  }
   const runs = program.runs.map((run) => {
     let runMutated = false;
     const tricks = run.tricks.map((t) => {
@@ -33,5 +44,29 @@ export function sanitizeProgram(program: Program): Program {
     });
     return runMutated ? { ...run, tricks } : run;
   });
-  return mutated ? { ...program, runs } : program;
+  return mutated ? { ...program, runs, technicalMarksByManoeuvreId } : program;
+}
+
+function sanitizeTechnicalMarksByManoeuvreId(raw: unknown): Record<string, number> {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const out: Record<string, number> = {};
+  let changed = false;
+  for (const [id, mark] of Object.entries(raw)) {
+    if (!MANOEUVRES_BY_ID[id]) {
+      changed = true;
+      continue;
+    }
+    if (typeof mark !== 'number' || !Number.isFinite(mark)) {
+      changed = true;
+      continue;
+    }
+    if (mark < MIN_TECHNICAL_MARK || mark > MAX_TECHNICAL_MARK) {
+      changed = true;
+      continue;
+    }
+    const normalized = normalizeTechnicalMark(mark);
+    if (normalized !== mark) changed = true;
+    out[id] = normalized;
+  }
+  return changed ? out : raw as Record<string, number>;
 }
