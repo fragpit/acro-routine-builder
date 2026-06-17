@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.0
 
 - Bonus-limit extras now still contribute to Avg T and run T while their bonus and coefficient stay excluded.
 - Trick cards now show custom technical marks next to the coefficient.
