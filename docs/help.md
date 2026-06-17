@@ -243,9 +243,13 @@ point is preserved.
 ### Score distribution
 
 The menu has three sliders (Technical / Choreo / Landing) totalling
-100%. Defaults are `50 / 50 / 0`. Technical and Choreo are linked -
+100%. Defaults are `40 / 40 / 20`. Technical and Choreo are linked -
 moving one moves the other in the opposite direction. Landing can
 be set manually and compensates.
+
+Score distribution is saved as a browser-local scoring setting. It is
+not part of the program file, so JSON export / import and share links
+keep the routine but do not move this setting between devices.
 
 ### Quality correction coefficients
 
@@ -338,9 +342,11 @@ it. To move a program between devices, use **Export JSON** below.
 ### Export JSON
 
 `Export JSON` downloads a portable `.arb.json` file. It contains
-the runs, bonuses, custom trick-type technical marks, program settings
-and the program name. Send it to a teammate or commit it into
-[test_data/](test_data/) as a fixture.
+the runs, bonuses, custom trick-type technical marks, notes, program
+mode, reset gap and the program name. Browser-local scoring settings
+such as Score distribution and Quality correction are not included.
+Send it to a teammate or commit it into [test_data/](test_data/) as a
+fixture.
 
 ### Export Markdown
 
