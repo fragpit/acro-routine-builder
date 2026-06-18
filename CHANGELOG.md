@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Cloudflare Pages preview cleanup now tolerates overlapping PR-close and
+  branch-delete runs for the same branch.
+
 ## v0.9.0
 
 - Bonus-limit extras now still contribute to Avg T and run T while their bonus and coefficient stay excluded.
