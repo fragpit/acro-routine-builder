@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.1
 
 - Cloudflare Pages preview cleanup now tolerates overlapping PR-close and
   branch-delete runs for the same branch.
