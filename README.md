@@ -108,6 +108,8 @@ API with forced deletion enabled for aliased preview deployments. To enable it,
 set repository variable `CF_PAGES_CLEANUP_ENABLED=true`, keep `CF_ACCOUNT_ID`
 configured, and add `CF_PAGES_API_TOKEN` with Cloudflare Pages Edit access. If
 cleanup is not enabled, the workflow job is skipped before calling Cloudflare.
+Overlapping cleanup events for the same branch are serialized, and a deployment
+that was already deleted by another cleanup run is treated as complete.
 
 ## Privacy
 
