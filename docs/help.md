@@ -278,10 +278,10 @@ program structure. Defaults are both **50%**. They apply like this:
 
 Type a value from 0 to 100 into either field, or use the `+ / -`
 buttons to step `Tq` to the next whole percent and `Cq` in 5%
-increments. Decimal values accept either a point or comma. Leave the
-defaults (50 / 50) for a conservative estimate that assumes average
-judge marks; raise them if you have specific marks from a real
-performance you want to model.
+increments. `Tq` accepts whole percentages only. Decimal `Cq` values
+accept either a point or comma. Leave the defaults (50 / 50) for a
+conservative estimate that assumes average judge marks; raise them if
+you have specific marks from a real performance you want to model.
 
 The `reset` link next to the heading restores both to 50%.
 

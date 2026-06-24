@@ -22,11 +22,17 @@ const btnCls =
   'disabled:cursor-not-allowed select-none text-sm';
 
 function formatValue(key: keyof QualityCorrection, value: number): string {
-  return key === 'technical' ? value.toFixed(1) : `${value}`;
+  return key === 'technical' ? `${Math.round(value)}` : `${value}`;
 }
 
-function normalizeValue(value: number): number {
-  return normalizeTechnicalQuality(Math.max(0, Math.min(100, value)));
+function normalizeValue(
+  key: keyof QualityCorrection,
+  value: number,
+): number {
+  const clamped = Math.max(0, Math.min(100, value));
+  return key === 'technical'
+    ? Math.round(clamped)
+    : normalizeTechnicalQuality(clamped);
 }
 
 function stepValue(
@@ -35,10 +41,10 @@ function stepValue(
   direction: 1 | -1,
 ): number {
   if (key !== 'technical') {
-    return normalizeValue(value + direction * CHOREO_STEP);
+    return normalizeValue(key, value + direction * CHOREO_STEP);
   }
   const next = direction > 0 ? Math.floor(value) + 1 : Math.ceil(value) - 1;
-  return normalizeValue(next);
+  return normalizeValue(key, next);
 }
 
 function QualityCorrectionControl({
@@ -61,7 +67,7 @@ function QualityCorrectionControl({
     : formatValue(correctionKey, value);
 
   function setValue(nextValue: number) {
-    const normalized = normalizeValue(nextValue);
+    const normalized = normalizeValue(correctionKey, nextValue);
     onChange({ ...quality, [correctionKey]: normalized });
     setDraft({
       key: `${correctionKey}:${normalized}`,
@@ -71,7 +77,10 @@ function QualityCorrectionControl({
 
   function changeInput(nextValue: string) {
     const next = nextValue.replace(',', '.');
-    if (!/^\d{0,3}(\.\d?)?$/.test(next)) return;
+    const pattern = correctionKey === 'technical'
+      ? /^\d{0,3}$/
+      : /^\d{0,3}(\.\d?)?$/;
+    if (!pattern.test(next)) return;
     setDraft({ key: draftKey, value: next });
   }
 
@@ -125,7 +134,7 @@ function QualityCorrectionControl({
         <input
           id={`quality-${correctionKey}`}
           type="text"
-          inputMode="decimal"
+          inputMode={correctionKey === 'technical' ? 'numeric' : 'decimal'}
           value={inputValue}
           onChange={(event) => changeInput(event.target.value)}
           onBlur={(event) => commitInput(event.target.value)}
