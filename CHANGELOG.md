@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Tq and Cq quality corrections can now be entered manually.
+
 ## v0.9.1
 
 - Cloudflare Pages preview cleanup now tolerates overlapping PR-close and

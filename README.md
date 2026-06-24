@@ -27,6 +27,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Repetition penalties distinguish regular and reverse variants while
   still flagging repeated reverse variants
 - Technicity and bonus estimation per run (AWT/AWQ formulas)
+- Manually editable technical and choreography quality corrections
 - Program total with average T and a cumulative change indicator next to
   it; click the total to pin a comparison baseline
 - AWT mode toggle (enables AWT-specific restrictions)

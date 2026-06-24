@@ -1,5 +1,5 @@
+import { useState } from 'react';
 import type { QualityCorrection } from '../scoring/final-score';
-import { normalizeTechnicalQuality } from '../scoring/technical-marks';
 
 interface Props {
   quality: QualityCorrection;
@@ -20,8 +20,12 @@ const btnCls =
   'disabled:opacity-30 disabled:hover:bg-transparent ' +
   'disabled:cursor-not-allowed select-none text-sm';
 
-function formatValue(key: keyof QualityCorrection, value: number): string {
-  return key === 'technical' ? value.toFixed(1) : `${value}`;
+function formatValue(value: number): string {
+  return `${Math.round(value)}`;
+}
+
+function normalizeValue(value: number): number {
+  return Math.round(Math.max(0, Math.min(100, value)));
 }
 
 function stepValue(
@@ -30,67 +34,143 @@ function stepValue(
   direction: 1 | -1,
 ): number {
   if (key !== 'technical') {
-    return Math.max(0, Math.min(100, value + direction * CHOREO_STEP));
+    return normalizeValue(value + direction * CHOREO_STEP);
   }
   const next = direction > 0 ? Math.floor(value) + 1 : Math.ceil(value) - 1;
-  return normalizeTechnicalQuality(Math.max(0, Math.min(100, next)));
+  return normalizeValue(next);
+}
+
+function QualityCorrectionControl({
+  correctionKey,
+  label,
+  quality,
+  onChange,
+}: Props & {
+  correctionKey: keyof QualityCorrection;
+  label: string;
+}) {
+  const value = quality[correctionKey];
+  const draftKey = `${correctionKey}:${value}`;
+  const [draft, setDraft] = useState({
+    key: draftKey,
+    value: formatValue(value),
+  });
+  const inputValue = draft.key === draftKey
+    ? draft.value
+    : formatValue(value);
+
+  function setValue(nextValue: number) {
+    const normalized = normalizeValue(nextValue);
+    onChange({ ...quality, [correctionKey]: normalized });
+    setDraft({
+      key: `${correctionKey}:${normalized}`,
+      value: formatValue(normalized),
+    });
+  }
+
+  function changeInput(nextValue: string) {
+    if (!/^\d{0,3}$/.test(nextValue)) return;
+    setDraft({ key: draftKey, value: nextValue });
+  }
+
+  function commitInput(nextValue: string) {
+    if (!nextValue.trim()) {
+      setDraft({
+        key: draftKey,
+        value: formatValue(value),
+      });
+      return;
+    }
+    const parsed = Number(nextValue);
+    if (!Number.isFinite(parsed)) {
+      setDraft({
+        key: draftKey,
+        value: formatValue(value),
+      });
+      return;
+    }
+    setValue(parsed);
+  }
+
+  function step(direction: 1 | -1) {
+    const parsed = Number(inputValue);
+    const base = Number.isFinite(parsed) ? parsed : value;
+    setValue(stepValue(correctionKey, base, direction));
+  }
+
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <label
+        htmlFor={`quality-${correctionKey}`}
+        className="text-slate-700 dark:text-slate-200 text-sm"
+      >
+        {label}
+      </label>
+      <div
+        className="inline-flex items-center rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden focus-within:border-sky-500"
+        role="group"
+        aria-label={label}
+      >
+        <button
+          type="button"
+          onClick={() => step(-1)}
+          disabled={value <= 0}
+          aria-label={`Decrease ${label}`}
+          className={btnCls}
+        >
+          -
+        </button>
+        <input
+          id={`quality-${correctionKey}`}
+          type="text"
+          inputMode="numeric"
+          value={inputValue}
+          onChange={(event) => changeInput(event.target.value)}
+          onBlur={(event) => commitInput(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.currentTarget.blur();
+            } else if (
+              event.key === 'ArrowUp' ||
+              event.key === 'ArrowDown'
+            ) {
+              event.preventDefault();
+              step(event.key === 'ArrowUp' ? 1 : -1);
+            }
+          }}
+          className="w-10 bg-transparent px-0 text-right text-sm tabular-nums outline-none"
+          aria-label={`${label} value`}
+        />
+        <span className="pr-1 text-sm select-none">%</span>
+        <button
+          type="button"
+          onClick={() => step(1)}
+          disabled={value >= 100}
+          aria-label={`Increase ${label}`}
+          className={btnCls}
+        >
+          +
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function QualityCorrectionEditor({
   quality,
   onChange,
 }: Props) {
-  function step(
-    key: keyof QualityCorrection,
-    direction: 1 | -1,
-  ) {
-    const cur = quality[key];
-    const next = stepValue(key, cur, direction);
-    if (next !== cur) onChange({ ...quality, [key]: next });
-  }
-
   return (
     <div className="space-y-2">
-      {KEYS.map(({ key, label }) => {
-        const val = quality[key];
-        return (
-          <div
-            key={key}
-            className="flex items-center justify-between gap-3"
-          >
-            <span className="text-slate-700 dark:text-slate-200 text-sm">
-              {label}
-            </span>
-            <div
-              className="inline-flex items-center rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden"
-              role="group"
-              aria-label={label}
-            >
-              <button
-                type="button"
-                onClick={() => step(key, -1)}
-                disabled={val <= 0}
-                aria-label={`Decrease ${label}`}
-                className={btnCls}
-              >
-                -
-              </button>
-              <span className="min-w-[2.5rem] px-1 text-center text-sm tabular-nums select-none">
-                {formatValue(key, val)}%
-              </span>
-              <button
-                type="button"
-                onClick={() => step(key, 1)}
-                disabled={val >= 100}
-                aria-label={`Increase ${label}`}
-                className={btnCls}
-              >
-                +
-              </button>
-            </div>
-          </div>
-        );
-      })}
+      {KEYS.map(({ key, label }) => (
+        <QualityCorrectionControl
+          key={key}
+          correctionKey={key}
+          label={label}
+          quality={quality}
+          onChange={onChange}
+        />
+      ))}
     </div>
   );
 }
