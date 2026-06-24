@@ -41,6 +41,13 @@ use the sidebar button beside `coeff` to collapse the palette. The
 same button appears at the left of the program toolbar to restore it.
 The collapsed state is remembered by the browser.
 
+The toolbar also has a full-screen button. Browsers that support the
+Fullscreen API hide their navigation UI directly. If Chrome on iPad
+does not expose that API, the button shows the installation steps:
+tap **Share**, choose **Add to Home Screen**, then launch ARB from its
+Home Screen icon. The installed web app opens without Chrome's tabs
+and address bar.
+
 ### Adding, moving and copying tricks (desktop)
 
 The desktop board supports mouse, touch and stylus input, including

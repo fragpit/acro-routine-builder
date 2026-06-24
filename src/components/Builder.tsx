@@ -23,9 +23,18 @@ import { useScoreDelta } from '../hooks/useScoreDelta';
 import { useProgramDnd } from '../hooks/useProgramDnd';
 import { useTrickPalette } from '../hooks/useTrickPalette';
 import { useHasTouchInput } from '../hooks/useHasTouchInput';
+import { useFullscreen } from '../hooks/useFullscreen';
 import ScoreDelta from './ScoreDelta';
 import TechnicalAverage from './TechnicalAverage';
-import { IconUndo, IconRedo, IconMenu, IconNote, IconPanelLeft } from './icons';
+import {
+  IconUndo,
+  IconRedo,
+  IconMenu,
+  IconNote,
+  IconPanelLeft,
+  IconMaximize,
+  IconMinimize,
+} from './icons';
 import { PaletteCard, PaletteCardPresentation } from './builder/PaletteCard';
 import { RunColumn } from './builder/RunColumn';
 import { closestStripInPointerRun } from './builder/collision';
@@ -38,6 +47,8 @@ export default function Builder() {
 
 function BuilderDesktop() {
   const hasTouchInput = useHasTouchInput();
+  const { isFullscreen, isStandalone, toggleFullscreen } = useFullscreen();
+  const [fullscreenHelpOpen, setFullscreenHelpOpen] = useState(false);
   const [paletteCollapsed, setPaletteCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
     return window.localStorage.getItem(STORAGE_KEYS.paletteCollapsed) === 'true';
@@ -123,6 +134,10 @@ function BuilderDesktop() {
       window.localStorage.setItem(STORAGE_KEYS.paletteCollapsed, String(next));
       return next;
     });
+  }
+
+  async function handleFullscreen() {
+    if (!await toggleFullscreen()) setFullscreenHelpOpen(true);
   }
 
   function handleSelectTrick(id: string | null) {
@@ -341,6 +356,17 @@ function BuilderDesktop() {
                 >
                   Reset all
                 </button>
+                {!isStandalone && (
+                  <button
+                    type="button"
+                    onClick={handleFullscreen}
+                    title={isFullscreen ? 'Exit full screen' : 'Full screen'}
+                    aria-label={isFullscreen ? 'Exit full screen' : 'Full screen'}
+                    className="w-7 h-7 touch-manipulation inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
+                  >
+                    {isFullscreen ? <IconMinimize /> : <IconMaximize />}
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => {
@@ -448,6 +474,41 @@ function BuilderDesktop() {
       </DragOverlay>
 
       <DesktopMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      {fullscreenHelpOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"
+          role="presentation"
+          onClick={() => setFullscreenHelpOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="fullscreen-help-title"
+            className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-5 text-slate-900 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="fullscreen-help-title" className="text-base font-semibold">
+              Full screen on iPad
+            </h2>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              This browser does not allow the page to hide its tabs and address bar directly.
+              Install ARB as a web app instead:
+            </p>
+            <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-slate-700 dark:text-slate-200">
+              <li>Tap Chrome's Share button.</li>
+              <li>Choose Add to Home Screen.</li>
+              <li>Open Acro Routine Builder from the Home Screen.</li>
+            </ol>
+            <button
+              type="button"
+              onClick={() => setFullscreenHelpOpen(false)}
+              className="mt-5 w-full rounded bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-500"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </DndContext>
   );
 }
