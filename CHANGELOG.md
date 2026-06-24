@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.2
 
 - Tq and Cq quality corrections can now be entered manually.
 
