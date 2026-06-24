@@ -11,6 +11,7 @@ import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
 import { useScoreSettings } from '../store/score-settings';
+import { STORAGE_KEYS } from '../store/storage-keys';
 import TrickInfoCard from './TrickInfoCard';
 import NotesEditor from './NotesEditor';
 import ViolationsPanel from './ViolationsPanel';
@@ -24,7 +25,7 @@ import { useTrickPalette } from '../hooks/useTrickPalette';
 import { useHasTouchInput } from '../hooks/useHasTouchInput';
 import ScoreDelta from './ScoreDelta';
 import TechnicalAverage from './TechnicalAverage';
-import { IconUndo, IconRedo, IconMenu, IconNote } from './icons';
+import { IconUndo, IconRedo, IconMenu, IconNote, IconPanelLeft } from './icons';
 import { PaletteCard, PaletteCardPresentation } from './builder/PaletteCard';
 import { RunColumn } from './builder/RunColumn';
 import { closestStripInPointerRun } from './builder/collision';
@@ -37,6 +38,10 @@ export default function Builder() {
 
 function BuilderDesktop() {
   const hasTouchInput = useHasTouchInput();
+  const [paletteCollapsed, setPaletteCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem(STORAGE_KEYS.paletteCollapsed) === 'true';
+  });
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const currentName = useProgramStore((s) => s.currentName);
@@ -112,6 +117,14 @@ function BuilderDesktop() {
     setNotesOpen(true);
   }
 
+  function togglePalette() {
+    setPaletteCollapsed((collapsed) => {
+      const next = !collapsed;
+      window.localStorage.setItem(STORAGE_KEYS.paletteCollapsed, String(next));
+      return next;
+    });
+  }
+
   function handleSelectTrick(id: string | null) {
     selectTrick(id);
     if (id) setNotesOpen(false);
@@ -183,47 +196,71 @@ function BuilderDesktop() {
       onDragCancel={onDragCancel}
     >
       <div className="flex h-full min-h-0">
-        <aside className="w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col">
-          <div className="p-3 border-b border-slate-200 dark:border-slate-700 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="text-xs uppercase text-slate-500">Palette</div>
-              <button
-                type="button"
-                onClick={toggleSort}
-                className="text-xs text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-1"
-                title="Toggle sort direction"
-              >
-                coeff {sortDir === 'asc' ? '↑' : '↓'}
-              </button>
-            </div>
-            <input
-              type="text"
-              value={paletteFilter}
-              onChange={(e) => setPaletteFilter(e.target.value)}
-              placeholder="search..."
-              className="w-full px-2 py-1 text-sm rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
-            />
-          </div>
-          <div className="flex-1 overflow-y-auto p-2 space-y-1">
-            {recentAvailable.length > 0 && (
-              <>
-                <div className="px-1 pt-0.5 pb-1 text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">
-                  Recent
+        {!paletteCollapsed && (
+          <aside className="w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col">
+            <div className="p-3 border-b border-slate-200 dark:border-slate-700 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="text-xs uppercase text-slate-500">Palette</div>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={toggleSort}
+                    className="text-xs text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-1"
+                    title="Toggle sort direction"
+                  >
+                    coeff {sortDir === 'asc' ? '↑' : '↓'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={togglePalette}
+                    title="Collapse palette"
+                    aria-label="Collapse palette"
+                    className="w-7 h-7 touch-manipulation inline-flex items-center justify-center rounded text-slate-500 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  >
+                    <IconPanelLeft />
+                  </button>
                 </div>
-                {recentAvailable.map((m) => (
-                  <PaletteCard key={`recent_${m.id}`} manoeuvre={m} recent />
-                ))}
-                <div className="my-2 border-t border-slate-200 dark:border-slate-700" />
-              </>
-            )}
-            {sortedAvailable.map((m) => (
-              <PaletteCard key={m.id} manoeuvre={m} />
-            ))}
-          </div>
-        </aside>
+              </div>
+              <input
+                type="text"
+                value={paletteFilter}
+                onChange={(e) => setPaletteFilter(e.target.value)}
+                placeholder="search..."
+                className="w-full px-2 py-1 text-sm rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {recentAvailable.length > 0 && (
+                <>
+                  <div className="px-1 pt-0.5 pb-1 text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                    Recent
+                  </div>
+                  {recentAvailable.map((m) => (
+                    <PaletteCard key={`recent_${m.id}`} manoeuvre={m} recent />
+                  ))}
+                  <div className="my-2 border-t border-slate-200 dark:border-slate-700" />
+                </>
+              )}
+              {sortedAvailable.map((m) => (
+                <PaletteCard key={m.id} manoeuvre={m} />
+              ))}
+            </div>
+          </aside>
+        )}
 
         <section className="flex-1 flex flex-col min-w-0">
           <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center gap-4 text-sm">
+            {paletteCollapsed && (
+              <button
+                type="button"
+                onClick={togglePalette}
+                title="Show palette"
+                aria-label="Show palette"
+                className="w-7 h-7 shrink-0 touch-manipulation inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
+              >
+                <IconPanelLeft />
+              </button>
+            )}
             <div className="flex-1 min-w-0 flex items-center gap-1.5">
               <span
                 className="text-sm font-semibold text-slate-800 dark:text-slate-200 min-w-0 truncate"

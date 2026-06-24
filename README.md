@@ -16,6 +16,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
   tricks are badged with the reason)
 - Drag-and-drop program board (`@dnd-kit`) with mouse, touch and stylus support
 - One-shot copy mode for touch-capable devices using the desktop layout
+- Collapsible desktop trick palette with browser-persisted state
 - Side selection (L/R) and bonus modifiers per placed trick
   (twisted / reverse / flipped, with mutual exclusions)
 - Trick-type technical mark overrides saved with the program and reflected

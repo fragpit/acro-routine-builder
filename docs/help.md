@@ -36,7 +36,10 @@ mobile they become a swipe-through pager.
 
 The **Palette** (left sidebar on desktop, `+ Add trick` button on
 mobile) lists all 38 solo tricks sorted by coefficient. Recently
-used tricks appear at the top under a `Recent` heading.
+used tricks appear at the top under a `Recent` heading. On desktop,
+use the sidebar button beside `coeff` to collapse the palette. The
+same button appears at the left of the program toolbar to restore it.
+The collapsed state is remembered by the browser.
 
 ### Adding, moving and copying tricks (desktop)
 

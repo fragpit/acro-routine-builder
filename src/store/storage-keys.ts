@@ -4,6 +4,7 @@
  */
 export const STORAGE_KEYS = Object.freeze({
   program: 'arb_program',
+  paletteCollapsed: 'arb.palette-collapsed',
   recentTricks: 'arb.recent-tricks',
   theme: 'arb_theme',
 });
