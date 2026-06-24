@@ -40,6 +40,9 @@ used tricks appear at the top under a `Recent` heading.
 
 ### Adding, moving and copying tricks (desktop)
 
+The desktop board supports mouse, touch and stylus input, including
+wide tablets that use the desktop layout in landscape orientation.
+
 - **Add**: drag a trick from the palette into any run column. As
   the cursor moves through the column, the nearest gap between two
   cells opens up to mark where the trick will land - hover over a

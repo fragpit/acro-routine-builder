@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Desktop drag-and-drop now works with touch and stylus input on wide tablets.
+
 ## v0.9.2
 
 - Tq and Cq quality corrections can now be entered manually.

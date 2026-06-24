@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   useSensor,
   useSensors,
@@ -14,7 +14,7 @@ export type ActiveDrag = { type: 'palette' | 'cell'; id: string };
 
 /**
  * Owns the desktop builder's drag-and-drop wiring:
- * - sensors (pointer + touch with mobile-friendly delay)
+ * - sensors (mouse + touch with mobile-friendly delay)
  * - Alt-key tracking so a hold during drop turns move into copy
  * - DragStart / DragEnd handlers that dispatch into the program store
  *
@@ -50,7 +50,7 @@ export function useProgramDnd(opts: { onPaletteAddCommit: (manoeuvreId: string) 
   }, []);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
   );
 

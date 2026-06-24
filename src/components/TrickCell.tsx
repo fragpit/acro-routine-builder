@@ -98,7 +98,7 @@ export default function TrickCell({
             {...attributes}
             {...listeners}
             onClick={(e) => e.stopPropagation()}
-            className="w-5 h-5 text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing"
+            className="w-5 h-5 touch-none text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing"
             aria-label="drag"
           >
             ⋮⋮
