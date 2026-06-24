@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { QualityCorrection } from '../scoring/final-score';
-import { normalizeTechnicalQuality } from '../scoring/technical-marks';
 
 interface Props {
   quality: QualityCorrection;
@@ -21,18 +20,12 @@ const btnCls =
   'disabled:opacity-30 disabled:hover:bg-transparent ' +
   'disabled:cursor-not-allowed select-none text-sm';
 
-function formatValue(key: keyof QualityCorrection, value: number): string {
-  return key === 'technical' ? `${Math.round(value)}` : `${value}`;
+function formatValue(value: number): string {
+  return `${Math.round(value)}`;
 }
 
-function normalizeValue(
-  key: keyof QualityCorrection,
-  value: number,
-): number {
-  const clamped = Math.max(0, Math.min(100, value));
-  return key === 'technical'
-    ? Math.round(clamped)
-    : normalizeTechnicalQuality(clamped);
+function normalizeValue(value: number): number {
+  return Math.round(Math.max(0, Math.min(100, value)));
 }
 
 function stepValue(
@@ -41,10 +34,10 @@ function stepValue(
   direction: 1 | -1,
 ): number {
   if (key !== 'technical') {
-    return normalizeValue(key, value + direction * CHOREO_STEP);
+    return normalizeValue(value + direction * CHOREO_STEP);
   }
   const next = direction > 0 ? Math.floor(value) + 1 : Math.ceil(value) - 1;
-  return normalizeValue(key, next);
+  return normalizeValue(next);
 }
 
 function QualityCorrectionControl({
@@ -60,35 +53,31 @@ function QualityCorrectionControl({
   const draftKey = `${correctionKey}:${value}`;
   const [draft, setDraft] = useState({
     key: draftKey,
-    value: formatValue(correctionKey, value),
+    value: formatValue(value),
   });
   const inputValue = draft.key === draftKey
     ? draft.value
-    : formatValue(correctionKey, value);
+    : formatValue(value);
 
   function setValue(nextValue: number) {
-    const normalized = normalizeValue(correctionKey, nextValue);
+    const normalized = normalizeValue(nextValue);
     onChange({ ...quality, [correctionKey]: normalized });
     setDraft({
       key: `${correctionKey}:${normalized}`,
-      value: formatValue(correctionKey, normalized),
+      value: formatValue(normalized),
     });
   }
 
   function changeInput(nextValue: string) {
-    const next = nextValue.replace(',', '.');
-    const pattern = correctionKey === 'technical'
-      ? /^\d{0,3}$/
-      : /^\d{0,3}(\.\d?)?$/;
-    if (!pattern.test(next)) return;
-    setDraft({ key: draftKey, value: next });
+    if (!/^\d{0,3}$/.test(nextValue)) return;
+    setDraft({ key: draftKey, value: nextValue });
   }
 
   function commitInput(nextValue: string) {
     if (!nextValue.trim()) {
       setDraft({
         key: draftKey,
-        value: formatValue(correctionKey, value),
+        value: formatValue(value),
       });
       return;
     }
@@ -96,7 +85,7 @@ function QualityCorrectionControl({
     if (!Number.isFinite(parsed)) {
       setDraft({
         key: draftKey,
-        value: formatValue(correctionKey, value),
+        value: formatValue(value),
       });
       return;
     }
@@ -134,7 +123,7 @@ function QualityCorrectionControl({
         <input
           id={`quality-${correctionKey}`}
           type="text"
-          inputMode={correctionKey === 'technical' ? 'numeric' : 'decimal'}
+          inputMode="numeric"
           value={inputValue}
           onChange={(event) => changeInput(event.target.value)}
           onBlur={(event) => commitInput(event.target.value)}
