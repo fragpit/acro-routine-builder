@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Desktop drag-and-drop now works with touch and stylus input on wide tablets.
+- Desktop drag-and-drop now works with touch and stylus input on wide tablets,
+  with a one-shot copy mode for placed tricks.
 
 ## v0.9.2
 

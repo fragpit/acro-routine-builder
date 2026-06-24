@@ -51,7 +51,10 @@ wide tablets that use the desktop layout in landscape orientation.
 - **Move**: drag an existing trick cell to a new slot (same or
   different run).
 - **Copy**: hold `Alt` while dragging an existing cell - the overlay
-  turns green and the trick is duplicated instead of moved.
+  turns green and the trick is duplicated instead of moved. On a
+  touch-capable device, tap `copy` on a trick cell instead; the
+  selected cell turns green and its next drag creates a copy. Copy
+  mode switches off after the drag or when `copy` is tapped again.
 - **Remove**: click the small `✕` on the top-right of a trick cell.
 - **Duplicate run**: click `duplicate` in a run header, then click
   the full-run `Insert duplicate here` target on another run. Empty

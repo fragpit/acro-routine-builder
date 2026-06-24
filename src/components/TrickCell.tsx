@@ -15,6 +15,9 @@ interface Props {
   ignoredReasons?: string[];
   unrewardedBonuses?: Set<string>;
   technicalMarksByManoeuvreId: TechnicalMarksByManoeuvreId;
+  showCopyMode: boolean;
+  copyModeActive: boolean;
+  onToggleCopyMode: () => void;
   onSelect: () => void;
 }
 
@@ -25,6 +28,9 @@ export default function TrickCell({
   ignoredReasons,
   unrewardedBonuses,
   technicalMarksByManoeuvreId,
+  showCopyMode,
+  copyModeActive,
+  onToggleCopyMode,
   onSelect,
 }: Props) {
   const ignored = (ignoredReasons?.length ?? 0) > 0;
@@ -51,6 +57,7 @@ export default function TrickCell({
         ${isDragging ? 'opacity-40' : ''}
         ${highlight === 'error' ? 'border-red-500 bg-red-100 dark:bg-red-950/40' : highlight === 'warning' ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30' : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800'}
         ${selected ? 'ring-2 ring-sky-500' : ''}
+        ${copyModeActive ? 'ring-2 ring-emerald-500' : ''}
         ${ignored ? 'opacity-50' : ''}
       `}
     >
@@ -93,6 +100,25 @@ export default function TrickCell({
                 {s}
               </button>
             ))}
+          {showCopyMode && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleCopyMode();
+              }}
+              className={`h-5 touch-manipulation rounded px-1 text-[10px] font-medium ${
+                copyModeActive
+                  ? 'bg-emerald-600 text-white'
+                  : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300'
+              }`}
+              aria-label={copyModeActive ? 'Disable copy mode' : 'Enable copy mode'}
+              aria-pressed={copyModeActive}
+              title="Copy mode for next drag"
+            >
+              copy
+            </button>
+          )}
           <button
             type="button"
             {...attributes}
@@ -107,6 +133,7 @@ export default function TrickCell({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
+              if (copyModeActive) onToggleCopyMode();
               removeTrick(trick.id);
             }}
             className="w-5 h-5 text-slate-500 hover:text-red-400"

@@ -21,6 +21,7 @@ import { useBonusMalusPerRun, useViolationHighlights } from '../hooks/useScoring
 import { useScoreDelta } from '../hooks/useScoreDelta';
 import { useProgramDnd } from '../hooks/useProgramDnd';
 import { useTrickPalette } from '../hooks/useTrickPalette';
+import { useHasTouchInput } from '../hooks/useHasTouchInput';
 import ScoreDelta from './ScoreDelta';
 import TechnicalAverage from './TechnicalAverage';
 import { IconUndo, IconRedo, IconMenu, IconNote } from './icons';
@@ -35,6 +36,7 @@ export default function Builder() {
 }
 
 function BuilderDesktop() {
+  const hasTouchInput = useHasTouchInput();
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const currentName = useProgramStore((s) => s.currentName);
@@ -60,9 +62,17 @@ function BuilderDesktop() {
     pushRecent,
   } = useTrickPalette();
 
-  const { sensors, activeDrag, altHeld, onDragStart, onDragEnd } = useProgramDnd({
-    onPaletteAddCommit: pushRecent,
-  });
+  const {
+    sensors,
+    activeDrag,
+    copyModeTrickId,
+    copying,
+    toggleCopyMode,
+    clearCopyMode,
+    onDragStart,
+    onDragEnd,
+    onDragCancel,
+  } = useProgramDnd({ onPaletteAddCommit: pushRecent });
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -76,15 +86,17 @@ function BuilderDesktop() {
       const key = e.key.toLowerCase();
       if (key === 'z' && !e.shiftKey) {
         e.preventDefault();
+        clearCopyMode();
         undo();
       } else if ((key === 'z' && e.shiftKey) || key === 'y') {
         e.preventDefault();
+        clearCopyMode();
         redo();
       }
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [undo, redo]);
+  }, [undo, redo, clearCopyMode]);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
@@ -109,6 +121,7 @@ function BuilderDesktop() {
     if (duplicateSourceRunIndex === null || duplicateSourceRunIndex === targetRunIndex) return;
     const target = program.runs[targetRunIndex];
     if (target.tricks.length > 0 && !confirm(`Overwrite run ${targetRunIndex + 1}?`)) return;
+    clearCopyMode();
     duplicateRun(duplicateSourceRunIndex, targetRunIndex);
     setDuplicateSourceRunIndex(null);
   }
@@ -167,6 +180,7 @@ function BuilderDesktop() {
       collisionDetection={closestStripInPointerRun}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
+      onDragCancel={onDragCancel}
     >
       <div className="flex h-full min-h-0">
         <aside className="w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col">
@@ -254,7 +268,10 @@ function BuilderDesktop() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={undo}
+                  onClick={() => {
+                    clearCopyMode();
+                    undo();
+                  }}
                   disabled={!canUndo}
                   title="Undo (Cmd/Ctrl+Z)"
                   aria-label="Undo"
@@ -264,7 +281,10 @@ function BuilderDesktop() {
                 </button>
                 <button
                   type="button"
-                  onClick={redo}
+                  onClick={() => {
+                    clearCopyMode();
+                    redo();
+                  }}
                   disabled={!canRedo}
                   title="Redo (Cmd/Ctrl+Shift+Z)"
                   aria-label="Redo"
@@ -275,7 +295,10 @@ function BuilderDesktop() {
                 <button
                   type="button"
                   onClick={() => {
-                    if (confirm('Clear all tricks from every run?')) resetProgram();
+                    if (confirm('Clear all tricks from every run?')) {
+                      clearCopyMode();
+                      resetProgram();
+                    }
                   }}
                   className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
                 >
@@ -283,7 +306,10 @@ function BuilderDesktop() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMenuOpen(true)}
+                  onClick={() => {
+                    clearCopyMode();
+                    setMenuOpen(true);
+                  }}
                   title="Open menu"
                   aria-label="Open menu"
                   className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
@@ -337,7 +363,13 @@ function BuilderDesktop() {
                   unrewardedBonuses={unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID)}
                   onSelectTrick={handleSelectTrick}
                   selectedTrickId={selectedTrickId}
-                  onReset={() => resetRun(runIndex)}
+                  showCopyMode={hasTouchInput}
+                  copyModeTrickId={copyModeTrickId}
+                  onToggleCopyMode={toggleCopyMode}
+                  onReset={() => {
+                    clearCopyMode();
+                    resetRun(runIndex);
+                  }}
                   onDuplicate={() => setDuplicateSourceRunIndex(runIndex)}
                   duplicateMode={duplicateSourceRunIndex !== null}
                   isDuplicateSource={duplicateSourceRunIndex === runIndex}
@@ -371,9 +403,9 @@ function BuilderDesktop() {
         )}
         {activeDrag?.type === 'cell' && (
           <div
-            className={`px-2 py-1 rounded text-sm text-white ${altHeld ? 'bg-emerald-700' : 'bg-sky-700'}`}
+            className={`px-2 py-1 rounded text-sm text-white ${copying ? 'bg-emerald-700' : 'bg-sky-700'}`}
           >
-            {altHeld ? 'Copying...' : 'Moving...'}
+            {copying ? 'Copying...' : 'Moving...'}
           </div>
         )}
       </DragOverlay>

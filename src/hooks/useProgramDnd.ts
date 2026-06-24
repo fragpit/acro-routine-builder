@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   MouseSensor,
   TouchSensor,
@@ -27,6 +27,7 @@ export function useProgramDnd(opts: { onPaletteAddCommit: (manoeuvreId: string) 
   const copyTrick = useProgramStore((s) => s.copyTrick);
 
   const [activeDrag, setActiveDrag] = useState<ActiveDrag | null>(null);
+  const [copyModeTrickId, setCopyModeTrickId] = useState<string | null>(null);
 
   const altHeldRef = useRef(false);
   const [altHeld, setAltHeld] = useState(false);
@@ -60,15 +61,21 @@ export function useProgramDnd(opts: { onPaletteAddCommit: (manoeuvreId: string) 
     if (data.type === 'palette') {
       setActiveDrag({ type: 'palette', id: data.manoeuvreId });
     } else {
+      if (copyModeTrickId !== data.trickId) setCopyModeTrickId(null);
       setActiveDrag({ type: 'cell', id: data.trickId });
     }
   }
 
   function onDragEnd(e: DragEndEvent) {
     setActiveDrag(null);
+    const data = e.active.data.current;
+    const copyModeActive = isDragData(data)
+      && data.type === 'cell'
+      && copyModeTrickId === data.trickId;
+    if (copyModeActive) setCopyModeTrickId(null);
+
     const overData = e.over?.data.current;
     if (!isDropData(overData)) return;
-    const data = e.active.data.current;
     if (!isDragData(data)) return;
 
     if (data.type === 'palette') {
@@ -81,12 +88,40 @@ export function useProgramDnd(opts: { onPaletteAddCommit: (manoeuvreId: string) 
     const altFromEvent = activator instanceof KeyboardEvent || activator instanceof MouseEvent
       ? activator.altKey
       : false;
-    if (altHeldRef.current || altFromEvent) {
+    if (copyModeActive || altHeldRef.current || altFromEvent) {
       copyTrick(data.trickId, overData.runIndex, overData.insertIndex);
     } else {
       moveTrick(data.trickId, overData.runIndex, overData.insertIndex);
     }
   }
 
-  return { sensors, activeDrag, altHeld, onDragStart, onDragEnd };
+  function onDragCancel() {
+    if (activeDrag?.type === 'cell' && copyModeTrickId === activeDrag.id) {
+      setCopyModeTrickId(null);
+    }
+    setActiveDrag(null);
+  }
+
+  const toggleCopyMode = useCallback((trickId: string) => {
+    setCopyModeTrickId((current) => current === trickId ? null : trickId);
+  }, []);
+
+  const clearCopyMode = useCallback(() => {
+    setCopyModeTrickId(null);
+  }, []);
+
+  const copying = altHeld
+    || (activeDrag?.type === 'cell' && copyModeTrickId === activeDrag.id);
+
+  return {
+    sensors,
+    activeDrag,
+    copyModeTrickId,
+    copying,
+    toggleCopyMode,
+    clearCopyMode,
+    onDragStart,
+    onDragEnd,
+    onDragCancel,
+  };
 }
