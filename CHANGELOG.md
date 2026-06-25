@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.3
 
 - Desktop drag-and-drop now works with touch and stylus input on wide tablets,
   with a one-shot copy mode, collapsible palette, full-screen control and
