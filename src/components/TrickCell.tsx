@@ -196,7 +196,7 @@ export default function TrickCell({
         </div>
       </div>
       {dedicatedNameRow && (
-        <div className={`mt-1 whitespace-normal break-words leading-snug ${ignored ? 'line-through' : ''}`}>
+        <div className={`mt-1 truncate leading-snug ${ignored ? 'line-through' : ''}`}>
           {manoeuvre.name}
         </div>
       )}

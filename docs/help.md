@@ -54,8 +54,8 @@ The desktop board supports mouse, touch and stylus input, including
 wide tablets that use the desktop layout in landscape orientation.
 When a run column becomes narrow enough that fewer than 15 characters
 of a trick name would remain visible, the controls stay on the first
-row and the full trick name wraps onto the next row. Bonus badges
-remain below the name.
+row and the trick name moves onto a single dedicated row, using an
+ellipsis if it still does not fit. Bonus badges remain below the name.
 
 - **Add**: drag a trick from the palette into any run column. As
   the cursor moves through the column, the nearest gap between two
