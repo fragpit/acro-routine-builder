@@ -3,7 +3,8 @@
 ## Unreleased
 
 - Desktop drag-and-drop now works with touch and stylus input on wide tablets,
-  with a one-shot copy mode, collapsible palette and full-screen control.
+  with a one-shot copy mode, collapsible palette, full-screen control and
+  readable trick names in narrow run columns.
 
 ## v0.9.2
 
