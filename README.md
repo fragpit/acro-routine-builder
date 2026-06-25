@@ -18,7 +18,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - One-shot copy mode for touch-capable devices using the desktop layout
 - Collapsible desktop trick palette with browser-persisted state
 - Full-screen control with an iPad standalone-PWA fallback
-- Adaptive desktop trick cards that move severely truncated names to one row
+- Board-wide aligned name rows when any desktop trick name is severely truncated
 - Side selection (L/R) and bonus modifiers per placed trick
   (twisted / reverse / flipped, with mutual exclusions)
 - Trick-type technical mark overrides saved with the program and reflected

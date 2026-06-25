@@ -23,6 +23,8 @@ interface Props {
   showCopyMode: boolean;
   copyModeActive: boolean;
   onToggleCopyMode: () => void;
+  forceDedicatedNameRow: boolean;
+  onDedicatedNameRowNeedChange: (trickId: string, needed: boolean) => void;
   onSelect: () => void;
 }
 
@@ -36,6 +38,8 @@ export default function TrickCell({
   showCopyMode,
   copyModeActive,
   onToggleCopyMode,
+  forceDedicatedNameRow,
+  onDedicatedNameRowNeedChange,
   onSelect,
 }: Props) {
   const ignored = (ignoredReasons?.length ?? 0) > 0;
@@ -56,7 +60,7 @@ export default function TrickCell({
   const actionsRef = useRef<HTMLDivElement>(null);
   const coefficientRef = useRef<HTMLSpanElement>(null);
   const technicalMarkRef = useRef<HTMLSpanElement>(null);
-  const [dedicatedNameRow, setDedicatedNameRow] = useState(false);
+  const [needsDedicatedNameRow, setNeedsDedicatedNameRow] = useState(false);
 
   useLayoutEffect(() => {
     const header = headerRef.current;
@@ -85,7 +89,7 @@ export default function TrickCell({
         - technicalMarkWidth
         - gapWidth * innerItemCount;
 
-      setDedicatedNameRow(shouldUseDedicatedNameRow(
+      setNeedsDedicatedNameRow(shouldUseDedicatedNameRow(
         measureText(manoeuvreName),
         measureText(minimumInlineText),
         availableWidth,
@@ -98,6 +102,11 @@ export default function TrickCell({
     observer.observe(actions);
     return () => observer.disconnect();
   }, [customTechnicalMark, manoeuvreName]);
+
+  useLayoutEffect(() => {
+    onDedicatedNameRowNeedChange(trick.id, needsDedicatedNameRow);
+    return () => onDedicatedNameRowNeedChange(trick.id, false);
+  }, [needsDedicatedNameRow, onDedicatedNameRowNeedChange, trick.id]);
 
   if (!manoeuvre) return null;
 
@@ -116,7 +125,7 @@ export default function TrickCell({
     >
       <div ref={headerRef} className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          {!dedicatedNameRow && (
+          {!forceDedicatedNameRow && (
             <span className={`min-w-0 flex-1 truncate ${ignored ? 'line-through' : ''}`}>
               {manoeuvre.name}
             </span>
@@ -195,7 +204,7 @@ export default function TrickCell({
           </button>
         </div>
       </div>
-      {dedicatedNameRow && (
+      {forceDedicatedNameRow && (
         <div className={`mt-1 truncate leading-snug ${ignored ? 'line-through' : ''}`}>
           {manoeuvre.name}
         </div>

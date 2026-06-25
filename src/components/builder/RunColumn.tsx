@@ -47,6 +47,8 @@ export type RunColumnProps = {
   showCopyMode: boolean;
   copyModeTrickId: string | null;
   onToggleCopyMode: (trickId: string) => void;
+  forceDedicatedNameRows: boolean;
+  onDedicatedNameRowNeedChange: (trickId: string, needed: boolean) => void;
   onReset: () => void;
   onDuplicate: () => void;
   duplicateMode: boolean;
@@ -75,6 +77,8 @@ export function RunColumn({
   showCopyMode,
   copyModeTrickId,
   onToggleCopyMode,
+  forceDedicatedNameRows,
+  onDedicatedNameRowNeedChange,
   onReset,
   onDuplicate,
   duplicateMode,
@@ -141,6 +145,8 @@ export function RunColumn({
                       showCopyMode={showCopyMode}
                       copyModeActive={copyModeTrickId === t.id}
                       onToggleCopyMode={() => onToggleCopyMode(t.id)}
+                      forceDedicatedNameRow={forceDedicatedNameRows}
+                      onDedicatedNameRowNeedChange={onDedicatedNameRowNeedChange}
                       onSelect={() => onSelectTrick(t.id)}
                     />
                     <DropZone runIndex={runIndex} insertIndex={i + 1} />

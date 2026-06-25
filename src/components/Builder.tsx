@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { runTechnicity } from '../scoring/technicity';
@@ -49,6 +49,8 @@ function BuilderDesktop() {
   const hasTouchInput = useHasTouchInput();
   const { isFullscreen, isStandalone, toggleFullscreen } = useFullscreen();
   const [fullscreenHelpOpen, setFullscreenHelpOpen] = useState(false);
+  const [dedicatedNameRowTrickIds, setDedicatedNameRowTrickIds] =
+    useState<Set<string>>(() => new Set());
   const [paletteCollapsed, setPaletteCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
     return window.localStorage.getItem(STORAGE_KEYS.paletteCollapsed) === 'true';
@@ -135,6 +137,22 @@ function BuilderDesktop() {
       return next;
     });
   }
+
+  const handleDedicatedNameRowNeedChange = useCallback(
+    (trickId: string, needed: boolean) => {
+      setDedicatedNameRowTrickIds((current) => {
+        if (current.has(trickId) === needed) return current;
+        const next = new Set(current);
+        if (needed) {
+          next.add(trickId);
+        } else {
+          next.delete(trickId);
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   async function handleFullscreen() {
     if (!await toggleFullscreen()) setFullscreenHelpOpen(true);
@@ -429,6 +447,8 @@ function BuilderDesktop() {
                   showCopyMode={hasTouchInput}
                   copyModeTrickId={copyModeTrickId}
                   onToggleCopyMode={toggleCopyMode}
+                  forceDedicatedNameRows={dedicatedNameRowTrickIds.size > 0}
+                  onDedicatedNameRowNeedChange={handleDedicatedNameRowNeedChange}
                   onReset={() => {
                     clearCopyMode();
                     resetRun(runIndex);

@@ -4,7 +4,7 @@
 
 - Desktop drag-and-drop now works with touch and stylus input on wide tablets,
   with a one-shot copy mode, collapsible palette, full-screen control and
-  single-row trick names in narrow run columns.
+  board-wide aligned trick-name rows in narrow run columns.
 
 ## v0.9.2
 
