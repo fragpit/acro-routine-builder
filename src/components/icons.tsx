@@ -41,6 +41,40 @@ export function IconMenu({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
+/** Window with a left sidebar, used to toggle the desktop palette. */
+export function IconPanelLeft({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <line x1="9" y1="3" x2="9" y2="21" />
+    </svg>
+  );
+}
+
+/** Four outward corners, used to enter browser fullscreen. */
+export function IconMaximize({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <path d="M8 3H3v5" />
+      <path d="M16 3h5v5" />
+      <path d="M8 21H3v-5" />
+      <path d="M16 21h5v-5" />
+    </svg>
+  );
+}
+
+/** Four inward corners, used to exit browser fullscreen. */
+export function IconMinimize({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <path d="M3 8h5V3" />
+      <path d="M21 8h-5V3" />
+      <path d="M3 16h5v5" />
+      <path d="M21 16h-5v5" />
+    </svg>
+  );
+}
+
 /** Chain-link icon, used to copy anchor links to sections/tricks. */
 export function IconLink({ className = 'w-4 h-4' }: { className?: string }) {
   return (
@@ -161,4 +195,3 @@ export function IconTrash({ className = 'w-4 h-4' }: { className?: string }) {
     </svg>
   );
 }
-

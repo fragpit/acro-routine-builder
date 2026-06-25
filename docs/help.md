@@ -36,9 +36,28 @@ mobile they become a swipe-through pager.
 
 The **Palette** (left sidebar on desktop, `+ Add trick` button on
 mobile) lists all 38 solo tricks sorted by coefficient. Recently
-used tricks appear at the top under a `Recent` heading.
+used tricks appear at the top under a `Recent` heading. On desktop,
+use the sidebar button beside `coeff` to collapse the palette. The
+same button appears at the left of the program toolbar to restore it.
+The collapsed state is remembered by the browser.
+
+The toolbar also has a full-screen button. Browsers that support the
+Fullscreen API hide their navigation UI directly. If Chrome on iPad
+does not expose that API, the button shows the installation steps:
+tap **Share**, choose **Add to Home Screen**, then launch ARB from its
+Home Screen icon. The installed web app opens without Chrome's tabs
+and address bar.
 
 ### Adding, moving and copying tricks (desktop)
+
+The desktop board supports mouse, touch and stylus input, including
+wide tablets that use the desktop layout in landscape orientation.
+When a run column becomes narrow enough that fewer than 15 characters
+of a trick name would remain visible, the controls stay on the first
+row and the trick name moves onto a single dedicated row, using an
+ellipsis if it still does not fit. If one card needs that layout, all
+desktop trick cards switch together so their rows remain aligned.
+Bonus badges remain below the name.
 
 - **Add**: drag a trick from the palette into any run column. As
   the cursor moves through the column, the nearest gap between two
@@ -48,7 +67,10 @@ used tricks appear at the top under a `Recent` heading.
 - **Move**: drag an existing trick cell to a new slot (same or
   different run).
 - **Copy**: hold `Alt` while dragging an existing cell - the overlay
-  turns green and the trick is duplicated instead of moved.
+  turns green and the trick is duplicated instead of moved. On a
+  touch-capable device, tap `copy` on a trick cell instead; the
+  selected cell turns green and its next drag creates a copy. Copy
+  mode switches off after the drag or when `copy` is tapped again.
 - **Remove**: click the small `✕` on the top-right of a trick cell.
 - **Duplicate run**: click `duplicate` in a run header, then click
   the full-run `Insert duplicate here` target on another run. Empty

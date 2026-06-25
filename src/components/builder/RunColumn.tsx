@@ -44,6 +44,11 @@ export type RunColumnProps = {
   unrewardedBonuses: Map<string, Set<string>>;
   onSelectTrick: (id: string | null) => void;
   selectedTrickId: string | null;
+  showCopyMode: boolean;
+  copyModeTrickId: string | null;
+  onToggleCopyMode: (trickId: string) => void;
+  forceDedicatedNameRows: boolean;
+  onDedicatedNameRowNeedChange: (trickId: string, needed: boolean) => void;
   onReset: () => void;
   onDuplicate: () => void;
   duplicateMode: boolean;
@@ -69,6 +74,11 @@ export function RunColumn({
   unrewardedBonuses,
   onSelectTrick,
   selectedTrickId,
+  showCopyMode,
+  copyModeTrickId,
+  onToggleCopyMode,
+  forceDedicatedNameRows,
+  onDedicatedNameRowNeedChange,
   onReset,
   onDuplicate,
   duplicateMode,
@@ -132,6 +142,11 @@ export function RunColumn({
                       ignoredReasons={ignored.get(t.id)}
                       unrewardedBonuses={unrewardedBonuses.get(t.id)}
                       technicalMarksByManoeuvreId={technicalMarksByManoeuvreId}
+                      showCopyMode={showCopyMode}
+                      copyModeActive={copyModeTrickId === t.id}
+                      onToggleCopyMode={() => onToggleCopyMode(t.id)}
+                      forceDedicatedNameRow={forceDedicatedNameRows}
+                      onDedicatedNameRowNeedChange={onDedicatedNameRowNeedChange}
                       onSelect={() => onSelectTrick(t.id)}
                     />
                     <DropZone runIndex={runIndex} insertIndex={i + 1} />

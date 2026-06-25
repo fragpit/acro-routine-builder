@@ -35,7 +35,7 @@ export function PaletteCard({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm cursor-grab active:cursor-grabbing select-none flex justify-between ${isDragging ? 'opacity-40' : ''} hover:border-sky-500`}
+      className={`px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm cursor-grab active:cursor-grabbing select-none touch-manipulation flex justify-between ${isDragging ? 'opacity-40' : ''} hover:border-sky-500`}
     >
       <span className="truncate">{manoeuvre.name}</span>
       <span className="text-slate-500 dark:text-slate-400 ml-2 shrink-0">

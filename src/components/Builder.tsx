@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { MANOEUVRES_BY_ID } from '../data/manoeuvres';
 import { runTechnicity } from '../scoring/technicity';
@@ -11,6 +11,7 @@ import { unrewardedBonusesByTrick } from '../rules/repeated-bonus';
 import { runSymmetry } from '../rules/validators/symmetry';
 import { useProgramStore } from '../store/program-store';
 import { useScoreSettings } from '../store/score-settings';
+import { STORAGE_KEYS } from '../store/storage-keys';
 import TrickInfoCard from './TrickInfoCard';
 import NotesEditor from './NotesEditor';
 import ViolationsPanel from './ViolationsPanel';
@@ -21,9 +22,19 @@ import { useBonusMalusPerRun, useViolationHighlights } from '../hooks/useScoring
 import { useScoreDelta } from '../hooks/useScoreDelta';
 import { useProgramDnd } from '../hooks/useProgramDnd';
 import { useTrickPalette } from '../hooks/useTrickPalette';
+import { useHasTouchInput } from '../hooks/useHasTouchInput';
+import { useFullscreen } from '../hooks/useFullscreen';
 import ScoreDelta from './ScoreDelta';
 import TechnicalAverage from './TechnicalAverage';
-import { IconUndo, IconRedo, IconMenu, IconNote } from './icons';
+import {
+  IconUndo,
+  IconRedo,
+  IconMenu,
+  IconNote,
+  IconPanelLeft,
+  IconMaximize,
+  IconMinimize,
+} from './icons';
 import { PaletteCard, PaletteCardPresentation } from './builder/PaletteCard';
 import { RunColumn } from './builder/RunColumn';
 import { closestStripInPointerRun } from './builder/collision';
@@ -35,6 +46,15 @@ export default function Builder() {
 }
 
 function BuilderDesktop() {
+  const hasTouchInput = useHasTouchInput();
+  const { isFullscreen, isStandalone, toggleFullscreen } = useFullscreen();
+  const [fullscreenHelpOpen, setFullscreenHelpOpen] = useState(false);
+  const [dedicatedNameRowTrickIds, setDedicatedNameRowTrickIds] =
+    useState<Set<string>>(() => new Set());
+  const [paletteCollapsed, setPaletteCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem(STORAGE_KEYS.paletteCollapsed) === 'true';
+  });
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const currentName = useProgramStore((s) => s.currentName);
@@ -60,9 +80,17 @@ function BuilderDesktop() {
     pushRecent,
   } = useTrickPalette();
 
-  const { sensors, activeDrag, altHeld, onDragStart, onDragEnd } = useProgramDnd({
-    onPaletteAddCommit: pushRecent,
-  });
+  const {
+    sensors,
+    activeDrag,
+    copyModeTrickId,
+    copying,
+    toggleCopyMode,
+    clearCopyMode,
+    onDragStart,
+    onDragEnd,
+    onDragCancel,
+  } = useProgramDnd({ onPaletteAddCommit: pushRecent });
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -76,15 +104,17 @@ function BuilderDesktop() {
       const key = e.key.toLowerCase();
       if (key === 'z' && !e.shiftKey) {
         e.preventDefault();
+        clearCopyMode();
         undo();
       } else if ((key === 'z' && e.shiftKey) || key === 'y') {
         e.preventDefault();
+        clearCopyMode();
         redo();
       }
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [undo, redo]);
+  }, [undo, redo, clearCopyMode]);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
@@ -100,6 +130,34 @@ function BuilderDesktop() {
     setNotesOpen(true);
   }
 
+  function togglePalette() {
+    setPaletteCollapsed((collapsed) => {
+      const next = !collapsed;
+      window.localStorage.setItem(STORAGE_KEYS.paletteCollapsed, String(next));
+      return next;
+    });
+  }
+
+  const handleDedicatedNameRowNeedChange = useCallback(
+    (trickId: string, needed: boolean) => {
+      setDedicatedNameRowTrickIds((current) => {
+        if (current.has(trickId) === needed) return current;
+        const next = new Set(current);
+        if (needed) {
+          next.add(trickId);
+        } else {
+          next.delete(trickId);
+        }
+        return next;
+      });
+    },
+    [],
+  );
+
+  async function handleFullscreen() {
+    if (!await toggleFullscreen()) setFullscreenHelpOpen(true);
+  }
+
   function handleSelectTrick(id: string | null) {
     selectTrick(id);
     if (id) setNotesOpen(false);
@@ -109,6 +167,7 @@ function BuilderDesktop() {
     if (duplicateSourceRunIndex === null || duplicateSourceRunIndex === targetRunIndex) return;
     const target = program.runs[targetRunIndex];
     if (target.tricks.length > 0 && !confirm(`Overwrite run ${targetRunIndex + 1}?`)) return;
+    clearCopyMode();
     duplicateRun(duplicateSourceRunIndex, targetRunIndex);
     setDuplicateSourceRunIndex(null);
   }
@@ -167,49 +226,74 @@ function BuilderDesktop() {
       collisionDetection={closestStripInPointerRun}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
+      onDragCancel={onDragCancel}
     >
       <div className="flex h-full min-h-0">
-        <aside className="w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col">
-          <div className="p-3 border-b border-slate-200 dark:border-slate-700 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="text-xs uppercase text-slate-500">Palette</div>
-              <button
-                type="button"
-                onClick={toggleSort}
-                className="text-xs text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-1"
-                title="Toggle sort direction"
-              >
-                coeff {sortDir === 'asc' ? '↑' : '↓'}
-              </button>
-            </div>
-            <input
-              type="text"
-              value={paletteFilter}
-              onChange={(e) => setPaletteFilter(e.target.value)}
-              placeholder="search..."
-              className="w-full px-2 py-1 text-sm rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
-            />
-          </div>
-          <div className="flex-1 overflow-y-auto p-2 space-y-1">
-            {recentAvailable.length > 0 && (
-              <>
-                <div className="px-1 pt-0.5 pb-1 text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">
-                  Recent
+        {!paletteCollapsed && (
+          <aside className="w-72 shrink-0 border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col">
+            <div className="p-3 border-b border-slate-200 dark:border-slate-700 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="text-xs uppercase text-slate-500">Palette</div>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={toggleSort}
+                    className="text-xs text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-1"
+                    title="Toggle sort direction"
+                  >
+                    coeff {sortDir === 'asc' ? '↑' : '↓'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={togglePalette}
+                    title="Collapse palette"
+                    aria-label="Collapse palette"
+                    className="w-7 h-7 touch-manipulation inline-flex items-center justify-center rounded text-slate-500 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  >
+                    <IconPanelLeft />
+                  </button>
                 </div>
-                {recentAvailable.map((m) => (
-                  <PaletteCard key={`recent_${m.id}`} manoeuvre={m} recent />
-                ))}
-                <div className="my-2 border-t border-slate-200 dark:border-slate-700" />
-              </>
-            )}
-            {sortedAvailable.map((m) => (
-              <PaletteCard key={m.id} manoeuvre={m} />
-            ))}
-          </div>
-        </aside>
+              </div>
+              <input
+                type="text"
+                value={paletteFilter}
+                onChange={(e) => setPaletteFilter(e.target.value)}
+                placeholder="search..."
+                className="w-full px-2 py-1 text-sm rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:border-sky-500 outline-none"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {recentAvailable.length > 0 && (
+                <>
+                  <div className="px-1 pt-0.5 pb-1 text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                    Recent
+                  </div>
+                  {recentAvailable.map((m) => (
+                    <PaletteCard key={`recent_${m.id}`} manoeuvre={m} recent />
+                  ))}
+                  <div className="my-2 border-t border-slate-200 dark:border-slate-700" />
+                </>
+              )}
+              {sortedAvailable.map((m) => (
+                <PaletteCard key={m.id} manoeuvre={m} />
+              ))}
+            </div>
+          </aside>
+        )}
 
         <section className="flex-1 flex flex-col min-w-0">
           <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center gap-4 text-sm">
+            {paletteCollapsed && (
+              <button
+                type="button"
+                onClick={togglePalette}
+                title="Show palette"
+                aria-label="Show palette"
+                className="w-7 h-7 shrink-0 touch-manipulation inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
+              >
+                <IconPanelLeft />
+              </button>
+            )}
             <div className="flex-1 min-w-0 flex items-center gap-1.5">
               <span
                 className="text-sm font-semibold text-slate-800 dark:text-slate-200 min-w-0 truncate"
@@ -254,7 +338,10 @@ function BuilderDesktop() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={undo}
+                  onClick={() => {
+                    clearCopyMode();
+                    undo();
+                  }}
                   disabled={!canUndo}
                   title="Undo (Cmd/Ctrl+Z)"
                   aria-label="Undo"
@@ -264,7 +351,10 @@ function BuilderDesktop() {
                 </button>
                 <button
                   type="button"
-                  onClick={redo}
+                  onClick={() => {
+                    clearCopyMode();
+                    redo();
+                  }}
                   disabled={!canRedo}
                   title="Redo (Cmd/Ctrl+Shift+Z)"
                   aria-label="Redo"
@@ -275,15 +365,32 @@ function BuilderDesktop() {
                 <button
                   type="button"
                   onClick={() => {
-                    if (confirm('Clear all tricks from every run?')) resetProgram();
+                    if (confirm('Clear all tricks from every run?')) {
+                      clearCopyMode();
+                      resetProgram();
+                    }
                   }}
                   className="px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
                 >
                   Reset all
                 </button>
+                {!isStandalone && (
+                  <button
+                    type="button"
+                    onClick={handleFullscreen}
+                    title={isFullscreen ? 'Exit full screen' : 'Full screen'}
+                    aria-label={isFullscreen ? 'Exit full screen' : 'Full screen'}
+                    className="w-7 h-7 touch-manipulation inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
+                  >
+                    {isFullscreen ? <IconMinimize /> : <IconMaximize />}
+                  </button>
+                )}
                 <button
                   type="button"
-                  onClick={() => setMenuOpen(true)}
+                  onClick={() => {
+                    clearCopyMode();
+                    setMenuOpen(true);
+                  }}
                   title="Open menu"
                   aria-label="Open menu"
                   className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
@@ -337,7 +444,15 @@ function BuilderDesktop() {
                   unrewardedBonuses={unrewardedBonusesByTrick(run, MANOEUVRES_BY_ID)}
                   onSelectTrick={handleSelectTrick}
                   selectedTrickId={selectedTrickId}
-                  onReset={() => resetRun(runIndex)}
+                  showCopyMode={hasTouchInput}
+                  copyModeTrickId={copyModeTrickId}
+                  onToggleCopyMode={toggleCopyMode}
+                  forceDedicatedNameRows={dedicatedNameRowTrickIds.size > 0}
+                  onDedicatedNameRowNeedChange={handleDedicatedNameRowNeedChange}
+                  onReset={() => {
+                    clearCopyMode();
+                    resetRun(runIndex);
+                  }}
                   onDuplicate={() => setDuplicateSourceRunIndex(runIndex)}
                   duplicateMode={duplicateSourceRunIndex !== null}
                   isDuplicateSource={duplicateSourceRunIndex === runIndex}
@@ -371,14 +486,49 @@ function BuilderDesktop() {
         )}
         {activeDrag?.type === 'cell' && (
           <div
-            className={`px-2 py-1 rounded text-sm text-white ${altHeld ? 'bg-emerald-700' : 'bg-sky-700'}`}
+            className={`px-2 py-1 rounded text-sm text-white ${copying ? 'bg-emerald-700' : 'bg-sky-700'}`}
           >
-            {altHeld ? 'Copying...' : 'Moving...'}
+            {copying ? 'Copying...' : 'Moving...'}
           </div>
         )}
       </DragOverlay>
 
       <DesktopMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      {fullscreenHelpOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"
+          role="presentation"
+          onClick={() => setFullscreenHelpOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="fullscreen-help-title"
+            className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-5 text-slate-900 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="fullscreen-help-title" className="text-base font-semibold">
+              Full screen on iPad
+            </h2>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              This browser does not allow the page to hide its tabs and address bar directly.
+              Install ARB as a web app instead:
+            </p>
+            <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-slate-700 dark:text-slate-200">
+              <li>Tap Chrome's Share button.</li>
+              <li>Choose Add to Home Screen.</li>
+              <li>Open Acro Routine Builder from the Home Screen.</li>
+            </ol>
+            <button
+              type="button"
+              onClick={() => setFullscreenHelpOpen(false)}
+              className="mt-5 w-full rounded bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-500"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </DndContext>
   );
 }
