@@ -116,7 +116,8 @@ trick type in the program. When it is not customized, the value
 follows the `Tq` default from Program settings. Editing a trick type's
 mark changes the score and the displayed `Avg T`, but it does not
 change the `Tq` default used by unset trick types. Trick cards show
-custom marks next to the trick coefficient.
+custom marks next to the trick coefficient. On desktop, click outside
+the right sidebar to close the trick info panel.
 
 ### Undo and redo
 
