@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.4
 
 - Desktop trick info panels now close when clicking outside the right sidebar.
 
