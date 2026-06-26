@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Desktop trick info panels now close when clicking outside the right sidebar.
+
 ## v0.9.3
 
 - Desktop drag-and-drop now works with touch and stylus input on wide tablets,

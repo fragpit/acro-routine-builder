@@ -465,13 +465,26 @@ function BuilderDesktop() {
         </section>
 
         {selectedTrick && (
-          <aside className="w-80 shrink-0 border-l border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto">
-            <TrickInfoCard
-              manoeuvre={MANOEUVRES_BY_ID[selectedTrick.manoeuvreId]}
-              placedTrick={selectedTrick}
-              onClose={() => selectTrick(null)}
+          <div
+            className="fixed inset-0 z-40 flex justify-end"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${MANOEUVRES_BY_ID[selectedTrick.manoeuvreId].name} trick details`}
+          >
+            <button
+              type="button"
+              aria-label="Close trick details"
+              onClick={() => selectTrick(null)}
+              className="absolute inset-0 bg-slate-900/60"
             />
-          </aside>
+            <aside className="relative h-full w-80 max-w-[90vw] overflow-y-auto border-l border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+              <TrickInfoCard
+                manoeuvre={MANOEUVRES_BY_ID[selectedTrick.manoeuvreId]}
+                placedTrick={selectedTrick}
+                onClose={() => selectTrick(null)}
+              />
+            </aside>
+          </div>
         )}
         {!selectedTrick && notesOpen && (
           <aside className="w-80 shrink-0 border-l border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden flex">
