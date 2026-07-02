@@ -159,8 +159,11 @@ export default function BuilderMobile() {
           <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
             {currentName ?? <span className="italic font-normal text-slate-400">Untitled</span>}
           </div>
-          <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            <span>{program.awtMode ? 'AWT' : 'AWQ'} · {program.runs.length} run{program.runs.length === 1 ? '' : 's'}</span>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-start gap-1.5">
+            <span className="whitespace-nowrap">
+              {program.awtMode ? 'AWT' : 'AWQ'} · {program.runs.length}{' '}
+              run{program.runs.length === 1 ? '' : 's'}
+            </span>
             {programTotal && (
               <>
                 <span>·</span>
@@ -184,7 +187,7 @@ export default function BuilderMobile() {
             {technicalAverage !== null && (
               <>
                 <span>·</span>
-                <TechnicalAverage value={technicalAverage} />
+                <TechnicalAverage value={technicalAverage} stacked />
               </>
             )}
           </div>

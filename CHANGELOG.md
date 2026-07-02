@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Mobile headers keep `Avg T` intact and place its percentage on a second line.
+
 ## v0.9.4
 
 - Desktop trick info panels now close when clicking outside the right sidebar.
