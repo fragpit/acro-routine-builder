@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Mobile headers align Score and Avg T labels above their numeric values.
+- Mobile headers place the total below mode/runs and the Avg T percentage below its label.
 
 ## v0.9.4
 

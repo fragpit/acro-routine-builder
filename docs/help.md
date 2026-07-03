@@ -246,8 +246,8 @@ Where:
 The header shows the **program total** (sum of all per-run Final
 Scores) and the current **Avg T** across tricks that can receive a
 judge technical mark.
-On mobile, the `Score` and `Avg T` labels stay together on the first
-line, with their numeric values aligned below them.
+On mobile, the program total appears below the mode and run count,
+while the `Avg T` percentage appears below its label.
 Next to the score is a small change indicator in green or red showing
 the difference from a comparison baseline:
 
