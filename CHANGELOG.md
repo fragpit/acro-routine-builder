@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Mobile headers place the total below mode/runs and the Avg T percentage below its label.
+- Mobile headers show mode/runs above a desktop-style Score and Avg T row.
 
 ## v0.9.4
 
