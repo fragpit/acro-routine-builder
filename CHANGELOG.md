@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Mobile headers keep `Avg T` intact and place its percentage on a second line.
+- Mobile headers align Score and Avg T labels above their numeric values.
 
 ## v0.9.4
 

@@ -170,17 +170,22 @@ export default function BuilderMobile() {
                 <button
                   type="button"
                   onClick={toggleScorePin}
-                  className="inline-flex items-center gap-1.5 rounded px-1 -mx-1 active:bg-slate-100 dark:active:bg-slate-800"
+                  className="inline-flex flex-col items-start gap-0.5 rounded px-1 -mx-1 text-xs leading-none active:bg-slate-100 dark:active:bg-slate-800"
                   title={
                     scorePinned
                       ? 'Pinned baseline. Tap to unpin.'
                       : 'Tap to pin a comparison baseline.'
                   }
                 >
-                  <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
-                    {programTotal.total.toFixed(3)}
+                  <span className="whitespace-nowrap uppercase tracking-wide">
+                    Score
                   </span>
-                  <ScoreDelta delta={scoreDelta} />
+                  <span className="inline-flex items-baseline gap-1.5 whitespace-nowrap">
+                    <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
+                      {programTotal.total.toFixed(3)}
+                    </span>
+                    <ScoreDelta delta={scoreDelta} />
+                  </span>
                 </button>
               </>
             )}
