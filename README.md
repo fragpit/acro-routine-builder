@@ -33,7 +33,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Technicity and bonus estimation per run (AWT/AWQ formulas)
 - Manually editable technical and choreography quality corrections
 - Program total with average T and a cumulative change indicator next to
-  it; click the total to pin a comparison baseline
+  it; click the total to pin a comparison baseline. Mobile shows mode/runs
+  above a desktop-style Score and Avg T row.
 - AWT mode toggle (enables AWT-specific restrictions)
 - Program import/export: JSON roundtrip + human-readable markdown report
 - Free-form program notes editor (right-side panel on desktop, bottom-sheet

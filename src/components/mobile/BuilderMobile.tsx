@@ -159,34 +159,32 @@ export default function BuilderMobile() {
           <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
             {currentName ?? <span className="italic font-normal text-slate-400">Untitled</span>}
           </div>
-          <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            <span>{program.awtMode ? 'AWT' : 'AWQ'} · {program.runs.length} run{program.runs.length === 1 ? '' : 's'}</span>
+          <div className="whitespace-nowrap text-[11px] text-slate-500 dark:text-slate-400">
+            {program.awtMode ? 'AWT' : 'AWQ'} · {program.runs.length}{' '}
+            run{program.runs.length === 1 ? '' : 's'}
+          </div>
+          <div className="flex items-center gap-3 min-h-4">
             {programTotal && (
-              <>
-                <span>·</span>
-                <button
-                  type="button"
-                  onClick={toggleScorePin}
-                  className="inline-flex items-center gap-1.5 rounded px-1 -mx-1 active:bg-slate-100 dark:active:bg-slate-800"
-                  title={
-                    scorePinned
-                      ? 'Pinned baseline. Tap to unpin.'
-                      : 'Tap to pin a comparison baseline.'
-                  }
-                >
-                  <span className="font-mono font-semibold text-sky-700 dark:text-sky-300">
-                    {programTotal.total.toFixed(3)}
-                  </span>
-                  <ScoreDelta delta={scoreDelta} />
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={toggleScorePin}
+                className="inline-flex items-baseline gap-1.5 rounded px-1 -mx-1 text-xs leading-none active:bg-slate-100 dark:active:bg-slate-800"
+                title={
+                  scorePinned
+                    ? 'Pinned baseline. Tap to unpin.'
+                    : 'Tap to pin a comparison baseline.'
+                }
+              >
+                <span className="whitespace-nowrap text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  Score
+                </span>
+                <span className="whitespace-nowrap font-mono font-semibold text-sky-700 dark:text-sky-300">
+                  {programTotal.total.toFixed(3)}
+                </span>
+                <ScoreDelta delta={scoreDelta} />
+              </button>
             )}
-            {technicalAverage !== null && (
-              <>
-                <span>·</span>
-                <TechnicalAverage value={technicalAverage} />
-              </>
-            )}
+            <TechnicalAverage value={technicalAverage} />
           </div>
         </div>
         <div className="flex items-center gap-1.5">

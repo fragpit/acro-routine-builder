@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Mobile headers show mode/runs above a desktop-style Score and Avg T row.
+
 ## v0.9.4
 
 - Desktop trick info panels now close when clicking outside the right sidebar.

@@ -246,6 +246,8 @@ Where:
 The header shows the **program total** (sum of all per-run Final
 Scores) and the current **Avg T** across tricks that can receive a
 judge technical mark.
+On mobile, the mode and run count appear on their own line, with
+`Score` and `Avg T` shown together on the line below.
 Next to the score is a small change indicator in green or red showing
 the difference from a comparison baseline:
 
