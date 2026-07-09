@@ -4,7 +4,8 @@ Acro Routine Builder (ARB) is a static web app that helps you
 compose a competitive acro program under the FAI Sporting Code 2025
 (Section 7F). It validates tricks and computes per-run scores. This
 page is the hands-on manual. For the raw rulebook see the
-[Rules reference](/docs/rules) and [Tricks reference](/docs/tricks).
+[Rules reference](/docs/rules), where `Download Official PDF` downloads
+the bundled rulebook PDF, and [Tricks reference](/docs/tricks).
 
 ## What you can do
 

@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rulesSource from '../../docs/sporting_code_aerobatics_2025.md?raw';
-import { IconLink } from './icons';
+import rulesPdfUrl from '../../docs/sporting_code_aerobatics_2025.pdf?url';
+import { IconDownload, IconLink } from './icons';
 
 interface TocEntry {
   level: 2 | 3;
@@ -181,7 +182,17 @@ export default function RulesDocs() {
           <span>≡</span>
           <span>Contents</span>
         </button>
-        <article className="max-w-3xl mx-auto px-4 lg:px-6 py-6 prose prose-lg prose-slate dark:prose-invert prose-headings:scroll-mt-4 prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-code:text-sky-700 dark:prose-code:text-sky-300">
+        <div className="max-w-3xl mx-auto px-4 lg:px-6 pt-6">
+          <a
+            href={rulesPdfUrl}
+            download="sporting_code_aerobatics_2025.pdf"
+            className="inline-flex items-center gap-2 rounded border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-sky-500 hover:text-sky-700 dark:hover:text-sky-300 transition"
+          >
+            <IconDownload />
+            <span>Download Official PDF</span>
+          </a>
+        </div>
+        <article className="max-w-3xl mx-auto px-4 lg:px-6 py-4 prose prose-lg prose-slate dark:prose-invert prose-headings:scroll-mt-4 prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-code:text-sky-700 dark:prose-code:text-sky-300">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
