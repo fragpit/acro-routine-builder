@@ -5,8 +5,11 @@ import ThemeToggle from './ThemeToggle';
 import TricksDocs from './TricksDocs';
 import RulesDocs from './RulesDocs';
 import HelpDocs from './HelpDocs';
+import NewsDocs from './NewsDocs';
 import FeedbackMenu from './FeedbackMenu';
+import HelpMenu from './HelpMenu';
 import AppUpdateIndicator from './AppUpdateIndicator';
+import MobileNavLinks from './mobile/MobileNavLinks';
 import { useCloudflareAnalytics } from '../hooks/useCloudflareAnalytics';
 import { useShareLink } from '../hooks/useShareLink';
 import { AppUpdateProvider } from '../hooks/AppUpdateProvider';
@@ -27,17 +30,28 @@ export default function App() {
             <span className="lg:hidden">ARB</span>
             <span className="hidden lg:inline">Acro Routine Builder</span>
           </Link>
-          <nav className="ml-auto flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">
-            <Link to="/builder" className="hover:text-sky-600 dark:hover:text-sky-400">Builder</Link>
-            <Link to="/docs/help" className="hover:text-sky-600 dark:hover:text-sky-400">Help</Link>
-            <Link to="/docs/rules" className="hover:text-sky-600 dark:hover:text-sky-400">Rules</Link>
-            <Link to="/docs/tricks" className="hover:text-sky-600 dark:hover:text-sky-400">Tricks</Link>
-            <FeedbackMenu
-              triggerClassName="w-8 h-8 rounded border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 transition"
-              iconSize="md"
-              align="right"
-            />
-            <ThemeToggle />
+          <nav className="lg:hidden ml-auto flex-1 min-w-0">
+            <MobileNavLinks primary="builder" textStyle="plain" />
+          </nav>
+          <nav className="ml-auto hidden lg:flex items-center gap-5 text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">
+            <div className="flex items-center gap-5">
+              <Link to="/builder" className="hover:text-sky-600 dark:hover:text-sky-400">Builder</Link>
+              <Link to="/docs/rules" className="hover:text-sky-600 dark:hover:text-sky-400">Rules</Link>
+              <Link to="/docs/tricks" className="hover:text-sky-600 dark:hover:text-sky-400">Tricks</Link>
+            </div>
+            <div className="flex items-center gap-2">
+              <HelpMenu
+                triggerClassName="w-8 h-8 rounded border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 transition"
+                iconSize="sm"
+                align="right"
+              />
+              <FeedbackMenu
+                triggerClassName="w-8 h-8 rounded border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 transition"
+                iconSize="sm"
+                align="right"
+              />
+              <ThemeToggle />
+            </div>
           </nav>
         </header>
         <main className="flex-1 min-h-0">
@@ -47,6 +61,7 @@ export default function App() {
             <Route path="/docs/help" element={<HelpDocs />} />
             <Route path="/docs/rules" element={<RulesDocs />} />
             <Route path="/docs/tricks" element={<TricksDocs />} />
+            <Route path="/docs/news" element={<NewsDocs />} />
           </Routes>
         </main>
       </AppUpdateProvider>

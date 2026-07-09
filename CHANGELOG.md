@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Surface unread News and app updates in Help and builder menu buttons.
+- Combine desktop Help and News into the question-mark menu.
+- Show unread News as subtle blue dots in the Help menu.
+- Align mobile Home header icon buttons to the right.
+- Keep text-only nav items unframed in the mobile Home header.
+- Move mobile Help and News into a question-mark menu.
+- Standardize mobile navigation buttons across Home and the builder drawer.
+- Add a curated News page with unread highlighting for returning users.
+
 ## v0.9.9
 
 - Installed PWAs now show a low-key update notice when a newer build is

@@ -24,6 +24,8 @@ import { useProgramDnd } from '../hooks/useProgramDnd';
 import { useTrickPalette } from '../hooks/useTrickPalette';
 import { useHasTouchInput } from '../hooks/useHasTouchInput';
 import { useFullscreen } from '../hooks/useFullscreen';
+import { useAppUpdateController } from '../hooks/useAppUpdateController';
+import { useNewsUnread } from '../hooks/useNewsUnread';
 import ScoreDelta from './ScoreDelta';
 import TechnicalAverage from './TechnicalAverage';
 import {
@@ -48,6 +50,10 @@ export default function Builder() {
 function BuilderDesktop() {
   const hasTouchInput = useHasTouchInput();
   const { isFullscreen, isStandalone, toggleFullscreen } = useFullscreen();
+  const { status: updateStatus } = useAppUpdateController();
+  const hasUnreadNews = useNewsUnread();
+  const updateAvailable = updateStatus === 'update-available';
+  const menuHasIndicator = updateAvailable || hasUnreadNews;
   const [fullscreenHelpOpen, setFullscreenHelpOpen] = useState(false);
   const [dedicatedNameRowTrickIds, setDedicatedNameRowTrickIds] =
     useState<Set<string>>(() => new Set());
@@ -391,11 +397,17 @@ function BuilderDesktop() {
                     clearCopyMode();
                     setMenuOpen(true);
                   }}
-                  title="Open menu"
-                  aria-label="Open menu"
-                  className="w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
+                  title={menuHasIndicator ? 'Open menu: new activity' : 'Open menu'}
+                  aria-label={menuHasIndicator ? 'Open menu, new activity' : 'Open menu'}
+                  className="relative w-7 h-7 inline-flex items-center justify-center rounded border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400"
                 >
                   <IconMenu />
+                  {menuHasIndicator && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-sky-500 ring-2 ring-white dark:ring-slate-900"
+                    />
+                  )}
                 </button>
               </div>
             </div>

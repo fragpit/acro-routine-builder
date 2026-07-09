@@ -7,6 +7,8 @@ import { useProgramStore } from '../../store/program-store';
 import { useScoreSettings } from '../../store/score-settings';
 import { useBonusMalusPerRun, useViolationHighlights } from '../../hooks/useScoringDerived';
 import { useScoreDelta } from '../../hooks/useScoreDelta';
+import { useAppUpdateController } from '../../hooks/useAppUpdateController';
+import { useNewsUnread } from '../../hooks/useNewsUnread';
 import ScoreDelta from '../ScoreDelta';
 import TechnicalAverage from '../TechnicalAverage';
 import { loadRecentTricks, pushRecentTrick } from '../../store/recent-tricks';
@@ -20,6 +22,8 @@ import MobileMenu from './MobileMenu';
 import NotesSheetMobile from './NotesSheetMobile';
 
 export default function BuilderMobile() {
+  const { status: updateStatus } = useAppUpdateController();
+  const hasUnreadNews = useNewsUnread();
   const program = useProgramStore((s) => s.program);
   const violations = useProgramStore((s) => s.violations);
   const currentName = useProgramStore((s) => s.currentName);
@@ -47,6 +51,8 @@ export default function BuilderMobile() {
   const [notesSheetOpen, setNotesSheetOpen] = useState(false);
   const [statsExpanded, setStatsExpanded] = useState(false);
   const hasNotes = program.notes.trim().length > 0;
+  const updateAvailable = updateStatus === 'update-available';
+  const menuHasIndicator = updateAvailable || hasUnreadNews;
   const technicalMarksByManoeuvreId = useMemo(
     () => program.technicalMarksByManoeuvreId ?? {},
     [program.technicalMarksByManoeuvreId],
@@ -209,10 +215,17 @@ export default function BuilderMobile() {
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="w-9 h-9 rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 flex items-center justify-center"
-            aria-label="Open menu"
+            className="relative w-9 h-9 rounded border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 flex items-center justify-center"
+            aria-label={menuHasIndicator ? 'Open menu, new activity' : 'Open menu'}
+            title={menuHasIndicator ? 'Open menu: new activity' : 'Open menu'}
           >
             ≡
+            {menuHasIndicator && (
+              <span
+                aria-hidden="true"
+                className="absolute right-1 top-1 h-2 w-2 rounded-full bg-sky-500 ring-2 ring-white dark:ring-slate-900"
+              />
+            )}
           </button>
         </div>
       </header>

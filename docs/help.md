@@ -6,6 +6,7 @@ compose a competitive acro program under the FAI Sporting Code 2025
 page is the hands-on manual. For the raw rulebook see the
 [Rules reference](/docs/rules), where `Download Official PDF` downloads
 the bundled rulebook PDF, and [Tricks reference](/docs/tricks).
+For user-facing product updates, open [News](/docs/news).
 
 ## What you can do
 
@@ -447,8 +448,15 @@ particular:
 - The mobile builder keeps its header, violation bar, run indicator
   and score blocks inside the visible browser window; the trick stack
   scrolls inside the active run.
+- The Home header uses plain text links for Builder, Rules and
+  Tricks. The mobile builder drawer keeps its nav entries framed.
+  The question-mark button opens Help, News and app update actions
+  when a newer build is available.
 - The Rules and Tricks doc sidebars become off-canvas drawers below
   1024px, opened by the `≡ Contents` bar at the top.
+- Unseen user-facing updates show as subtle blue dots on the
+  question-mark button, the builder menu button and the News menu item.
+  Opening News marks the latest update as seen.
 - Mobile trick cells have `L / R` side toggles and an inline `✕`
   for remove.
 
@@ -466,6 +474,9 @@ The speech-bubble button in the nav opens a small menu with:
 The version number is shown at the bottom of the Home page and at
 the bottom of the drawer menu on mobile. When a newer build is
 published, the Home page version line shows an `update available`
-notice with **Update** and **Later** actions. **Update** reloads into
-the new build; **Later** hides the notice until a later update check.
-On mobile, pulling down from the top still checks for updates manually.
+notice with **Update** and **Later** actions. The question-mark menu
+also shows **Update Available**, and the question-mark and builder
+menu buttons get a subtle blue dot while the update is waiting.
+**Update** reloads into the new build; **Later** hides the Home-page
+notice until a later update check. On mobile, pulling down from the
+top still checks for updates manually.
