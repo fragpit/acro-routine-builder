@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { execSync } from 'node:child_process';
-import { copyFileSync } from 'node:fs';
+import { copyFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const PROD_BASE = '/acro-routine-builder/';
@@ -32,49 +32,57 @@ function resolveAppVersion(): string {
   }
 }
 
-function copyIndexAsFallback(): PluginOption {
+function staticBuildFiles(appVersion: string): PluginOption {
   return {
-    name: 'copy-index-as-404',
+    name: 'static-build-files',
     closeBundle() {
       const dir = resolve(process.cwd(), 'dist');
       copyFileSync(resolve(dir, 'index.html'), resolve(dir, '404.html'));
+      writeFileSync(
+        resolve(dir, 'app-version.json'),
+        `${JSON.stringify({ version: appVersion })}\n`,
+      );
     },
   };
 }
 
-export default defineConfig(({ command }) => ({
-  plugins: [
-    react(),
-    tailwindcss(),
-    VitePWA({
-      registerType: 'prompt',
-      injectRegister: null,
-      manifest: false,
-      manifestFilename: 'site.webmanifest',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
-        cleanupOutdatedCaches: true,
-        navigateFallback: 'index.html',
-      },
-      includeAssets: [
-        'favicon.svg',
-        'favicon-32.png',
-        'apple-touch-icon.png',
-        'icon-192.png',
-        'icon-512.png',
-        'site.webmanifest',
-      ],
-    }),
-    copyIndexAsFallback(),
-  ],
-  base: resolveBase(command),
-  define: {
-    __APP_VERSION__: JSON.stringify(resolveAppVersion()),
-    __CF_ANALYTICS_TOKEN__: JSON.stringify(
-      process.env.CF_ANALYTICS_TOKEN ?? null,
-    ),
-    __SHARE_SHORTENER_URL__: JSON.stringify(
-      process.env.SHARE_SHORTENER_URL ?? null,
-    ),
-  },
-}));
+export default defineConfig(({ command }) => {
+  const appVersion = resolveAppVersion();
+
+  return {
+    plugins: [
+      react(),
+      tailwindcss(),
+      VitePWA({
+        registerType: 'prompt',
+        injectRegister: null,
+        manifest: false,
+        manifestFilename: 'site.webmanifest',
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+          cleanupOutdatedCaches: true,
+          navigateFallback: 'index.html',
+        },
+        includeAssets: [
+          'favicon.svg',
+          'favicon-32.png',
+          'apple-touch-icon.png',
+          'icon-192.png',
+          'icon-512.png',
+          'site.webmanifest',
+        ],
+      }),
+      staticBuildFiles(appVersion),
+    ],
+    base: resolveBase(command),
+    define: {
+      __APP_VERSION__: JSON.stringify(appVersion),
+      __CF_ANALYTICS_TOKEN__: JSON.stringify(
+        process.env.CF_ANALYTICS_TOKEN ?? null,
+      ),
+      __SHARE_SHORTENER_URL__: JSON.stringify(
+        process.env.SHARE_SHORTENER_URL ?? null,
+      ),
+    },
+  };
+});

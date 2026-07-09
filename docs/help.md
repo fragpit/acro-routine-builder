@@ -464,4 +464,8 @@ The speech-bubble button in the nav opens a small menu with:
 - **Email** - write to the maintainer.
 
 The version number is shown at the bottom of the Home page and at
-the bottom of the drawer menu on mobile.
+the bottom of the drawer menu on mobile. When a newer build is
+published, the Home page version line shows an `update available`
+notice with **Update** and **Later** actions. **Update** reloads into
+the new build; **Later** hides the notice until a later update check.
+On mobile, pulling down from the top still checks for updates manually.

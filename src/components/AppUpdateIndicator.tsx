@@ -1,33 +1,31 @@
 import { useIsMobile } from '../hooks/useIsMobile';
-import { useAppUpdate } from '../hooks/useAppUpdate';
+import { useAppUpdateController } from '../hooks/useAppUpdateController';
+import type { UpdateStatus } from '../hooks/useAppUpdate';
 import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { IconRefresh, IconCheck } from './icons';
 
 const PULL_THRESHOLD = 70;
 
 /**
- * Top-anchored pill that visualises the pull-to-refresh app-update flow.
+ * Top-anchored pill that visualises app update checks.
  *
  * Mounted once at the App root. On mobile (< lg), listens for a top-of-page
  * pull-down gesture and, on release past the threshold, asks the service
- * worker to check for a new build. The same pill then morphs to show
- * "checking" / "updating" / "up to date" / "offline" status. On desktop
- * the gesture is disabled - browser refresh covers that case.
- *
- * The plugin is configured with `registerType: 'prompt'`, so a waiting SW
- * never auto-activates; the pull gesture is the user's explicit consent.
+ * worker to check for a new build. Persistent update actions live beside the
+ * Home page version instead of in this transient gesture indicator.
  */
 export default function AppUpdateIndicator() {
   const isMobile = useIsMobile();
-  const { status, checkAndApply } = useAppUpdate();
+  const { status, checkForUpdate } = useAppUpdateController();
   const { pull, pulling, armed } = usePullToRefresh({
     enabled: isMobile,
-    onTrigger: () => void checkAndApply(),
+    onTrigger: () => void checkForUpdate(),
     threshold: PULL_THRESHOLD,
   });
 
   const showPull = pulling && pull > 4;
-  const showStatus = status !== 'idle';
+  const topStatus = status === 'update-available' ? 'idle' : status;
+  const showStatus = topStatus !== 'idle';
   if (!showPull && !showStatus) return null;
 
   const offset = showStatus
@@ -36,7 +34,7 @@ export default function AppUpdateIndicator() {
   const opacity = showStatus
     ? 1
     : Math.min(1, pull / (PULL_THRESHOLD * 0.8));
-  const spinning = status === 'checking' || status === 'updating';
+  const spinning = topStatus === 'checking' || topStatus === 'updating';
 
   return (
     <div
@@ -53,8 +51,15 @@ export default function AppUpdateIndicator() {
         opacity,
       }}
     >
-      <div className="mt-2 flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 px-3 py-1.5 shadow-md text-slate-700 dark:text-slate-200 text-xs">
-        {status === 'up-to-date' ? (
+      <div
+        className={[
+          'mt-2 flex items-center gap-2 rounded-full border border-slate-200',
+          'dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 px-3',
+          'py-1.5 shadow-md text-slate-700 dark:text-slate-200 text-xs',
+          'pointer-events-none',
+        ].join(' ')}
+      >
+        {topStatus === 'up-to-date' ? (
           <IconCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
         ) : (
           <IconRefresh
@@ -66,14 +71,14 @@ export default function AppUpdateIndicator() {
             }
           />
         )}
-        <span>{labelFor(status, armed, pulling)}</span>
+        <span>{labelFor(topStatus, armed, pulling)}</span>
       </div>
     </div>
   );
 }
 
 function labelFor(
-  status: ReturnType<typeof useAppUpdate>['status'],
+  status: Exclude<UpdateStatus, 'update-available'>,
   armed: boolean,
   pulling: boolean,
 ): string {

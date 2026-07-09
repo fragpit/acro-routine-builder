@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Installed PWAs now show a low-key update notice when a newer build is
+  published.
+
 ## v0.9.7
 
 - Header menus now stay above mobile documentation section bars.
