@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.7
 
 - Header menus now stay above mobile documentation section bars.
 
