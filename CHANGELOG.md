@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.6
 
 - Rules now offers a `Download Official PDF` button for the bundled rulebook.
 
