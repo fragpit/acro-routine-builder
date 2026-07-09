@@ -12,11 +12,30 @@ const hardcoreEntry = (p: number) => ({ id: 'hardcore_entry', label: 'Hardcore E
 const cabSlide = (p: number) => ({ id: 'cab_slide', label: 'Cab Slide', percent: p, countsAs: 'twisted' as const });
 const toTwistedSat = (p: number) => ({ id: 'to_twisted_sat', label: 'To Twisted SAT', percent: p, countsAs: 'twisted' as const });
 
+function withFlippedBonusExclusions(m: Manoeuvre): Manoeuvre {
+  const flippedIds = m.availableBonuses.filter((b) => b.countsAs === 'flipped').map((b) => b.id);
+  if (flippedIds.length === 0) return m;
+
+  const extraExclusions: string[][] = [];
+  for (const flippedId of flippedIds) {
+    for (const bonus of m.availableBonuses) {
+      if (bonus.id === flippedId) continue;
+      const alreadyExcluded = m.mutualExclusions.some(
+        (group) => group.includes(flippedId) && group.includes(bonus.id),
+      );
+      if (!alreadyExcluded) extraExclusions.push([flippedId, bonus.id]);
+    }
+  }
+
+  if (extraExclusions.length === 0) return m;
+  return { ...m, mutualExclusions: [...m.mutualExclusions, ...extraExclusions] };
+}
+
 /**
  * All 38 solo manoeuvres from FAI Sporting Code 7B 2025, section 1.1.
  * Source of truth for both validators and UI info cards.
  */
-export const MANOEUVRES: Manoeuvre[] = [
+export const MANOEUVRES: Manoeuvre[] = ([
   {
     id: 'tail_slide',
     name: 'Tail Slide',
@@ -801,7 +820,7 @@ export const MANOEUVRES: Manoeuvre[] = [
     mutualExclusions: [],
     groups: ['tumbling_related'],
   },
-];
+] satisfies Manoeuvre[]).map(withFlippedBonusExclusions);
 
 export const MANOEUVRES_BY_ID: Record<string, Manoeuvre> = Object.fromEntries(
   MANOEUVRES.map((m) => [m.id, m]),
@@ -820,4 +839,3 @@ export const BONUS_CATALOG: BonusDefinition[] = (() => {
   }
   return Array.from(seen.values());
 })();
-

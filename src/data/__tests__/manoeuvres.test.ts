@@ -17,6 +17,28 @@ describe('MANOEUVRES integrity', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('every flipped bonus excludes every other bonus on the same trick', () => {
+    const offenders: string[] = [];
+    for (const m of MANOEUVRES) {
+      const flippedBonusIds = m.availableBonuses
+        .filter((b) => b.countsAs === 'flipped')
+        .map((b) => b.id);
+
+      for (const flippedId of flippedBonusIds) {
+        for (const bonus of m.availableBonuses) {
+          if (bonus.id === flippedId) continue;
+          const excluded = m.mutualExclusions.some(
+            (group) => group.includes(flippedId) && group.includes(bonus.id),
+          );
+          if (!excluded) {
+            offenders.push(`${m.id}: '${flippedId}' does not exclude '${bonus.id}'`);
+          }
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
   it('every forbiddenConnectionTo target is a known manoeuvre id', () => {
     const offenders: string[] = [];
     for (const m of MANOEUVRES) {
