@@ -126,10 +126,17 @@ Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
 
 Do everything above, then **finalize**:
 
-1. Merge the PR (squash).
+1. Confirm the PR is mergeable enough for GitHub to accept the merge, then merge
+   it through GitHub MCP using squash merge.
 2. Switch to the default branch (`main`) and pull.
 3. Bump the release tag. The user must specify `patch`, `minor` or `major`; if they didn't, ask. Bumping rules below.
-4. Delete the dev branch locally and on the remote.
+4. Delete the dev branch locally and on the remote. If the remote branch is
+   already gone because GitHub deleted it after merge, treat that as completed
+   cleanup.
+
+Do not wait for the final GitHub Pages deploy after pushing the release tag.
+Report the pushed tag and release commit; the tag-triggered deploy can finish
+asynchronously.
 
 ### Tag bumping rules
 
@@ -138,8 +145,11 @@ Do everything above, then **finalize**:
 - Compute the next tag from the latest existing tag (not from `package.json`): `patch` → `vX.Y.Z+1`, `minor` → `vX.Y+1.0`, `major` → `vX+1.0.0`.
 - Also bump `package.json` `version` to match, commit as `Bump version to X.Y.Z`, push to `main`.
 - In the same `Bump version` commit, rename the `## Unreleased` heading in `CHANGELOG.md` to `## vX.Y.Z`. Do **not** add a fresh empty `## Unreleased` placeholder - when the next change lands, the PR that introduces it is responsible for re-adding the heading. The tag IS the release, so the changelog must move in lockstep - otherwise entries linger under `Unreleased` long after they shipped (this has happened and required a retroactive fixup).
+- If pushing `main` or a branch over HTTPS fails because credentials cannot be
+  read, do not retry the same failing transport. Use the working SSH remote for
+  Git pushes, or use GitHub MCP for file/branch operations where appropriate.
 - Create the tag annotated (`git tag -a vX.Y.Z -m "..."`) - lightweight tags fail here because of a forced-annotated git config. Push with `git push origin vX.Y.Z`.
-- The tag push may report "Cannot create ref due to creations being restricted" - that's a protected-ref ruleset being bypassed (admin action). The tag still gets created; no action needed.
+- The tag push may report "Cannot create ref due to creations being restricted" - that's a protected-ref ruleset being bypassed (admin action). Verify the tag exists, then continue; no extra deploy polling is needed.
 
 ## Key documents
 
