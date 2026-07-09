@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Installed PWAs now show an Update available prompt when a newer build
-  is published.
+- Installed PWAs now show a low-key update notice when a newer build is
+  published.
 
 ## v0.9.7
 

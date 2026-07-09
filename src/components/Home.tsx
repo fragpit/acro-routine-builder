@@ -1,6 +1,15 @@
 import { Link } from 'react-router-dom';
+import { useAppUpdateController } from '../hooks/useAppUpdateController';
 
 export default function Home() {
+  const {
+    status,
+    latestVersion,
+    applyUpdate,
+    dismissUpdate,
+  } = useAppUpdateController();
+  const updateAvailable = status === 'update-available';
+
   return (
     <div className="h-full flex flex-col p-6">
       <div className="flex-1 flex items-center justify-center">
@@ -26,7 +35,34 @@ export default function Home() {
         </div>
       </div>
       <div className="text-center text-xs text-slate-500 dark:text-slate-400">
-        v{__APP_VERSION__}
+        <span>v{__APP_VERSION__}</span>
+        {updateAvailable ? (
+          <span className="ml-1 inline-flex flex-wrap items-center justify-center gap-x-1 gap-y-1">
+            <span>
+              (
+              {latestVersion
+                ? `update available: v${latestVersion}`
+                : 'update available'}
+            </span>
+            <span aria-hidden>·</span>
+            <button
+              type="button"
+              onClick={() => void applyUpdate()}
+              className="font-semibold text-sky-700 hover:text-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:text-sky-300 dark:hover:text-sky-200"
+            >
+              Update
+            </button>
+            <span aria-hidden>·</span>
+            <button
+              type="button"
+              onClick={dismissUpdate}
+              className="font-semibold text-slate-600 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 dark:text-slate-300 dark:hover:text-slate-100 dark:focus:ring-slate-600"
+            >
+              Later
+            </button>
+            <span>)</span>
+          </span>
+        ) : null}
       </div>
     </div>
   );

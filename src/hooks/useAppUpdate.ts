@@ -3,6 +3,7 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 import { checkAppVersion } from './app-update-version';
 
 const INSTALL_TIMEOUT_MS = 10000;
+const RELOAD_FALLBACK_MS = 2500;
 
 /**
  * Status surfaced by the app-update indicator.
@@ -130,7 +131,14 @@ export function useAppUpdate() {
     const registration = registrationRef.current;
     try {
       if (registration && !registration.waiting) {
-        await registration.update();
+        const updateFinished = await withTimeout(
+          registration.update(),
+          INSTALL_TIMEOUT_MS,
+        );
+        if (!updateFinished) {
+          window.location.reload();
+          return;
+        }
       }
 
       const readyToActivate = registration
@@ -138,7 +146,13 @@ export function useAppUpdate() {
         : false;
 
       if (registration && readyToActivate) {
-        void updateServiceWorker(true);
+        const reloadFallback = window.setTimeout(() => {
+          window.location.reload();
+        }, RELOAD_FALLBACK_MS);
+        void updateServiceWorker(true).catch(() => {
+          window.clearTimeout(reloadFallback);
+          flashStatus('offline');
+        });
         return;
       }
     } catch {
@@ -205,5 +219,21 @@ function waitForInstalledWorker(
     }
 
     installingWorker.addEventListener('statechange', onStateChange);
+  });
+}
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const timeout = window.setTimeout(() => resolve(false), timeoutMs);
+    promise.then(
+      () => {
+        window.clearTimeout(timeout);
+        resolve(true);
+      },
+      (error: unknown) => {
+        window.clearTimeout(timeout);
+        reject(error);
+      },
+    );
   });
 }

@@ -465,7 +465,7 @@ The speech-bubble button in the nav opens a small menu with:
 
 The version number is shown at the bottom of the Home page and at
 the bottom of the drawer menu on mobile. When a newer build is
-published, the app shows an **Update available** prompt with **Update**
-and **Later** actions. **Update** reloads into the new build; **Later**
-hides the prompt until a later update check. On mobile, pulling down
-from the top still checks for updates manually.
+published, the Home page version line shows an `update available`
+notice with **Update** and **Later** actions. **Update** reloads into
+the new build; **Later** hides the notice until a later update check.
+On mobile, pulling down from the top still checks for updates manually.
