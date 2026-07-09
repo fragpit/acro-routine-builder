@@ -47,6 +47,7 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
   bare id from clipboard / manual paste - useful inside the
   installed PWA on iOS, where chat-app links always open in Safari.
 - Light/dark theme, persisted in localStorage
+- Installed PWA update prompt when a newer tagged release is published
 - Online documentation: FAI Sporting Code, downloadable official PDF and
   generated trick reference
 - **Mobile UI**: on viewports below 1024px the builder switches to a
@@ -87,8 +88,9 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-The tag name is injected into the bundle as the app version and shown in
-the header. `vite.config.ts` sets `base` to the repo subpath in
+The tag name is injected into the bundle as the app version, shown in
+the UI and written to `app-version.json` so installed PWAs can detect
+newer builds. `vite.config.ts` sets `base` to the repo subpath in
 production builds; BrowserRouter handles client-side routing, and a
 `404.html` (a build-time copy of `index.html`) lets Pages resolve
 deep-link refreshes back into the SPA.
