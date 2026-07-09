@@ -47,7 +47,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
   bare id from clipboard / manual paste - useful inside the
   installed PWA on iOS, where chat-app links always open in Safari.
 - Light/dark theme, persisted in localStorage
-- Online documentation: FAI Sporting Code and generated trick reference
+- Online documentation: FAI Sporting Code, downloadable official PDF and
+  generated trick reference
 - **Mobile UI**: on viewports below 1024px the builder switches to a
   touch-first layout - swipe between runs, tap-to-insert palette with
   a full-screen trick picker, compact per-row insert controls, recent

@@ -85,6 +85,17 @@ export function IconLink({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
+/** Down arrow into a tray, used for download actions. */
+export function IconDownload({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg {...SVG_PROPS} className={className} aria-hidden="true">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <path d="M7 10l5 5 5-5" />
+      <path d="M12 15V3" />
+    </svg>
+  );
+}
+
 /** Speech bubble with three dots, used as the Feedback button trigger. */
 export function IconFeedback({ className = 'w-4 h-4' }: { className?: string }) {
   return (
