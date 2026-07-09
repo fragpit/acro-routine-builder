@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.9
 
 - Installed PWAs now show a low-key update notice when a newer build is
   published.
