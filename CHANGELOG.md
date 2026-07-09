@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Header menus now stay above mobile documentation section bars.
+
 ## v0.9.6
 
 - Rules now offers a `Download Official PDF` button for the bundled rulebook.
