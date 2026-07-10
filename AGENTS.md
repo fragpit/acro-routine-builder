@@ -113,9 +113,13 @@ Cloudflare Web Analytics is wired in via [src/hooks/useCloudflareAnalytics.ts](s
    overview and gets at most a one-line bullet under Features.
    Skip this step for purely internal refactors that the user
    cannot perceive.
-4. Commit and push the branch.
-5. Open a PR via GitHub MCP (never `gh` CLI - see user memory).
-6. Add changes to CHANGELOG.md. Keep entries short - one bullet, a
+4. If the change affects end-user behavior or business logic, ask the
+   user whether to add a curated public entry to [docs/news.md](docs/news.md).
+   Skip this for purely technical, infrastructure or maintenance-only
+   changes.
+5. Commit and push the branch.
+6. Open a PR via GitHub MCP (never `gh` CLI - see user memory).
+7. Add changes to CHANGELOG.md. Keep entries short - one bullet, a
    single line if possible, describing the user-visible effect. Put
    root-cause analysis and implementation detail in the PR body, not
    in CHANGELOG.

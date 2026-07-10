@@ -1,13 +1,19 @@
 import { useTheme } from '../hooks/useTheme';
 
-export default function ThemeToggle() {
+interface Props {
+  className?: string;
+}
+
+export default function ThemeToggle({
+  className = 'w-8 h-8 flex items-center justify-center rounded border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 transition',
+}: Props) {
   const [theme, toggle] = useTheme();
   return (
     <button
       type="button"
       onClick={toggle}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-      className="w-8 h-8 flex items-center justify-center rounded border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-sky-500 hover:text-sky-600 dark:hover:text-sky-400 transition"
+      className={className}
     >
       {theme === 'dark' ? (
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -1,5 +1,7 @@
 # Acro Routine Builder
 
+> This app is 100% vibe-coded: no human-written commits have been applied.
+
 Web app for paragliding acro pilots to build competition programs (AWT/AWQ)
 under FAI Sporting Code 2025 rules. Drag tricks into runs, get real-time
 validation against the rulebook, estimate technicity and bonuses, and
@@ -47,9 +49,11 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
   bare id from clipboard / manual paste - useful inside the
   installed PWA on iOS, where chat-app links always open in Safari.
 - Light/dark theme, persisted in localStorage
-- Installed PWA update prompt when a newer tagged release is published
+- Installed PWA update prompts when a newer tagged release is published
 - Online documentation: FAI Sporting Code, downloadable official PDF and
   generated trick reference
+- Curated News page for user-facing updates, with an unread indicator
+  for returning users
 - **Mobile UI**: on viewports below 1024px the builder switches to a
   touch-first layout - swipe between runs, tap-to-insert palette with
   a full-screen trick picker, compact per-row insert controls, recent

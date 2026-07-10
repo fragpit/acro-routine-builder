@@ -3,6 +3,7 @@
  * - they are the persisted-state contract with every user's browser.
  */
 export const STORAGE_KEYS = Object.freeze({
+  newsLastSeen: 'arb.news-last-seen',
   program: 'arb_program',
   paletteCollapsed: 'arb.palette-collapsed',
   recentTricks: 'arb.recent-tricks',
