@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.15
 
 - AWT import snapshot now includes Arc'obatic Games 2026 and Saisies Acro
   Master 2026 results.
