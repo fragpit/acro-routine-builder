@@ -1,5 +1,11 @@
 # News
 
+## New AWT competition results
+
+Results from Arc'obatic Games 2026 and Saisies Acro Master 2026 are now
+available in Import AWT. Choose either competition and a pilot to load their
+three-run program into the builder.
+
 ## v0.9.12
 
 - Bonus-limit warnings now highlight only the extra twisted, reversed or flipped
