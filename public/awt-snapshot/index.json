@@ -158,6 +158,28 @@
     "last_update": null
   },
   {
+    "_id": "6a0d51dfcab9804cb4f9a21b",
+    "name": "Arc'obatic Games 2026",
+    "code": "arcobatic-games-20256",
+    "start_date": "2026-06-13",
+    "end_date": "2026-06-14",
+    "location": "Bourg Saint Maurice",
+    "published": true,
+    "type": "solo",
+    "state": "closed",
+    "number_of_pilots": 8,
+    "number_of_teams": 0,
+    "number_of_judges": 3,
+    "number_of_runs": 3,
+    "image": "/files/26acb5d31f8ba453e008305eb7b76cb39fe1c926f254887e799a8d35f9384f75",
+    "logo": "/files/26acb5d31f8ba453e008305eb7b76cb39fe1c926f254887e799a8d35f9384f75",
+    "website": null,
+    "seasons": [
+      "awt-2026"
+    ],
+    "last_update": "2026-06-13T11:29:00.388268"
+  },
+  {
     "_id": "68d142742eb9a1951caaacb4",
     "name": "Championnat de France de voltige 2025",
     "code": "championnat-de-france-de-voltige-2025",
@@ -492,6 +514,28 @@
     "website": null,
     "seasons": [],
     "last_update": "2025-10-07T11:15:39.389534"
+  },
+  {
+    "_id": "6a0d521fcab9804cb4f9a21c",
+    "name": "Saisies Acro Master 2026",
+    "code": "saisies-acro-master-2026",
+    "start_date": "2026-06-20",
+    "end_date": "2026-06-21",
+    "location": "Villard Sur Doron",
+    "published": true,
+    "type": "solo",
+    "state": "closed",
+    "number_of_pilots": 8,
+    "number_of_teams": 0,
+    "number_of_judges": 3,
+    "number_of_runs": 3,
+    "image": "/files/58df92235ebe11d2bc71a5024b722a083820cdcf6ade35775351f7db23776d3f",
+    "logo": "/files/58df92235ebe11d2bc71a5024b722a083820cdcf6ade35775351f7db23776d3f",
+    "website": null,
+    "seasons": [
+      "awt-2026"
+    ],
+    "last_update": "2026-06-20T10:42:10.996696"
   },
   {
     "_id": "6810b8cbe2fadfea2cb58014",

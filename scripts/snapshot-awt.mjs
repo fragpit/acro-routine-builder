@@ -26,6 +26,7 @@ const COMPETITIONS_DIR = join(SNAPSHOT_DIR, 'competitions');
 const API_BASE = 'https://api.acroworldtour.com/public';
 const REQUEST_DELAY_MS = 200;
 const MAX_RETRIES = 3;
+const VOLATILE_COMPARISON_KEYS = new Set(['last_update']);
 
 async function main() {
   console.log(`Fetching competition list from ${API_BASE}/competitions/`);
@@ -136,7 +137,16 @@ async function writeIfChanged(path, payload, { pretty }) {
     await writeFile(path, next, 'utf8');
     return 'added';
   }
-  if (hash(prev) === hash(next)) {
+  let prevPayload;
+  try {
+    prevPayload = JSON.parse(prev);
+  } catch {
+    await writeFile(path, next, 'utf8');
+    return 'updated';
+  }
+  if (
+    snapshotComparisonHash(prevPayload) === snapshotComparisonHash(payload)
+  ) {
     return 'unchanged';
   }
   await writeFile(path, next, 'utf8');
@@ -165,11 +175,34 @@ function hash(s) {
   return createHash('sha1').update(s).digest('hex');
 }
 
+/** Hash a snapshot payload while excluding volatile upstream metadata. */
+export function snapshotComparisonHash(payload) {
+  return hash(
+    JSON.stringify(normalizeForComparison(payload, VOLATILE_COMPARISON_KEYS)),
+  );
+}
+
+function normalizeForComparison(value, ignoredKeys) {
+  if (Array.isArray(value)) {
+    return value.map((item) => normalizeForComparison(item, ignoredKeys));
+  }
+  if (value === null || typeof value !== 'object') return value;
+
+  return Object.fromEntries(
+    Object.keys(value)
+      .filter((key) => !ignoredKeys.has(key))
+      .sort()
+      .map((key) => [key, normalizeForComparison(value[key], ignoredKeys)]),
+  );
+}
+
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
