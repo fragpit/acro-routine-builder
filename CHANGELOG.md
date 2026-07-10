@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.12
 
 - Highlight only over-limit bonus tricks instead of every trick in the category.
 
