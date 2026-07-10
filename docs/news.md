@@ -6,7 +6,7 @@ Results from Arc'obatic Games 2026 and Saisies Acro Master 2026 are now
 available in Import AWT. Choose either competition and a pilot to load their
 three-run program into the builder.
 
-## v0.9.12
+## Bonus-limit warnings highlight only ignored tricks
 
 - Bonus-limit warnings now highlight only the extra twisted, reversed or flipped
   tricks that will not be scored.
@@ -21,7 +21,7 @@ This keeps the builder aligned with the intended scoring model and prevents
 accidental combinations such as Flip plus Twisted, Reverse, Hardcore Entry or
 Cab Slide on the same trick.
 
-## v0.9.5
+## Mobile scoring summary stays visible
 
 - Mobile builder headers now keep mode and run count visible above
   Score and Avg T.
