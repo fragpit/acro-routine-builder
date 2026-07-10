@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.14
 
 - Keep installed iOS PWAs full-height after launch and page navigation.
 
