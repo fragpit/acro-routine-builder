@@ -448,7 +448,8 @@ particular:
   placement.
 - The mobile builder keeps its header, violation bar, run indicator
   and score blocks inside the visible browser window; the trick stack
-  scrolls inside the active run.
+  scrolls inside the active run. Installed iOS PWAs fill the screen after
+  launch and when returning from another page.
 - The Home header uses plain text links for Builder, Rules and
   Tricks. The mobile builder drawer keeps its nav entries framed.
   The question-mark button opens Help, News and app update actions

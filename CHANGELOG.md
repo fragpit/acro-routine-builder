@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Keep installed iOS PWAs full-height after launch and page navigation.
+
 ## v0.9.13
 
 - Fix Rules PDF downloads from installed PWAs.
