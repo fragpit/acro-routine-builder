@@ -1,5 +1,10 @@
 # News
 
+## v0.9.12
+
+- Bonus-limit warnings now highlight only the extra twisted, reversed or flipped
+  tricks that will not be scored.
+
 ## Flipped bonuses now block other bonuses
 
 Flipped variants are now treated as exclusive bonus choices. When you select a

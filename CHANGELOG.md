@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Highlight only over-limit bonus tricks instead of every trick in the category.
+
 ## v0.9.11
 
 - Flipped bonuses now disable every other bonus on the same trick.

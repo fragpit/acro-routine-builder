@@ -20,7 +20,7 @@ describe('validateBonusLimits', () => {
     const v = validateBonusLimits(p, MANOEUVRES_BY_ID);
     expect(v).toHaveLength(1);
     expect(v[0].ruleId).toBe('bonus-limits-twisted');
-    expect(v[0].affectedCells).toHaveLength(6);
+    expect(v[0].affectedCells).toEqual([{ runIndex: 0, trickIndex: 5 }]);
   });
 
   it('flags >3 reversed', () => {
@@ -29,7 +29,9 @@ describe('validateBonusLimits', () => {
     );
     const p = program([run(...tricks)]);
     const v = validateBonusLimits(p, MANOEUVRES_BY_ID);
-    expect(v.some((x) => x.ruleId === 'bonus-limits-reversed')).toBe(true);
+    expect(v.find((x) => x.ruleId === 'bonus-limits-reversed')?.affectedCells).toEqual([
+      { runIndex: 0, trickIndex: 3 },
+    ]);
   });
 
   it('flags >2 flipped', () => {
@@ -38,7 +40,9 @@ describe('validateBonusLimits', () => {
     );
     const p = program([run(...tricks)]);
     const v = validateBonusLimits(p, MANOEUVRES_BY_ID);
-    expect(v.some((x) => x.ruleId === 'bonus-limits-flipped')).toBe(true);
+    expect(v.find((x) => x.ruleId === 'bonus-limits-flipped')?.affectedCells).toEqual([
+      { runIndex: 0, trickIndex: 2 },
+    ]);
   });
 
   it('counts each category once per trick even with multiple twisted bonuses', () => {
