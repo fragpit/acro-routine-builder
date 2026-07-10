@@ -61,7 +61,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
   touch-first layout - swipe between runs, tap-to-insert palette with
   a full-screen trick picker, compact per-row insert controls, recent
   tricks, handle-based reorder with edge auto-scroll, a viewport-fitted
-  trick stack, bottom-sheet for trick details, and a right-side drawer menu
+  trick stack, reliable full-height rendering in installed iOS PWAs,
+  bottom-sheet for trick details, and a right-side drawer menu
   for Save/Load/Export/settings
   (shares the same Zustand store as the desktop view, so state is
   identical across layouts)
