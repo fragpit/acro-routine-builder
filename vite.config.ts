@@ -59,7 +59,7 @@ export default defineConfig(({ command }) => {
         manifest: false,
         manifestFilename: 'site.webmanifest',
         workbox: {
-          globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+          globPatterns: ['**/*.{js,css,html,svg,png,pdf,webmanifest}'],
           cleanupOutdatedCaches: true,
           navigateFallback: 'index.html',
         },
