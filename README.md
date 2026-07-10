@@ -22,7 +22,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
 - Full-screen control with an iPad standalone-PWA fallback
 - Board-wide aligned name rows when any desktop trick name is severely truncated
 - Side selection (L/R) and bonus modifiers per placed trick
-  (twisted / reverse / flipped, with mutual exclusions)
+  (twisted / reverse / flipped, with mutual exclusions; flipped bonuses disable
+  all other bonuses on that trick)
 - Trick-type technical mark overrides saved with the program and reflected
   in the displayed average T and trick cards while the Tq default stays fixed
 - Default bonuses applied automatically on trick insertion

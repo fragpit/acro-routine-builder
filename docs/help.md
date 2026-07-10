@@ -13,7 +13,8 @@ For user-facing product updates, open [News](/docs/news).
 - Build up to eight runs, each containing any number of solo tricks.
 - Drag tricks from a palette and arrange them between runs.
 - Attach twisted / reversed / flipped / SAT / misty bonuses per trick
-  (only those allowed by the trick's catalog entry).
+  (only those allowed by the trick's catalog entry). Selecting a flipped
+  bonus disables every other bonus on that trick.
 - Switch between AWQ (World Series) and AWT (World Tour) rule sets.
 - See live validation against every FAI restriction: forbidden
   connections, repetition windows, bonus-slot limits, high-coefficient
