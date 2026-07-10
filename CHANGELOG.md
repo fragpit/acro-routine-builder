@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.13
 
 - Fix Rules PDF downloads from installed PWAs.
 
