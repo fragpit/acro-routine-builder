@@ -162,7 +162,7 @@ Validation runs on every change.
   (high-coefficient over the limit, tumbling/infinity/rhythmic
   cap, stall-to-infinite family one-per-run, bonus slots over
   the limit). The run is still flyable; the extras just do not
-  count.
+  count. For bonus slot limits, only each extra trick is highlighted.
 
 The **Violations** panel (desktop: bottom; mobile: collapsible bar)
 lists every issue. Tapping an item jumps the viewport to the

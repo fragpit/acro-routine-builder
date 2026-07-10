@@ -31,6 +31,8 @@ Live app: <https://fragpit.github.io/acro-routine-builder/>
   overwriting non-empty targets
 - Live validation of all structural FAI rules (see
   [docs/trick_rules.md](docs/trick_rules.md))
+- Bonus-limit warnings highlight only the extra twisted, reversed or flipped
+  tricks that are not scored
 - Repetition penalties distinguish regular and reverse variants while
   still flagging repeated reverse variants
 - Technicity and bonus estimation per run (AWT/AWQ formulas)

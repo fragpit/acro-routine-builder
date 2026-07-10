@@ -34,7 +34,9 @@ export function validateBonusLimits(
           ruleId: `bonus-limits-${cat}`,
           severity: 'warning',
           description: `Run ${runIndex + 1}: more than ${BONUS_LIMITS[cat]} ${cat} manoeuvres (${cells.length})`,
-          affectedCells: cells.map((c) => ({ runIndex, trickIndex: c.trickIndex })),
+          affectedCells: cells
+            .slice(BONUS_LIMITS[cat])
+            .map((c) => ({ runIndex, trickIndex: c.trickIndex })),
         });
       }
     });
