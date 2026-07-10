@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.10
 
 - Surface unread News and app updates in Help and builder menu buttons.
 - Combine desktop Help and News into the question-mark menu.
