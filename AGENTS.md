@@ -126,11 +126,12 @@ Cloudflare Web Analytics is wired in via [src/hooks/useCloudflareAnalytics.ts](s
    Skip this for purely technical, infrastructure or maintenance-only
    changes.
 5. Commit and push the branch.
-6. Open a PR via GitHub MCP (never `gh` CLI - see user memory).
-7. Add changes to CHANGELOG.md. Keep entries short - one bullet, a
-   single line if possible, describing the user-visible effect. Put
-   root-cause analysis and implementation detail in the PR body, not
-   in CHANGELOG.
+6. Open a PR with `gh pr create`.
+7. If the change affects end-user behavior or business logic, add it to
+   CHANGELOG.md. Keep entries short - one bullet, a single line if possible,
+   describing the user-visible effect. Skip purely internal, infrastructure or
+   maintenance changes. Put root-cause analysis and implementation detail in
+   the PR body, not in CHANGELOG.
 
 Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
 
@@ -138,8 +139,8 @@ Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
 
 Do everything above, then **finalize**:
 
-1. Confirm the PR is mergeable enough for GitHub to accept the merge, then merge
-   it through GitHub MCP using squash merge.
+1. Confirm the PR is mergeable enough for GitHub to accept the merge, then run
+   `gh pr merge --squash`.
 2. Switch to the default branch (`main`) and pull.
 3. Bump the release tag. The user must specify `patch`, `minor` or `major`; if they didn't, ask. Bumping rules below.
 4. Delete the dev branch locally and on the remote. If the remote branch is
@@ -159,7 +160,7 @@ asynchronously.
 - In the same `Bump version` commit, rename the `## Unreleased` heading in `CHANGELOG.md` to `## vX.Y.Z`. Do **not** add a fresh empty `## Unreleased` placeholder - when the next change lands, the PR that introduces it is responsible for re-adding the heading. The tag IS the release, so the changelog must move in lockstep - otherwise entries linger under `Unreleased` long after they shipped (this has happened and required a retroactive fixup).
 - If pushing `main` or a branch over HTTPS fails because credentials cannot be
   read, do not retry the same failing transport. Use the working SSH remote for
-  Git pushes, or use GitHub MCP for file/branch operations where appropriate.
+  Git pushes.
 - Create the tag annotated (`git tag -a vX.Y.Z -m "..."`) - lightweight tags fail here because of a forced-annotated git config. Push with `git push origin vX.Y.Z`.
 - The tag push may report "Cannot create ref due to creations being restricted" - that's a protected-ref ruleset being bypassed (admin action). Verify the tag exists, then continue; no extra deploy polling is needed.
 
