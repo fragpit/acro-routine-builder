@@ -1,9 +1,5 @@
 # Changelog
 
-## Unreleased
-
-- Use the local GitHub CLI for repository operations.
-
 ## v0.9.15
 
 - AWT import snapshot now includes Arc'obatic Games 2026 and Saisies Acro
