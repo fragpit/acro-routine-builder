@@ -127,10 +127,11 @@ Cloudflare Web Analytics is wired in via [src/hooks/useCloudflareAnalytics.ts](s
    changes.
 5. Commit and push the branch.
 6. Open a PR with `gh pr create`.
-7. Add changes to CHANGELOG.md. Keep entries short - one bullet, a
-   single line if possible, describing the user-visible effect. Put
-   root-cause analysis and implementation detail in the PR body, not
-   in CHANGELOG.
+7. If the change affects end-user behavior or business logic, add it to
+   CHANGELOG.md. Keep entries short - one bullet, a single line if possible,
+   describing the user-visible effect. Skip purely internal, infrastructure or
+   maintenance changes. Put root-cause analysis and implementation detail in
+   the PR body, not in CHANGELOG.
 
 Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
 
