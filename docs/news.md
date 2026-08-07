@@ -1,5 +1,10 @@
 # News
 
+## New School 2026 results are available
+
+Results from New School 2026 are now available in Import AWT. Choose a pilot
+to load their three-run program into the builder.
+
 ## New AWT competition results
 
 Results from Arc'obatic Games 2026 and Saisies Acro Master 2026 are now
