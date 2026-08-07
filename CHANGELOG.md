@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- AWT import snapshot now includes New School 2026 results.
+
 ## v0.9.15
 
 - AWT import snapshot now includes Arc'obatic Games 2026 and Saisies Acro

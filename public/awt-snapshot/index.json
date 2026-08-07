@@ -372,6 +372,28 @@
     "last_update": "2026-06-06T13:29:59.322532"
   },
   {
+    "_id": "6a51dfc18115009dfb125757",
+    "name": "New School",
+    "code": "new-school",
+    "start_date": "2026-07-11",
+    "end_date": "2026-07-11",
+    "location": "Grandvillard",
+    "published": true,
+    "type": "solo",
+    "state": "closed",
+    "number_of_pilots": 8,
+    "number_of_teams": 0,
+    "number_of_judges": 3,
+    "number_of_runs": 3,
+    "image": null,
+    "logo": null,
+    "website": null,
+    "seasons": [
+      "awt-2026"
+    ],
+    "last_update": "2026-07-11T12:52:26.531863"
+  },
+  {
     "_id": "6810ba0ae2fadfea2cb58017",
     "name": "New School 2025",
     "code": "new-school-2025",
