@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.17
 
 - AWT import snapshot now includes Sonchaux Acroshow 2026 results.
 
