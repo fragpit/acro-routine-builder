@@ -1,5 +1,10 @@
 # News
 
+## Sonchaux Acroshow 2026 results are available
+
+Results from Sonchaux Acroshow 2026 are now available in Import AWT. Choose a
+pilot to load their three-run program into the builder.
+
 ## New School 2026 results are available
 
 Results from New School 2026 are now available in Import AWT. Choose a pilot

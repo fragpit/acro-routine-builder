@@ -139,6 +139,13 @@ Stop there. Do **not** merge, tag, or delete the branch until explicitly asked.
 
 Do everything above, then **finalize**:
 
+- When the user says `финализируй`, treat that as explicit authorization to
+  merge the PR and complete the full finalize workflow. If required review is
+  the only policy blocking an otherwise mergeable PR, use an admin squash
+  merge without asking for confirmation again.
+- When the user says `апай патч` or `apply patch`, treat that as an explicit
+  `patch` release choice and do not ask for the bump type again.
+
 1. Confirm the PR is mergeable enough for GitHub to accept the merge, then run
    `gh pr merge --squash`.
 2. Switch to the default branch (`main`) and pull.

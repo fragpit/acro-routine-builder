@@ -652,6 +652,29 @@
     "last_update": "2025-08-18T07:18:52.108990"
   },
   {
+    "_id": "6a7e021ae3508c6adc6e1280",
+    "name": "Sonchaux Acroshow 2026",
+    "code": "sonchaux-acroshow-2026",
+    "start_date": "2026-08-14",
+    "end_date": "2026-08-15",
+    "location": "Villeneuve ",
+    "published": true,
+    "type": "solo",
+    "state": "closed",
+    "number_of_pilots": 37,
+    "number_of_teams": 0,
+    "number_of_judges": 3,
+    "number_of_runs": 3,
+    "image": null,
+    "logo": null,
+    "website": null,
+    "seasons": [
+      "awq-2026",
+      "che-2026"
+    ],
+    "last_update": "2026-08-17T07:41:02.180620"
+  },
+  {
     "_id": "6474ce54dead16336c65a7b4",
     "name": "Swiss Championships 2023",
     "code": "swiss-championships-2023",
