@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- AWT import snapshot now includes Sonchaux Acroshow 2026 results.
+
 ## v0.9.16
 
 - AWT import snapshot now includes New School 2026 results.
