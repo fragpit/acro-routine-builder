@@ -458,6 +458,29 @@
     "last_update": "2024-10-20T11:53:08.178852"
   },
   {
+    "_id": "6ac65020c9e80168d571d8ce",
+    "name": "Roq'Acro 2026",
+    "code": "roqacro-2026",
+    "start_date": "2026-10-08",
+    "end_date": "2026-10-11",
+    "location": "Roquebrune-Cap-Martin",
+    "published": true,
+    "type": "solo",
+    "state": "closed",
+    "number_of_pilots": 22,
+    "number_of_teams": 0,
+    "number_of_judges": 3,
+    "number_of_runs": 5,
+    "image": null,
+    "logo": null,
+    "website": null,
+    "seasons": [
+      "awq-2026",
+      "fra-2026"
+    ],
+    "last_update": "2026-10-11T10:41:11.470751"
+  },
+  {
     "_id": "633fbf97e4c8954cb0a9e437",
     "name": "Roq'Acro Amicale 2022",
     "code": "roqacro-amicale-2022",

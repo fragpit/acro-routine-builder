@@ -1,5 +1,10 @@
 # News
 
+## Roq'Acro 2026 results are available
+
+Results from Roq'Acro 2026 are now available in Import AWT. Choose a pilot
+to load their five-run program into the builder.
+
 ## Sonchaux Acroshow 2026 results are available
 
 Results from Sonchaux Acroshow 2026 are now available in Import AWT. Choose a
