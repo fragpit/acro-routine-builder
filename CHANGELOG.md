@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.9.18
 
 - AWT import snapshot now includes Roq'Acro 2026 results.
 
